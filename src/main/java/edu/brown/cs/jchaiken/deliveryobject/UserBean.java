@@ -17,9 +17,10 @@ public final class UserBean extends DeliveryObjectBean<User> implements User {
   private Collection<Order> currOrders;
   private String email;
   private String paymentId;
+  private int cell;
 
   private UserBean(String newId, String newName, String newEmail,
-      String newPaymentId) {
+      String newPaymentId, int cellNum) {
     super(newId);
     name = newName;
     email = newEmail;
@@ -28,6 +29,7 @@ public final class UserBean extends DeliveryObjectBean<User> implements User {
     pastOrders = Collections.synchronizedCollection(new HashSet<Order>());
     currDeliveries = Collections.synchronizedCollection(new HashSet<Order>());
     currOrders = Collections.synchronizedCollection(new HashSet<Order>());
+    cell = cellNum;
   }
 
   @Override
@@ -61,8 +63,33 @@ public final class UserBean extends DeliveryObjectBean<User> implements User {
   }
 
   @Override
+  public void addPastOrder(Order order) {
+    pastOrders.add(order);
+  }
+
+  @Override
+  public void addCurrentOrder(Order order) {
+    currOrders.add(order);
+  }
+
+  @Override
+  public void addCurrentDelivery(Order order) {
+    currDeliveries.add(order);
+  }
+
+  @Override
+  public void addPastDelivery(Order order) {
+    pastDeliveries.add(order);
+  }
+
+  @Override
   public String getStripeId() {
     return paymentId;
+  }
+
+  @Override
+  public int getCell() {
+    return cell;
   }
 
   @Override
@@ -92,6 +119,7 @@ public final class UserBean extends DeliveryObjectBean<User> implements User {
     private String name;
     private String email;
     private String paymentId;
+    private int cell;
 
     UserBuilder setId(String newId) {
       this.id = newId;
@@ -113,9 +141,14 @@ public final class UserBean extends DeliveryObjectBean<User> implements User {
       return this;
     }
 
+    UserBuilder setCell(int cellNumber) {
+      this.cell = cellNumber;
+      return this;
+    }
+
     User build() {
-      //insert into DB
-      return new UserBean(id, name, email, paymentId);
+      //TODO insert into DB
+      return new UserBean(id, name, email, paymentId, cell);
     }
   }
 }

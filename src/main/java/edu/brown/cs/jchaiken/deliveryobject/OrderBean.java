@@ -12,24 +12,29 @@ public final class OrderBean extends DeliveryObjectBean<Order> implements
     Order {
   private User orderer;
   private User deliverer;
-  private String pickup;
-  private String dropoff;
+  private String pickupL;
+  private String dropoffL;
   private List<String> items;
   private double price;
   private double fee;
   private Status status;
+  private double pickupTime;
+  private double dropoffTime;
 
   private OrderBean(String newId, User newOrderer, User newDeliverer,
-      String newPickup, String newDropoff, List<String> newItems) {
+      String newPickup, String newDropoff, List<String> newItems, double 
+      pickupT, double dropoffT) {
     super(newId);
     status = Status.UNASSIGNED;
     orderer = newOrderer;
     deliverer = newDeliverer;
-    pickup = newPickup;
-    dropoff = newDropoff;
+    pickupL = newPickup;
+    dropoffL = newDropoff;
     items = newItems;
     price = -1;
     fee = -1;
+    pickupTime = pickupT;
+    dropoffTime = dropoffT;
   }
 
   @Override
@@ -54,13 +59,13 @@ public final class OrderBean extends DeliveryObjectBean<Order> implements
 
   @Override
   public String getPickupLocation() {
-    return pickup;
+    return pickupL;
   }
 
   @Override
   public String getDropoffLocation() {
     // TODO Auto-generated method stub
-    return dropoff;
+    return dropoffL;
   }
 
   @Override
@@ -73,7 +78,7 @@ public final class OrderBean extends DeliveryObjectBean<Order> implements
   public void setPrice(double newPrice) {
     // TODO Auto-generated method stub
     price = newPrice;
-    //set fee here
+    //TODO set fee here
   }
 
   @Override
@@ -92,6 +97,17 @@ public final class OrderBean extends DeliveryObjectBean<Order> implements
     return status;
   }
 
+
+  @Override
+  public double getPickupTime() {
+    return pickupTime;
+  }
+
+  @Override
+  public double getDropoffTime() {
+    return dropoffTime;
+  }
+
   /**
    * OrderBuilder offers a way to construct an order if it is not yet in the
    * database. Also inserts it in the database.
@@ -105,6 +121,8 @@ public final class OrderBean extends DeliveryObjectBean<Order> implements
     private String dropoffB;
     private List<String> itemsB;
     private String idB;
+    private double pickupT;
+    private double dropoffT;
 
     OrderBuilder setId(String id) {
       idB = id;
@@ -136,9 +154,19 @@ public final class OrderBean extends DeliveryObjectBean<Order> implements
       return this;
     }
 
+    OrderBuilder setPickupTime(double pickup) {
+      pickupT = pickup;
+      return this;
+    }
+
+    OrderBuilder setDropoffTime(double dropoff) {
+      dropoffT = dropoff;
+      return this;
+    }
+
     Order build() {
       return new OrderBean(idB, ordererB, delivererB, pickupB, dropoffB,
-          itemsB);
+          itemsB, pickupT, dropoffT);
     }
   }
 }

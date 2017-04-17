@@ -2,7 +2,10 @@ package edu.brown.cs.jchaiken.deliveryobject;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.List;
+
+import edu.brown.cs.jchaiken.database.Database;
 
 /**
  * Models an order if it has not been read in from the database yet.
@@ -16,75 +19,97 @@ public class OrderProxy extends DeliveryObjectProxy<Order> implements Order {
   }
 
   @Override
-  protected void cache(Connection connection) throws SQLException {
+  protected void cache() throws SQLException {
     //TODO do database stuff
-    //TODO create new bean
-    //TODO set data to it
+    String query = "SELECT * FROM orders WHERE id = " + super.getId();
+    List<List<Object>> results = Database.query(query);
+    if (results.size() == 1) {
+      List<Object> order = results.get(0);
+      String ordererId = (String) order.get(1);
+      String delivererId = (String) order.get(2);
+      double pickupT = (double) order.get(3);
+      double dropoffT = (double) order.get(4);
+      List<String> items = Arrays.asList(((String) order.get(5)).split(","));
+      String pickupL = (String) order.get(6);
+      String dropoffL = (String) order.get(7);
+    }
   }
 
   @Override
   public User getOrderer() {
-    cache();
+    check();
     return super.getData().getOrderer();
   }
 
   @Override
   public User getDeliverer() {
-    cache();
+    check();
     return super.getData().getDeliverer();
   }
 
   @Override
   public void assignDeliverer(User deliverer) {
-    cache();
+    check();
     super.getData().assignDeliverer(deliverer);
   }
 
   @Override
   public List<String> getOrderItems() {
-    cache();
+    check();
     return super.getData().getOrderItems();
   }
 
   @Override
   public String getPickupLocation() {
-    cache();
+    check();
     return super.getData().getPickupLocation();
   }
 
   @Override
   public String getDropoffLocation() {
-    cache();
+    check();
     return super.getData().getDropoffLocation();
   }
 
   @Override
   public double getPrice() {
-    cache();
+    check();
     return super.getData().getPrice();
   }
 
   @Override
   public void setPrice(double price) {
-    cache();
+    check();
     super.getData().setPrice(price);
   }
 
   @Override
   public void chargeCustomer() {
-    cache();
+    check();
     super.getData().chargeCustomer();
   }
 
   @Override
   public void setOrderStatus(Status status) {
-    cache();
+    check();
     super.getData().setOrderStatus(status);
   }
 
   @Override
   public Status status() {
-    cache();
+    check();
     return super.getData().status();
+  }
+
+  @Override
+  public double getPickupTime() {
+    check();
+    return super.getData().getPickupTime();
+  }
+
+  @Override
+  public double getDropoffTime() {
+    check();
+    return super.getData().getDropoffTime();
   }
 }

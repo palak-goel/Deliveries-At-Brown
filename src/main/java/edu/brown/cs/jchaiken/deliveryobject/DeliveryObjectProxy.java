@@ -55,15 +55,19 @@ public abstract class DeliveryObjectProxy<T extends DeliveryObject> {
     return data;
   }
 
+  protected void setData(T newData) {
+    data = newData;
+  }
+
   protected Cache<String, DeliveryObject> getCache() {
     return cache;
   }
 
-  protected void cache() {
+  protected void check() {
     checkCache();
     if (data == null && Database.getConnection() != null) {
       try {
-        cache(Database.getConnection());
+        cache();
       } catch (SQLException exc) {
         exc.printStackTrace();
       }
@@ -71,7 +75,7 @@ public abstract class DeliveryObjectProxy<T extends DeliveryObject> {
     }
   }
 
-  protected abstract void cache(Connection connection) throws SQLException;
+  protected abstract void cache() throws SQLException;
 
   @Override
   public boolean equals(Object obj) {

@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * UserProxy models a User if it has not been read in from the database.
@@ -20,56 +21,107 @@ public class UserProxy extends DeliveryObjectProxy<User> implements User {
 
   @Override
   public String getName() {
-    cache();
+    check();
     return super.getData().getName();
   }
 
   @Override
   public String getEmail() {
-    cache();
+    check();
     return super.getData().getEmail();
 
   }
 
   @Override
   public Collection<Order> pastDeliveries() {
-    cache();
+    check();
     return super.getData().pastDeliveries();
   }
 
   @Override
   public Collection<Order> currentDeliveries() {
-    cache();
+    check();
     return super.getData().currentDeliveries();
   }
 
   @Override
   public Collection<Order> pastOrders() {
-    cache();
+    check();
     return super.getData().pastOrders();
   }
 
   @Override
   public Collection<Order> currentOrders() {
-    cache();
+    check();
     return super.getData().currentOrders();
+  }
+
+
+  @Override
+  public void addPastDelivery(Order order) {
+    check();
+    super.getData().addPastDelivery(order);
+    
+  }
+
+  @Override
+  public void addPastOrder(Order order) {
+    check();
+    super.getData().addPastOrder(order);
+  }
+
+  @Override
+  public void addCurrentOrder(Order order) {
+    check();
+    super.getData().addCurrentOrder(order);
+  }
+
+  @Override
+  public void addCurrentDelivery(Order order) {
+    check();
+    super.getData().addCurrentDelivery(order);
   }
 
   @Override
   public String getStripeId() {
-    cache();
+    check();
     return super.getData().getStripeId();
+  }
+
+
+  @Override
+  public int getCell() {
+    check();
+    return super.getData().getCell();
   }
 
   @Override
   public void setStripeId(String id) {
-    cache();
+    check();
     super.getData().setStripeId(id);
   }
 
   @Override
-  protected void cache(Connection connection) throws SQLException {
+  protected void cache() throws SQLException {
     //TODO: read in user from DB
+    String query = "SELECT * FROM users WHERE id = " + super.getId();
+    List<List<Object>> results = Database.query(query);
+    if (results.size() == 1) {
+      List<Object> user = results.get(0);
+      String name = (String) user.get(1);
+      String email = (String) user.get(2);
+      int cell = (int) user.get(3);
+      String spark = (String) user.get(4);
+      UserBuilder bean = new UserBuilder();
+      User newUser = bean.setCell(cell)
+          .setEmail(email)
+          .setPayment(spark)
+          .setId(super.getId())
+          .setName(name)
+          .build();
+      //TODO past and current orders/deliveries
+      super.setData(newUser);
+    }
   }
 
   @Override
@@ -91,11 +143,29 @@ public class UserProxy extends DeliveryObjectProxy<User> implements User {
     String emailQuery = String.format("SELECT * FROM users WHERE email = %s",
         email);
     List<List<Object>> users = Database.query(emailQuery);
-    assert users.size() == 1;
-    List<Object> result = users.get(0);
-    UserBuilder builder = new UserBuilder();
-    //TODO: result stuff
-    return builder.build();
+    if (users != null && users.size() == 1) {
+      List<Object> result = users.get(0);
+      UserBuilder builder = new UserBuilder();
+      //TODO: result stuff
+      return builder.build();
+    }
+    return null;
   }
 
+  /**
+   * Returns true or false if an email password combination exists.
+   * @param email the potential account email.
+   * @param password the potential account's password.
+   * @return true or false whether it exists or not.
+   */
+  public static boolean userValidator(String email, String password) {
+    int hash = Objects.hash(password);
+    String query = String.format("SELECT * FROM users WHERE email = %s AND"
+        + " password = %s", email, hash);
+    List<List<Object>> users = Database.query(query);
+    if (users != null && users.size() == 1) {
+      return true;
+    }
+    return false;
+  }
 }

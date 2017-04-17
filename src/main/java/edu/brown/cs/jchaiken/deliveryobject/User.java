@@ -25,6 +25,12 @@ public interface User extends DeliveryObject {
   String getEmail();
 
   /**
+   * Return's the User's cell phone number
+   * @return the number.
+   */
+  int getCell();
+
+  /**
    * Returns the User's past deliveries.
    * @return the past deliveries.
    */
@@ -73,6 +79,30 @@ public interface User extends DeliveryObject {
   void charge(double amount);
 
   /**
+   * Adds a past delivery to the user.
+   * @param order the order to add.
+   */
+  void addPastDelivery(Order order);
+
+  /**
+   * Adds a past order to the user.
+   * @param order the order to add.
+   */
+  void addPastOrder(Order order);
+
+  /**
+   * Adds a current order to the user.
+   * @param order the order to add.
+   */
+  void addCurrentOrder(Order order);
+
+  /**
+   * Adds a past delivery to the user.
+   * @param order the order to add.
+   */
+  void addCurrentDelivery(Order order);
+
+  /**
    * Returns a user based on their id.
    * @param id the user id.
    * @return the user.
@@ -88,5 +118,16 @@ public interface User extends DeliveryObject {
    */
   static User byEmail(String email) {
     return UserProxy.byEmail(email);
+  }
+
+  /**
+   * Returns true or false if the email/password combination matches
+   * an existing user's information.
+   * @param email the user's email
+   * @param password the user's password.
+   * @return a boolean depending on whether the user exists.
+   */
+  static boolean userValidator(String email, String password) {
+    return UserProxy.userValidator(email, password);
   }
 }

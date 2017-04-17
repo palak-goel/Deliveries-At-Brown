@@ -83,6 +83,17 @@ public interface Order extends DeliveryObject {
   void setOrderStatus(Status status);
 
   /**
+   * Gets the pickup time of the order.
+   * @return the time the order was picked up.
+   */
+  double getPickupTime();
+
+  /**
+   * Gets the time the order was dropped off (if it has been).
+   * @return the time, or null otherwiase.
+   */
+  double getDropoffTime();
+  /**
    * Returns the order status.
    * @return status
    */

@@ -77,7 +77,8 @@ public final class Database {
       PreparedStatement prep = statements.get(queryString);
       return queryRunner(prep);
     } else {
-      try (PreparedStatement prep = getConnection().prepareStatement(queryString)) {
+      try (PreparedStatement prep = getConnection().prepareStatement(
+          queryString)) {
         statements.put(queryString, prep);
         return queryRunner(prep);
       } catch (SQLException exc) {
@@ -88,7 +89,7 @@ public final class Database {
   }
 
   private static List<List<Object>> queryRunner(PreparedStatement prep) {
-    try (ResultSet rs = prep.executeQuery()) {   
+    try (ResultSet rs = prep.executeQuery()) {
       ResultSetMetaData rmd = rs.getMetaData();
       List<List<Object>> results = new ArrayList<>();
       int cols = rmd.getColumnCount();

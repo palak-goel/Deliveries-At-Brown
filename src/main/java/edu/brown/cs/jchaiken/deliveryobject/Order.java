@@ -101,6 +101,11 @@ public interface Order extends DeliveryObject {
   Status status();
 
   /**
+   * Adds an order to the database.
+   */
+  void addToDatabase();
+
+  /**
    * Returns an order based on its id.
    * @param id the order's id.
    * @return the order.
@@ -125,5 +130,26 @@ public interface Order extends DeliveryObject {
    */
   static List<Order> byItem(String item) {
     return OrderProxy.byItem(item);
+  }
+
+  /**
+   * IdGenerator for unique hashing and database ids.
+   * @author jacksonchaiken
+   *
+   */
+  class IdGenerator {
+    private static int counter = 0;
+
+    private IdGenerator() {
+    }
+
+    /**
+     * Returns the next id for an order.
+     * @return the id.
+     */
+    static String getNextId() {
+      counter++;
+      return "/o/" + counter;
+    }
   }
 }

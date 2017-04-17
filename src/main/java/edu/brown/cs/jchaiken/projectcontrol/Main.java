@@ -1,6 +1,8 @@
 package edu.brown.cs.jchaiken.projectcontrol;
 
 import edu.brown.cs.jchaiken.database.Database;
+import edu.brown.cs.jchaiken.database.TableBuilder;
+
 import java.io.File;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
@@ -47,6 +49,11 @@ public final class Main {
           Database.setUrl(command);
           if (Database.getConnection() != null) {
             System.out.println("db set to " + command);
+            TableBuilder builder = new TableBuilder();
+            builder.buildItems();
+            builder.buildLocations();
+            builder.buildUsers();
+            builder.buildOrders();
           } else {
             System.out.println("ERROR: Cannot connect to database");
           }
@@ -58,10 +65,11 @@ public final class Main {
       } else {
         System.out.println("Database url must end in .sqlite3");
       }
-      if (options.has("gui")) {
-        //TODO: do gui stuff here
-      }
-      //TODO: REPL stuff here
     }
+    if (options.has("gui")) {
+      //TODO: do gui stuff here
+    }
+    //TODO: REPL stuff here
   }
 }
+

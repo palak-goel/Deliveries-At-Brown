@@ -1,10 +1,11 @@
 package edu.brown.cs.jchaiken.deliveryobject;
 
+import edu.brown.cs.jchaiken.database.Database;
+
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 
-import edu.brown.cs.jchaiken.database.Database;
 
 /**
  * Represents an order once it has been read in from the database. Order's can
@@ -14,6 +15,7 @@ import edu.brown.cs.jchaiken.database.Database;
  */
 public final class OrderBean extends DeliveryObjectBean<Order> implements
     Order {
+  private static final int SEVEN = 7;
   private User orderer;
   private User deliverer;
   private String pickupL;
@@ -26,19 +28,24 @@ public final class OrderBean extends DeliveryObjectBean<Order> implements
   private double dropoffTime;
 
   private OrderBean(String newId, User newOrderer, User newDeliverer,
-      String newPickup, String newDropoff, List<String> newItems, double 
-      pickupT, double dropoffT, Status newStatus) {
+      String newPickup, String newDropoff, double pickupT, double dropoffT) {
     super(newId);
-    status = newStatus;
     orderer = newOrderer;
     deliverer = newDeliverer;
     pickupL = newPickup;
     dropoffL = newDropoff;
-    items = newItems;
     price = -1;
     fee = -1;
     pickupTime = pickupT;
     dropoffTime = dropoffT;
+  }
+
+  private void addStatus(Status newStatus) {
+    status = newStatus;
+  }
+
+  private void addItems(List<String> newItems) {
+    items = newItems;
   }
 
   @Override
@@ -68,19 +75,16 @@ public final class OrderBean extends DeliveryObjectBean<Order> implements
 
   @Override
   public String getDropoffLocation() {
-    // TODO Auto-generated method stub
     return dropoffL;
   }
 
   @Override
   public double getPrice() {
-    // TODO Auto-generated method stub
     return price;
   }
 
   @Override
   public void setPrice(double newPrice) {
-    // TODO Auto-generated method stub
     price = newPrice;
     //TODO set fee here
   }
@@ -112,6 +116,35 @@ public final class OrderBean extends DeliveryObjectBean<Order> implements
     return dropoffTime;
   }
 
+  @Override
+  public void addToDatabase() {
+    try (PreparedStatement prep = Database.getConnection().prepareStatement(
+        "INSERT INTO orders VALUES (?,?,?,?,?,?,?)")) {
+      prep.setString(1, super.getId());
+      prep.setString(2, orderer.getId());
+      prep.setString(3, deliverer.getId());
+      prep.setDouble(4,  pickupTime);
+      prep.setDouble(5,  dropoffTime);
+      prep.setString(6, pickupL);
+      prep.setString(SEVEN,  dropoffL);
+      prep.addBatch();
+      prep.executeBatch();
+    } catch (SQLException exc) {
+      exc.printStackTrace();
+    }
+    try (PreparedStatement prep = Database.getConnection().prepareStatement(
+        "INSERT INTO items VALUES (?, ?)")) {
+      for (String item : items) {
+        prep.setString(1, super.getId());
+        prep.setString(2, item);
+        prep.addBatch();
+      }
+      prep.executeBatch();
+    } catch (SQLException exc) {
+      exc.printStackTrace();
+    }
+  }
+
   /**
    * OrderBuilder offers a way to construct an order if it is not yet in the
    * database. Also inserts it in the database.
@@ -128,7 +161,6 @@ public final class OrderBean extends DeliveryObjectBean<Order> implements
     private double pickupT;
     private double dropoffT;
     private Status status;
-    private static boolean tableBuilt = false;
 
     OrderBuilder setId(String id) {
       idB = id;
@@ -176,47 +208,11 @@ public final class OrderBean extends DeliveryObjectBean<Order> implements
     }
 
     Order build() {
-      //TODO: add to database
-      PreparedStatement prep;
-      try {
-        if (tableBuilt == false) {
-          prep = Database.getConnection().prepareStatement("CREATE TABLE IF NOT"
-              + " EXISTS orders (id TEXT, orderer_id TEXT, deliverer_id TEXT,"
-              + " pickup_time REAL, dropoff_time REAL, pickup_location TEXT, dropoff_location TEXT,"
-              + " PRIMARY KEY (id), FOREIGN KEY (orderer_id) REFERENCES users(id),"
-              + " FOREIGN KEY (deliverer_id) REFERENCES users(id) ON DELETE CASCADE"
-              + " ON UPDATE CASCADE);");
-          prep.executeUpdate();
-          prep = Database.getConnection().prepareStatement("CREATE TABLE IF"
-              + " NOT EXISTS items (order_id TEXT, item TEXT, PRIMARY KEY"
-              + " (order_id) ON DELETE CASCADE ON UPDATE CASCADE);");
-          prep.executeUpdate();
-          tableBuilt = true;
-        }
-        prep = Database.getConnection().prepareStatement("INSERT INTO orders"
-            + " VALUES (?,?,?,?,?,?,?)");
-        prep.setString(1, idB);
-        prep.setString(2, ordererB.getId());
-        prep.setString(3, delivererB.getId());
-        prep.setDouble(4,  pickupT);
-        prep.setDouble(5,  dropoffT);
-        prep.setString(6, pickupB);
-        prep.setString(7,  dropoffB);
-        prep.addBatch();
-        prep.executeBatch();
-        prep = Database.getConnection().prepareStatement("INSERT INTO items VALUES (?, ?)");
-        for (String item : itemsB) {
-          prep.setString(1, idB);
-          prep.setString(2, item);
-          prep.addBatch();
-        }
-        prep.executeBatch();
-      } catch (SQLException exc) {
-        // TODO Auto-generated catch block
-        exc.printStackTrace();
-      }
-      return new OrderBean(idB, ordererB, delivererB, pickupB, dropoffB,
-          itemsB, pickupT, dropoffT, status);
+      OrderBean bean = new OrderBean(idB, ordererB, delivererB, pickupB,
+          dropoffB, pickupT, dropoffT);
+      bean.addItems(itemsB);
+      bean.addStatus(status);
+      return bean;
     }
   }
 }

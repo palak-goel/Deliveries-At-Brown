@@ -60,7 +60,6 @@ public class UserProxy extends DeliveryObjectProxy<User> implements User {
   public void addPastDelivery(Order order) {
     check();
     super.getData().addPastDelivery(order);
-    
   }
 
   @Override
@@ -89,7 +88,7 @@ public class UserProxy extends DeliveryObjectProxy<User> implements User {
 
 
   @Override
-  public int getCell() {
+  public String getCell() {
     check();
     return super.getData().getCell();
   }
@@ -102,14 +101,13 @@ public class UserProxy extends DeliveryObjectProxy<User> implements User {
 
   @Override
   protected void cache() throws SQLException {
-    //TODO: read in user from DB
     String query = "SELECT * FROM users WHERE id = " + super.getId();
     List<List<Object>> results = Database.query(query);
     if (results.size() == 1) {
       List<Object> user = results.get(0);
       String name = (String) user.get(1);
       String email = (String) user.get(2);
-      int cell = (int) user.get(3);
+      String cell = (String) user.get(3);
       String spark = (String) user.get(4);
       UserBuilder bean = new UserBuilder();
       User newUser = bean.setCell(cell)
@@ -118,7 +116,6 @@ public class UserProxy extends DeliveryObjectProxy<User> implements User {
           .setId(super.getId())
           .setName(name)
           .build();
-      //TODO past and current orders/deliveries
       String orderQuery = "SELECT id, status, orderer_id, deliverer_id FROM"
           + " orders WHERE orderer_id = " + super
           .getId() + " OR deliverer_id = " + super.getId();
@@ -154,6 +151,12 @@ public class UserProxy extends DeliveryObjectProxy<User> implements User {
   public void charge(double amount) {
     check();
     super.getData().charge(amount);
+  }
+
+  @Override
+  public void addToDatabase() {
+    check();
+    super.getData().addToDatabase();
   }
 
   /**

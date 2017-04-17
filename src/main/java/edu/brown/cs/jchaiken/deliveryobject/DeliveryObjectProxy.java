@@ -22,7 +22,7 @@ public abstract class DeliveryObjectProxy<T extends DeliveryObject> {
   private T data;
   private static final int MAX_CACHE = 50000;
   private static Cache<String, DeliveryObject> cache = CacheBuilder.newBuilder()
-      .maximumSize(MAX_CACHE).expireAfterAccess(120, TimeUnit.MINUTES).build();
+      .maximumSize(MAX_CACHE).expireAfterAccess(125, TimeUnit.MINUTES).build();
 
   DeliveryObjectProxy(String newId) {
     if (newId == null) {

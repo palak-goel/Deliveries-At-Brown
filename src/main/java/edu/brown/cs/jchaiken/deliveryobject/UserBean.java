@@ -1,8 +1,14 @@
 package edu.brown.cs.jchaiken.deliveryobject;
 
+import edu.brown.cs.jchaiken.database.Database;
+
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Objects;
+
 
 /**
  * UserBean models a user after it has been read in from the database.
@@ -17,11 +23,13 @@ public final class UserBean extends DeliveryObjectBean<User> implements User {
   private Collection<Order> currOrders;
   private String email;
   private String paymentId;
-  private int cell;
+  private String cell;
+  private final int password;
 
   private UserBean(String newId, String newName, String newEmail,
-      String newPaymentId, int cellNum) {
+      String newPaymentId, String cellNum, int newPass) {
     super(newId);
+    password = newPass;
     name = newName;
     email = newEmail;
     paymentId = newPaymentId;
@@ -88,7 +96,7 @@ public final class UserBean extends DeliveryObjectBean<User> implements User {
   }
 
   @Override
-  public int getCell() {
+  public String getCell() {
     return cell;
   }
 
@@ -108,6 +116,21 @@ public final class UserBean extends DeliveryObjectBean<User> implements User {
     //TODO : Stripe stuff
   }
 
+
+  @Override
+  public void addToDatabase() {
+    try (PreparedStatement prep = Database.getConnection().prepareStatement(
+          "INSERT INTO users VALUES (?,?,?,?,?,?)")) {
+      prep.setString(1, super.getId());
+      prep.setString(2, name);
+      prep.setString(3, email);
+      prep.setString(4, cell);
+      prep.setInt(5, password);
+    } catch (SQLException exc) {
+      exc.printStackTrace();
+    }
+  }
+
   /**
    * UserBuilder provides a way to build a User if it must be created for
    * the first time and it should be added to the database.
@@ -119,7 +142,8 @@ public final class UserBean extends DeliveryObjectBean<User> implements User {
     private String name;
     private String email;
     private String paymentId;
-    private int cell;
+    private String cell;
+    private int pass;
 
     UserBuilder setId(String newId) {
       this.id = newId;
@@ -136,19 +160,23 @@ public final class UserBean extends DeliveryObjectBean<User> implements User {
       return this;
     }
 
+    UserBuilder setPassword(String password) {
+      pass = Objects.hash(password);
+      return this;
+    }
+
     UserBuilder setPayment(String newPaymentId) {
       this.paymentId = newPaymentId;
       return this;
     }
 
-    UserBuilder setCell(int cellNumber) {
+    UserBuilder setCell(String cellNumber) {
       this.cell = cellNumber;
       return this;
     }
 
     User build() {
-      //TODO insert into DB
-      return new UserBean(id, name, email, paymentId, cell);
+      return new UserBean(id, name, email, paymentId, cell, pass);
     }
   }
 }

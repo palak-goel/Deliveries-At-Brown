@@ -13,6 +13,7 @@ import java.util.List;
  *
  */
 public class OrderProxy extends DeliveryObjectProxy<Order> implements Order {
+  private static final int SEVEN = 7;
 
   OrderProxy(String newId) {
     super(newId);
@@ -31,7 +32,7 @@ public class OrderProxy extends DeliveryObjectProxy<Order> implements Order {
       double dropoffT = (double) order.get(4);
       List<String> items = Arrays.asList(((String) order.get(5)).split(","));
       String pickupL = (String) order.get(6);
-      String dropoffL = (String) order.get(7);
+      String dropoffL = (String) order.get(SEVEN);
       OrderBuilder builder = new OrderBuilder();
       Order newOrder = builder.setId(super.getId())
           .setOrderer(User.byId(ordererId))
@@ -122,6 +123,12 @@ public class OrderProxy extends DeliveryObjectProxy<Order> implements Order {
   public double getDropoffTime() {
     check();
     return super.getData().getDropoffTime();
+  }
+
+  @Override
+  public void addToDatabase() {
+    check();
+    super.getData().addToDatabase();
   }
 
   /**

@@ -2,7 +2,6 @@ package edu.brown.cs.jchaiken.deliveryobject;
 
 import edu.brown.cs.jchaiken.database.Database;
 import edu.brown.cs.jchaiken.deliveryobject.UserBean.UserBuilder;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
@@ -120,18 +119,41 @@ public class UserProxy extends DeliveryObjectProxy<User> implements User {
           .setName(name)
           .build();
       //TODO past and current orders/deliveries
+      String orderQuery = "SELECT id, status, orderer_id, deliverer_id FROM"
+          + " orders WHERE orderer_id = " + super
+          .getId() + " OR deliverer_id = " + super.getId();
+      List<List<Object>> orders = Database.query(orderQuery);
+      for (List<Object> order : orders) {
+        if (!order.get(1).equals("COMPLETED")) {
+          //is an orderer
+          if (order.get(2).equals(super.getId())) {
+            newUser.addPastOrder(new OrderProxy((String) order.get(0)));
+          } else {
+            //is deliverer
+            newUser.addPastDelivery(new OrderProxy((String) order.get(0)));
+          }
+        } else {
+          if (order.get(2).equals(super.getId())) {
+            newUser.addCurrentOrder(new OrderProxy((String) order.get(0)));
+          } else {
+            newUser.addCurrentDelivery(new OrderProxy((String) order.get(0)));
+          }
+        }
+      }
       super.setData(newUser);
     }
   }
 
   @Override
   public void pay(double amount) {
-    // TODO Auto-generated method stub
+    check();
+    super.getData().pay(amount);
   }
 
   @Override
   public void charge(double amount) {
-    // TODO Auto-generated method stub
+    check();
+    super.getData().charge(amount);
   }
 
   /**
@@ -140,14 +162,12 @@ public class UserProxy extends DeliveryObjectProxy<User> implements User {
    * @return the User, or null if it does not exist.
    */
   public static User byEmail(String email) {
-    String emailQuery = String.format("SELECT * FROM users WHERE email = %s",
+    String emailQuery = String.format("SELECT id FROM users WHERE email = %s",
         email);
     List<List<Object>> users = Database.query(emailQuery);
     if (users != null && users.size() == 1) {
       List<Object> result = users.get(0);
-      UserBuilder builder = new UserBuilder();
-      //TODO: result stuff
-      return builder.build();
+      return new UserProxy((String) result.get(0));
     }
     return null;
   }

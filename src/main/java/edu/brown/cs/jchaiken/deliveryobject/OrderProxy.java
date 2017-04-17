@@ -1,11 +1,11 @@
 package edu.brown.cs.jchaiken.deliveryobject;
 
-import java.sql.Connection;
+import edu.brown.cs.jchaiken.database.Database;
+import edu.brown.cs.jchaiken.deliveryobject.OrderBean.OrderBuilder;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import edu.brown.cs.jchaiken.database.Database;
 
 /**
  * Models an order if it has not been read in from the database yet.
@@ -32,6 +32,17 @@ public class OrderProxy extends DeliveryObjectProxy<Order> implements Order {
       List<String> items = Arrays.asList(((String) order.get(5)).split(","));
       String pickupL = (String) order.get(6);
       String dropoffL = (String) order.get(7);
+      OrderBuilder builder = new OrderBuilder();
+      Order newOrder = builder.setId(super.getId())
+          .setOrderer(User.byId(ordererId))
+          .setDeliverer(User.byId(delivererId))
+          .setPickupTime(pickupT)
+          .setDropoffTime(dropoffT)
+          .setDropoff(dropoffL)
+          .setPickup(pickupL)
+          .setItems(items)
+          .build();
+      super.setData(newOrder);
     }
   }
 
@@ -111,5 +122,35 @@ public class OrderProxy extends DeliveryObjectProxy<Order> implements Order {
   public double getDropoffTime() {
     check();
     return super.getData().getDropoffTime();
+  }
+
+  /**
+   * Returns a list of orders that contain a certain item.
+   * @param item the item to search for.
+   * @return the list of orders with that item.
+   */
+  public static List<Order> byItem(String item) {
+    String query = "SELECT id FROM orders WHERE item LIKE '%" + item + "%'";
+    List<List<Object>> results = Database.query(query);
+    List<Order> orders = new ArrayList<>();
+    for (List<Object> id : results) {
+      orders.add(new OrderProxy((String) id.get(0)));
+    }
+    return orders;
+  }
+
+  /**
+   * Returns a list of orders from a given pickup location.
+   * @param pickup the location where orders are picked up.
+   * @return the list of orders.
+   */
+  public static List<Order> byPickupLocation(String pickup) {
+    String query = "SELECT id FROM orders WHERE pickup_location = " + pickup;
+    List<List<Object>> results = Database.query(query);
+    List<Order> orders = new ArrayList<>();
+    for (List<Object> id : results) {
+      orders.add(new OrderProxy((String) id.get(0)));
+    }
+    return orders;
   }
 }

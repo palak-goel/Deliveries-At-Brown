@@ -39,7 +39,7 @@ public final class Main {
         .defaultsTo(DEFAULT_PORT);
     parser.accepts("db").withRequiredArg().ofType(String.class);
     OptionSet options = parser.parse(args);
-    if (options.has("db")) {
+    if (options.has("db") && options.valueOf("db") != null) {
       String command = (String) options.valueOf("db");
       if (command.contains(".sqlite3")) {
         // only try to connect on a new database
@@ -51,7 +51,7 @@ public final class Main {
             System.out.println("ERROR: Cannot connect to database");
           }
         } else if (command.equals(Database.getUrl())) {
-          System.out.println("map set to " + command);
+          System.out.println("database set to " + command);
         } else {
           System.out.println("No database found");
         }

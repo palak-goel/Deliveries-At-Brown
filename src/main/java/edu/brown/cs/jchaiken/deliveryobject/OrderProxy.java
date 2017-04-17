@@ -4,6 +4,11 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
+/**
+ * Models an order if it has not been read in from the database yet.
+ * @author jacksonchaiken
+ *
+ */
 public class OrderProxy extends DeliveryObjectProxy<Order> implements Order {
 
   OrderProxy(String newId) {
@@ -39,28 +44,24 @@ public class OrderProxy extends DeliveryObjectProxy<Order> implements Order {
   public List<String> getOrderItems() {
     cache();
     return super.getData().getOrderItems();
-
   }
 
   @Override
   public String getPickupLocation() {
     cache();
     return super.getData().getPickupLocation();
-
   }
 
   @Override
   public String getDropoffLocation() {
     cache();
     return super.getData().getDropoffLocation();
-
   }
 
   @Override
   public double getPrice() {
     cache();
     return super.getData().getPrice();
-
   }
 
   @Override
@@ -76,15 +77,14 @@ public class OrderProxy extends DeliveryObjectProxy<Order> implements Order {
   }
 
   @Override
-  public void setOrderStatus(ORDER_STATUS status) {
+  public void setOrderStatus(Status status) {
     cache();
-    super.getData().setOrderStatus(status);    
+    super.getData().setOrderStatus(status);
   }
 
   @Override
-  public ORDER_STATUS status() {
+  public Status status() {
     cache();
     return super.getData().status();
   }
-
 }

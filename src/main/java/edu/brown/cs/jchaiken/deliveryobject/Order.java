@@ -2,9 +2,20 @@ package edu.brown.cs.jchaiken.deliveryobject;
 
 import java.util.List;
 
+/**
+ * Top-level interface that allows for other classes to interact with
+ * Orders without knowing the underlying state.
+ * @author jacksonchaiken
+ *
+ */
 public interface Order extends DeliveryObject {
 
-  public static enum ORDER_STATUS {
+  /**
+   * Various statuses that Orders can take on.
+   * @author jacksonchaiken
+   *
+   */
+  enum Status {
     UNASSIGNED,
     ASSIGNED,
     AT_LOCATION,
@@ -12,25 +23,68 @@ public interface Order extends DeliveryObject {
     DROPPED_OFF
   }
 
-  public User getOrderer();
+  /**
+   * Returns the user that ordered the order.
+   * @return the user who ordered.
+   */
+  User getOrderer();
 
-  public User getDeliverer();
+  /**
+   * Returns the deliverer.
+   * @return the deliverer who accepted, or null if none assigned.
+   */
+  User getDeliverer();
 
-  public void assignDeliverer(User deliverer);
+  /**
+   * Assigns a user to be the deliverer.
+   * @param deliverer the user.
+   */
+  void assignDeliverer(User deliverer);
 
-  public List<String> getOrderItems();
+  /**
+   * Returns the items in the order.
+   * @return the items.
+   */
+  List<String> getOrderItems();
 
-  public String getPickupLocation();
+  /**
+   * Returns the pickup location.
+   * @return the address
+   */
+  String getPickupLocation();
 
-  public String getDropoffLocation();
+  /**
+   * Returns the dropoff location.
+   * @return the address.
+   */
+  String getDropoffLocation();
 
-  public double getPrice();
+  /**
+   * Returns the orders price.
+   * @return the price, or -1 if it has not been set.
+   */
+  double getPrice();
 
-  public void setPrice(double price);
+  /**
+   * Sets the price.
+   * @param price the new price.
+   */
+  void setPrice(double price);
 
-  public void chargeCustomer();
+  /**
+   * Charges the orderer and pays deliverer if order complete.
+   */
+  void chargeCustomer();
 
-  public void setOrderStatus(ORDER_STATUS status);
+  /**
+   * Sets the order's status.
+   * @param status the status.
+   */
+  void setOrderStatus(Status status);
 
-  public ORDER_STATUS status();
+  /**
+   * Returns the order status.
+   * @return status
+   */
+  Status status();
 }

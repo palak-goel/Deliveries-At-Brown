@@ -5,9 +5,18 @@ import java.io.File;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 
-public class Main {
+/**
+ * Starts the program and delegates functionality to the REPL and GUI.
+ * @author jacksonchaiken
+ *
+ */
+public final class Main {
   private static final int DEFAULT_PORT = 4567;
 
+  /**
+   * Runs the program.
+   * @param args Command line arguments.
+   */
   public static void main(String[] args) {
     new Main(args).run();
   }
@@ -29,7 +38,6 @@ public class Main {
     parser.accepts("port").withRequiredArg().ofType(Integer.class)
         .defaultsTo(DEFAULT_PORT);
     parser.accepts("db").withRequiredArg().ofType(String.class);
-   
     OptionSet options = parser.parse(args);
     if (options.has("db")) {
       String command = (String) options.valueOf("db");
@@ -51,10 +59,9 @@ public class Main {
         System.out.println("Database url must end in .sqlite3");
       }
       if (options.has("gui")) {
-        //do gui stuff here
+        //TODO: do gui stuff here
       }
-      
-      //REPL stuff here
+      //TODO: REPL stuff here
     }
   }
 }

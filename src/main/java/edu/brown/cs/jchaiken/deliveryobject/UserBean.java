@@ -4,7 +4,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 
-public class UserBean extends DeliveryObjectBean<User> implements User {
+/**
+ * UserBean models a user after it has been read in from the database.
+ * @author jacksonchaiken
+ *
+ */
+public final class UserBean extends DeliveryObjectBean<User> implements User {
   private String name;
   private Collection<Order> pastDeliveries;
   private Collection<Order> pastOrders;
@@ -20,9 +25,9 @@ public class UserBean extends DeliveryObjectBean<User> implements User {
     email = newEmail;
     paymentId = newPaymentId;
     pastDeliveries = Collections.synchronizedCollection(new HashSet<Order>());
-    pastOrders = Collections.synchronizedCollection(new HashSet<Order>());;
-    currDeliveries = Collections.synchronizedCollection(new HashSet<Order>());;
-    currOrders = Collections.synchronizedCollection(new HashSet<Order>());;
+    pastOrders = Collections.synchronizedCollection(new HashSet<Order>());
+    currDeliveries = Collections.synchronizedCollection(new HashSet<Order>());
+    currOrders = Collections.synchronizedCollection(new HashSet<Order>());
   }
 
   @Override
@@ -65,6 +70,23 @@ public class UserBean extends DeliveryObjectBean<User> implements User {
     paymentId = id;
   }
 
+
+  @Override
+  public void pay(double amount) {
+    //TODO : Stripe stuff
+  }
+
+  @Override
+  public void charge(double amount) {
+    //TODO : Stripe stuff
+  }
+
+  /**
+   * UserBuilder provides a way to build a User if it must be created for
+   * the first time and it should be added to the database.
+   * @author jacksonchaiken
+   *
+   */
   public static class UserBuilder {
     private String id;
     private String name;
@@ -86,26 +108,14 @@ public class UserBean extends DeliveryObjectBean<User> implements User {
       return this;
     }
 
-    UserBuilder setPayment(String paymentId) {
-      this.paymentId = paymentId;
+    UserBuilder setPayment(String newPaymentId) {
+      this.paymentId = newPaymentId;
       return this;
     }
 
     User build() {
       //insert into DB
-      
       return new UserBean(id, name, email, paymentId);
     }
-    
-  }
-
-  @Override
-  public void pay(double amount) {
-    //TODO : Stripe stuff
-  }
-
-  @Override
-  public void charge(double amount) {
-    //TODO : Stripe stuff
   }
 }

@@ -20,15 +20,15 @@ import java.util.concurrent.ConcurrentHashMap;
 public final class Database {
   private static ConcurrentHashMap<String, PreparedStatement> statements
       = new ConcurrentHashMap<>();
-  
   private static String url;
   private static ThreadLocal<Connection> conn;
-  
+
   private Database() {
   }
 
   /**
    * Returns a connection to the database.
+   * @return the connection
    */
   public static Connection getConnection() {
     if (conn == null || conn.get() == null) {
@@ -73,26 +73,28 @@ public final class Database {
    * @return A list of rows, containing the results
    */
   public static List<List<Object>> query(String queryString) {
-    PreparedStatement prep;
     if (statements.containsKey(queryString)) {
-      prep = statements.get(queryString);
+      PreparedStatement prep = statements.get(queryString);
+      return queryRunner(prep);
     } else {
-      try {
-        prep = getConnection().prepareStatement(queryString);
+      try (PreparedStatement prep = getConnection().prepareStatement(queryString)) {
         statements.put(queryString, prep);
+        return queryRunner(prep);
       } catch (SQLException exc) {
         exc.printStackTrace();
         return null;
       }
     }
-    try {
-      ResultSet rs = prep.executeQuery();
+  }
+
+  private static List<List<Object>> queryRunner(PreparedStatement prep) {
+    try (ResultSet rs = prep.executeQuery()) {   
       ResultSetMetaData rmd = rs.getMetaData();
       List<List<Object>> results = new ArrayList<>();
       int cols = rmd.getColumnCount();
       while (rs.next()) {
         List<Object> row = new ArrayList<>();
-        for (int x = 0; x < cols; x++) {
+        for (int x = 1; x <= cols; x++) {
           switch (rmd.getColumnTypeName(x)) {
             case "NULL":
               break;
@@ -123,12 +125,16 @@ public final class Database {
    * @param newUrl the new file path the database.
    */
   public static void setUrl(String newUrl) {
-    if (url != null && !url.equals(url)) {
+    if (url != null && !url.equals(newUrl)) {
       closeConnection();
     }
     url = newUrl;
   }
 
+  /**
+   * Returns the current url.
+   * @return the url.
+   */
   public static String getUrl() {
     return url;
   }

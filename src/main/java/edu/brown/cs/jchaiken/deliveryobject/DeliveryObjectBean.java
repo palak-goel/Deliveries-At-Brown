@@ -2,7 +2,13 @@ package edu.brown.cs.jchaiken.deliveryobject;
 
 import java.util.Objects;
 
-
+/**
+ * DeliveryObjectBean is a super-class for the bean subclasses which
+ * provide User and Order functionality.
+ * @author jacksonchaiken
+ *
+ * @param <T> The delivery object modeled as a bean.
+ */
 public abstract class DeliveryObjectBean<T extends DeliveryObject> {
   private String id;
 

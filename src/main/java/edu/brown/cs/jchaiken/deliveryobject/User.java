@@ -2,34 +2,91 @@ package edu.brown.cs.jchaiken.deliveryobject;
 
 import java.util.Collection;
 
+/**
+ * Top-level interface that allows for other clients to interact with User
+ * objects without knowing their underlying state.
+ * @author jacksonchaiken
+ *
+ */
 public interface User extends DeliveryObject {
-  public String getId();
 
-  public String getName();
+  String getId();
 
-  public String getEmail();
+  /**
+   * Returns the User's name.
+   * @return the name.
+   */
+  String getName();
 
-  public Collection<Order> pastDeliveries();
+  /**
+   * Return's the User's email.
+   * @return the email.
+   */
+  String getEmail();
 
-  public Collection<Order> currentDeliveries();
+  /**
+   * Returns the User's past deliveries.
+   * @return the past deliveries.
+   */
+  Collection<Order> pastDeliveries();
 
-  public Collection<Order> pastOrders();
+  /**
+   * Returns the User's current deliveries.
+   * @return the current deliveries.
+   */
+  Collection<Order> currentDeliveries();
 
-  public Collection<Order> currentOrders();
+  /**
+   * Returns the User's past orders.
+   * @return the past orders.
+   */
+  Collection<Order> pastOrders();
 
-  public String getStripeId();
+  /**
+   * Returns the User's current orders.
+   * @return the current orders.
+   */
+  Collection<Order> currentOrders();
 
-  public void setStripeId(String id);
+  /**
+   * Returns the Stripe Id.
+   * @return the stripe id.
+   */
+  String getStripeId();
 
-  public void pay(double amount);
+  /**
+   * Set's the stripe id.
+   * @param id the new id.
+   */
+  void setStripeId(String id);
 
-  public void charge(double amount);
+  /**
+   * Pay's the amount to the user.
+   * @param amount the payment.
+   */
+  void pay(double amount);
 
-  public static User byId(String id) {
+  /**
+   * Charges the amount to the user.
+   * @param amount the charge.
+   */
+  void charge(double amount);
+
+  /**
+   * Returns a user based on their id.
+   * @param id the user id.
+   * @return the user.
+   */
+  static User byId(String id) {
     return new UserProxy(id);
   }
 
-  public static User byEmail(String email) {
+  /**
+   * Returns a user by their email, if it exists.
+   * @param email the potential user's email.
+   * @return the user, or null.
+   */
+  static User byEmail(String email) {
     return UserProxy.byEmail(email);
   }
 }

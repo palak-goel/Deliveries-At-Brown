@@ -2,7 +2,14 @@ package edu.brown.cs.jchaiken.deliveryobject;
 
 import java.util.List;
 
-public class OrderBean extends DeliveryObjectBean<Order> implements Order {
+/**
+ * Represents an order once it has been read in from the database. Order's can
+ * be built manually using the OrderBuilder.
+ * @author jacksonchaiken
+ *
+ */
+public final class OrderBean extends DeliveryObjectBean<Order> implements
+    Order {
   private User orderer;
   private User deliverer;
   private String pickup;
@@ -10,11 +17,12 @@ public class OrderBean extends DeliveryObjectBean<Order> implements Order {
   private List<String> items;
   private double price;
   private double fee;
-  private ORDER_STATUS status;
+  private Status status;
 
-  private OrderBean(String newId, User newOrderer, User newDeliverer, String newPickup, String newDropoff, List<String> newItems) {
+  private OrderBean(String newId, User newOrderer, User newDeliverer,
+      String newPickup, String newDropoff, List<String> newItems) {
     super(newId);
-    status = ORDER_STATUS.UNASSIGNED;
+    status = Status.UNASSIGNED;
     orderer = newOrderer;
     deliverer = newDeliverer;
     pickup = newPickup;
@@ -75,13 +83,62 @@ public class OrderBean extends DeliveryObjectBean<Order> implements Order {
   }
 
   @Override
-  public void setOrderStatus(ORDER_STATUS newStatus) {
+  public void setOrderStatus(Status newStatus) {
     status = newStatus;
   }
 
   @Override
-  public ORDER_STATUS status() {
-    // TODO Auto-generated method stub
-    return null;
+  public Status status() {
+    return status;
+  }
+
+  /**
+   * OrderBuilder offers a way to construct an order if it is not yet in the
+   * database. Also inserts it in the database.
+   * @author jacksonchaiken
+   *
+   */
+  public static class OrderBuilder {
+    private User ordererB;
+    private User delivererB;
+    private String pickupB;
+    private String dropoffB;
+    private List<String> itemsB;
+    private String idB;
+
+    OrderBuilder setId(String id) {
+      idB = id;
+      return this;
+    }
+
+    OrderBuilder setOrderer(User orderer) {
+      ordererB = orderer;
+      return this;
+    }
+
+    OrderBuilder setDeliverer(User deliverer) {
+      delivererB = deliverer;
+      return this;
+    }
+
+    OrderBuilder setPickup(String pickup) {
+      pickupB = pickup;
+      return this;
+    }
+
+    OrderBuilder setDropoff(String dropoff) {
+      dropoffB = dropoff;
+      return this;
+    }
+
+    OrderBuilder setItems(List<String> items) {
+      itemsB = items;
+      return this;
+    }
+
+    Order build() {
+      return new OrderBean(idB, ordererB, delivererB, pickupB, dropoffB,
+          itemsB);
+    }
   }
 }

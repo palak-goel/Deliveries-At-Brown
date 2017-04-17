@@ -10,13 +10,19 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Objects;
 
-
+/**
+ * DeliveryObjectProxy is a superclass for the User and Order subclasses
+ * which interact with the database.
+ * @author jacksonchaiken
+ *
+ * @param <T> the delivery object stored in the database.
+ */
 public abstract class DeliveryObjectProxy<T extends DeliveryObject> {
   private String id;
   private T data;
   private static final int MAX_CACHE = 50000;
   private static Cache<String, DeliveryObject> cache = CacheBuilder.newBuilder()
-      .maximumSize(MAX_CACHE).build(); 
+      .maximumSize(MAX_CACHE).build();
 
   DeliveryObjectProxy(String newId) {
     if (newId == null) {

@@ -1,0 +1,40 @@
+package edu.brown.cs.jchaiken.deliveryobject;
+
+import java.util.Objects;
+
+
+public abstract class DeliveryObjectBean<T extends DeliveryObject> {
+  private String id;
+
+  DeliveryObjectBean(String newId) {
+    this.id = newId;
+  }
+
+  /**
+   * Returns the objects id.
+   * @return the id.
+   */
+  public String getId() {
+    return id;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj == this) {
+      return true;
+    }
+    if (!(obj instanceof DeliveryObjectBean)) {
+      return false;
+    }
+    DeliveryObjectBean<?> temp = (DeliveryObjectBean<?>) obj;
+    if (temp.getId().equals(this.id)) {
+      return true;
+    }
+    return false;
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(id);
+  }
+}

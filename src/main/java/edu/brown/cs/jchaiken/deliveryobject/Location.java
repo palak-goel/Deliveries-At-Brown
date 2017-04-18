@@ -34,6 +34,11 @@ public interface Location extends DeliveryObject {
   void addToDatabase();
 
   /**
+   * Deletes the location from the database.
+   */
+  void deleteFromDatabase();
+
+  /**
    * Returns a location, given its id.
    * @param id the location's id.
    * @return the Location.

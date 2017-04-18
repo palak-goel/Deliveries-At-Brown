@@ -11,7 +11,7 @@ import java.sql.SQLException;
  * @author jacksonchaiken
  *
  */
-public class LocationBean extends DeliveryObjectBean<Location> implements
+class LocationBean extends DeliveryObjectBean<Location> implements
     Location {
   private double lat;
   private double lng;
@@ -24,13 +24,11 @@ public class LocationBean extends DeliveryObjectBean<Location> implements
 
   @Override
   public double getLatitude() {
-    // TODO Auto-generated method stub
     return lat;
   }
 
   @Override
   public double getLongitude() {
-    // TODO Auto-generated method stub
     return lng;
   }
 
@@ -47,5 +45,18 @@ public class LocationBean extends DeliveryObjectBean<Location> implements
       // TODO Auto-generated catch block
       exc.printStackTrace();
     }
+  }
+
+  @Override
+  public void deleteFromDatabase() {
+    try (PreparedStatement prep = Database.getConnection().prepareStatement(
+        "DELETE FROM locations WHERE id = ?")) {
+      prep.setString(1, super.getId());
+      prep.executeUpdate();
+    } catch (SQLException exc) {
+      // TODO Auto-generated catch block
+      exc.printStackTrace();
+    }
+    DeliveryObjectProxy.getCache().invalidate(super.getId());
   }
 }

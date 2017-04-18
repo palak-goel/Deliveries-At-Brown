@@ -20,7 +20,24 @@ public interface Order extends DeliveryObject {
     ASSIGNED,
     AT_LOCATION,
     HAVE_FOOD,
-    COMPLETED
+    COMPLETED;
+
+    public static Status valueOf(int status) {
+      switch (status) {
+        case 0:
+          return Status.UNASSIGNED;
+        case 1:
+          return Status.ASSIGNED;
+        case 2:
+          return Status.AT_LOCATION;
+        case 3:
+          return Status.HAVE_FOOD;
+        case 4:
+          return Status.COMPLETED;
+        default:
+          return null;
+      }
+    }
   }
 
   /**
@@ -49,15 +66,15 @@ public interface Order extends DeliveryObject {
 
   /**
    * Returns the pickup location.
-   * @return the address
+   * @return the location
    */
-  String getPickupLocation();
+  Location getPickupLocation();
 
   /**
    * Returns the dropoff location.
-   * @return the address.
+   * @return the location.
    */
-  String getDropoffLocation();
+  Location getDropoffLocation();
 
   /**
    * Returns the orders price.
@@ -104,6 +121,11 @@ public interface Order extends DeliveryObject {
    * Adds an order to the database.
    */
   void addToDatabase();
+
+  /**
+   * Removes order from database;
+   */
+  void removeFromDatabase();
 
   /**
    * Returns an order based on its id.

@@ -15,23 +15,21 @@ import java.util.Objects;
  * @author jacksonchaiken
  *
  */
-public final class UserBean extends DeliveryObjectBean<User> implements User {
+final class UserBean extends DeliveryObjectBean<User> implements User {
   private String name;
   private Collection<Order> pastDeliveries;
   private Collection<Order> pastOrders;
   private Collection<Order> currDeliveries;
   private Collection<Order> currOrders;
-  private String email;
   private String paymentId;
   private String cell;
   private final int password;
 
-  private UserBean(String newId, String newName, String newEmail,
-      String newPaymentId, String cellNum, int newPass) {
-    super(newId);
+  private UserBean(String email, String newName, String newPaymentId, String
+      cellNum, int newPass) {
+    super(email);
     password = newPass;
     name = newName;
-    email = newEmail;
     paymentId = newPaymentId;
     pastDeliveries = Collections.synchronizedCollection(new HashSet<Order>());
     pastOrders = Collections.synchronizedCollection(new HashSet<Order>());
@@ -43,11 +41,6 @@ public final class UserBean extends DeliveryObjectBean<User> implements User {
   @Override
   public String getName() {
     return name;
-  }
-
-  @Override
-  public String getEmail() {
-    return email;
   }
 
   @Override
@@ -120,12 +113,12 @@ public final class UserBean extends DeliveryObjectBean<User> implements User {
   @Override
   public void addToDatabase() {
     try (PreparedStatement prep = Database.getConnection().prepareStatement(
-          "INSERT INTO users VALUES (?,?,?,?,?,?)")) {
-      prep.setString(1, super.getId());
+          "INSERT INTO users VALUES (?,?,?,?,?)")) {
       prep.setString(2, name);
-      prep.setString(3, email);
-      prep.setString(4, cell);
-      prep.setInt(5, password);
+      prep.setString(1, super.getId());
+      prep.setString(3, cell);
+      prep.setInt(4, password);
+      prep.setString(5, paymentId);
     } catch (SQLException exc) {
       exc.printStackTrace();
     }
@@ -140,7 +133,6 @@ public final class UserBean extends DeliveryObjectBean<User> implements User {
   public static class UserBuilder {
     private String id;
     private String name;
-    private String email;
     private String paymentId;
     private String cell;
     private int pass;
@@ -152,11 +144,6 @@ public final class UserBean extends DeliveryObjectBean<User> implements User {
 
     UserBuilder setName(String newName) {
       this.name = newName;
-      return this;
-    }
-
-    UserBuilder setEmail(String newEmail) {
-      this.email = newEmail;
       return this;
     }
 
@@ -176,7 +163,7 @@ public final class UserBean extends DeliveryObjectBean<User> implements User {
     }
 
     User build() {
-      return new UserBean(id, name, email, paymentId, cell, pass);
+      return new UserBean(id, name, paymentId, cell, pass);
     }
   }
 }

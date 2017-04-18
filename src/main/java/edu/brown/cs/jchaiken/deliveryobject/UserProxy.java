@@ -2,9 +2,11 @@ package edu.brown.cs.jchaiken.deliveryobject;
 
 import edu.brown.cs.jchaiken.database.Database;
 import edu.brown.cs.jchaiken.deliveryobject.UserBean.UserBuilder;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -12,7 +14,7 @@ import java.util.Objects;
  * @author jacksonchaiken
  *
  */
-public class UserProxy extends DeliveryObjectProxy<User> implements User {
+class UserProxy extends DeliveryObjectProxy<User> implements User {
 
   UserProxy(String id) {
     super(id);
@@ -24,12 +26,6 @@ public class UserProxy extends DeliveryObjectProxy<User> implements User {
     return super.getData().getName();
   }
 
-  @Override
-  public String getEmail() {
-    check();
-    return super.getData().getEmail();
-
-  }
 
   @Override
   public Collection<Order> pastDeliveries() {
@@ -99,45 +95,55 @@ public class UserProxy extends DeliveryObjectProxy<User> implements User {
     super.getData().setStripeId(id);
   }
 
+  private static final String cacheQuery =  "SELECT * FROM users WHERE id = ?";
+  private static final String orderQuery = "SELECT * FROM orders, order_status"
+      + " WHERE orders.deliverer_id = ? OR orders.orderer_id = ?";
+
   @Override
   protected void cache() throws SQLException {
-    String query = "SELECT * FROM users WHERE id = " + super.getId();
-    List<List<Object>> results = Database.query(query);
-    if (results.size() == 1) {
-      List<Object> user = results.get(0);
-      String name = (String) user.get(1);
-      String email = (String) user.get(2);
-      String cell = (String) user.get(3);
-      String spark = (String) user.get(4);
-      UserBuilder bean = new UserBuilder();
-      User newUser = bean.setCell(cell)
-          .setEmail(email)
-          .setPayment(spark)
-          .setId(super.getId())
-          .setName(name)
-          .build();
-      String orderQuery = "SELECT id, status, orderer_id, deliverer_id FROM"
-          + " orders WHERE orderer_id = " + super
-          .getId() + " OR deliverer_id = " + super.getId();
-      List<List<Object>> orders = Database.query(orderQuery);
-      for (List<Object> order : orders) {
-        if (!order.get(1).equals("COMPLETED")) {
-          //is an orderer
-          if (order.get(2).equals(super.getId())) {
-            newUser.addPastOrder(new OrderProxy((String) order.get(0)));
-          } else {
-            //is deliverer
-            newUser.addPastDelivery(new OrderProxy((String) order.get(0)));
+    try (PreparedStatement prep = Database.getConnection().prepareStatement(cacheQuery)) {
+      prep.setString(1, super.getId());
+      try (ResultSet rs = prep.executeQuery()) {
+        if (rs.next()) {
+          String name = rs.getString(2);
+          String cell = rs.getString(3);
+          String stripe = rs.getString(4);
+          UserBuilder bean = new UserBuilder();
+          User newUser = bean.setCell(cell)
+              .setPayment(stripe)
+              .setId(super.getId())
+              .setName(name)
+              .build();
+          try (PreparedStatement prep2 =  Database.getConnection().prepareStatement(orderQuery)) {
+            prep.setString(1, super.getId());
+            prep.setString(2, super.getId());
+            try (ResultSet rq = prep.executeQuery()) {
+              while (rq.next()) {
+                if (rq.getString(10).equals("COMPLETED")) {
+                  //is completed order
+                  if (rq.getString(2).equals(super.getId())) {
+                    newUser.addPastOrder(new OrderProxy(rs.getString(1)));
+                  } else {
+                    //completed delivery
+                    newUser.addPastDelivery(new OrderProxy(rs.getString(1)));
+                  }
+                } else {
+                  //in progress order
+                  if (rq.getString(2).equals(super.getId())) {
+                    newUser.addCurrentOrder(new OrderProxy(rs.getString(1)));
+                  } else {
+                    //in progress delivery
+                    newUser.addCurrentDelivery(new OrderProxy(rs.getString(1)));
+                  }
+                }
+              }
+            }
           }
-        } else {
-          if (order.get(2).equals(super.getId())) {
-            newUser.addCurrentOrder(new OrderProxy((String) order.get(0)));
-          } else {
-            newUser.addCurrentDelivery(new OrderProxy((String) order.get(0)));
-          }
+          super.setData(newUser);
         }
       }
-      super.setData(newUser);
+    } catch (SQLException exc) {
+      exc.printStackTrace();
     }
   }
 
@@ -159,21 +165,8 @@ public class UserProxy extends DeliveryObjectProxy<User> implements User {
     super.getData().addToDatabase();
   }
 
-  /**
-   * Returns a User based on the email entered.
-   * @param email the user's email.
-   * @return the User, or null if it does not exist.
-   */
-  public static User byEmail(String email) {
-    String emailQuery = String.format("SELECT id FROM users WHERE email = %s",
-        email);
-    List<List<Object>> users = Database.query(emailQuery);
-    if (users != null && users.size() == 1) {
-      List<Object> result = users.get(0);
-      return new UserProxy((String) result.get(0));
-    }
-    return null;
-  }
+  private static final String valQuery = "SELECT * FROM users WHERE email = ? AND"
+      + " password = ?";
 
   /**
    * Returns true or false if an email password combination exists.
@@ -183,11 +176,17 @@ public class UserProxy extends DeliveryObjectProxy<User> implements User {
    */
   public static boolean userValidator(String email, String password) {
     int hash = Objects.hash(password);
-    String query = String.format("SELECT * FROM users WHERE email = %s AND"
-        + " password = %s", email, hash);
-    List<List<Object>> users = Database.query(query);
-    if (users != null && users.size() == 1) {
-      return true;
+    try (PreparedStatement prep = Database.getConnection().prepareStatement(valQuery)) {
+      prep.setString(1, email);
+      prep.setInt(2, hash);
+      try (ResultSet rs = prep.executeQuery()) {
+        if (rs.next()) {
+          return true;
+        }
+      }
+    } catch (SQLException exc) {
+      // TODO Auto-generated catch block
+      exc.printStackTrace();
     }
     return false;
   }

@@ -10,21 +10,8 @@ public class TableBuilder {
    */
   public void buildUsers() {
     try (PreparedStatement prep = Database.getConnection().prepareStatement(
-        "CREATE TABLE IF NOT EXISTS users (id TEXT, name TEXT, email TEXT,"
+        "CREATE TABLE IF NOT EXISTS users (id TEXT, name TEXT,"
           + " cell TEXT, password INT, stripe_id TEXT, PRIMARY KEY (id));")) {
-      prep.executeUpdate();
-    } catch (SQLException exc) {
-      exc.printStackTrace();
-    }
-  }
-
-  /**
-   * Builds the items table if it does not exist.
-   */
-  public void buildItems() {
-    try (PreparedStatement prep = Database.getConnection().prepareStatement(
-        "CREATE TABLE IF NOT EXISTS items ("
-        + "order_id TEXT, item TEXT, PRIMARY KEY (order_id));")) {
       prep.executeUpdate();
     } catch (SQLException exc) {
       exc.printStackTrace();
@@ -39,7 +26,8 @@ public class TableBuilder {
         "CREATE TABLE IF NOT"
         + " EXISTS orders (id TEXT, orderer_id TEXT, deliverer_id TEXT,"
         + " pickup_time REAL, dropoff_time REAL, pickup_location TEXT,"
-        + " dropoff_location TEXT, PRIMARY KEY (id), FOREIGN KEY (orderer_id)"
+        + " dropoff_location TEXT, price REAL, items TEXT, PRIMARY KEY (id),"
+        + " FOREIGN KEY (orderer_id)"
         + " REFERENCES users(id), FOREIGN KEY (deliverer_id) REFERENCES"
         + " users(id) ON DELETE CASCADE ON UPDATE CASCADE);")) {
       prep.executeUpdate();
@@ -55,6 +43,19 @@ public class TableBuilder {
     try (PreparedStatement prep = Database.getConnection().prepareStatement(
         "CREATE TABLE IF NOT EXISTS locations (id TEXT, latitude"
             + " REAL, longitude REAL, PRIMARY KEY (id));")) {
+      prep.executeUpdate();
+    } catch (SQLException exc) {
+      exc.printStackTrace();
+    }
+  }
+
+  /**
+   * Builds the order status table if it does not exist.
+   */
+  public void buildOrderStatus() {
+    try (PreparedStatement prep = Database.getConnection().prepareStatement(
+        "CREATE TABLE IF NOT EXISTS order_status (order_id TEXT, status INT,"
+        + " FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE ON UPDATE CASCADE);")) {
       prep.executeUpdate();
     } catch (SQLException exc) {
       exc.printStackTrace();

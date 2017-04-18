@@ -13,13 +13,13 @@ import java.util.List;
  * @author jacksonchaiken
  *
  */
-public final class OrderBean extends DeliveryObjectBean<Order> implements
+final class OrderBean extends DeliveryObjectBean<Order> implements
     Order {
   private static final int SEVEN = 7;
   private User orderer;
   private User deliverer;
-  private String pickupL;
-  private String dropoffL;
+  private Location pickupL;
+  private Location dropoffL;
   private List<String> items;
   private double price;
   private double fee;
@@ -28,7 +28,8 @@ public final class OrderBean extends DeliveryObjectBean<Order> implements
   private double dropoffTime;
 
   private OrderBean(String newId, User newOrderer, User newDeliverer,
-      String newPickup, String newDropoff, double pickupT, double dropoffT) {
+      Location newPickup, Location newDropoff, double pickupT,
+      double dropoffT) {
     super(newId);
     orderer = newOrderer;
     deliverer = newDeliverer;
@@ -69,12 +70,12 @@ public final class OrderBean extends DeliveryObjectBean<Order> implements
   }
 
   @Override
-  public String getPickupLocation() {
+  public Location getPickupLocation() {
     return pickupL;
   }
 
   @Override
-  public String getDropoffLocation() {
+  public Location getDropoffLocation() {
     return dropoffL;
   }
 
@@ -116,51 +117,83 @@ public final class OrderBean extends DeliveryObjectBean<Order> implements
     return dropoffTime;
   }
 
+  private static final String addOrder = "INSERT INTO orders VALUES (?,?,?,?,?"
+      + ",?,?,?,?)";
+  private static final String addStatus = "INSERT INTO order_status VALUES (?,?)";
+
   @Override
   public void addToDatabase() {
-    try (PreparedStatement prep = Database.getConnection().prepareStatement(
-        "INSERT INTO orders VALUES (?,?,?,?,?,?,?)")) {
+    try (PreparedStatement prep = Database.getConnection().prepareStatement(addOrder)) {
       prep.setString(1, super.getId());
       prep.setString(2, orderer.getId());
       prep.setString(3, deliverer.getId());
-      prep.setDouble(4,  pickupTime);
-      prep.setDouble(5,  dropoffTime);
-      prep.setString(6, pickupL);
-      prep.setString(SEVEN,  dropoffL);
+      prep.setDouble(4, pickupTime);
+      prep.setDouble(5, dropoffTime);
+      prep.setString(6, pickupL.getId());
+      prep.setString(SEVEN, dropoffL.getId());
+      prep.setDouble(8, price);
+      String itemString = "";
+      for (int x = 0; x < items.size(); x++) {
+        if (x + 1 == items.size()) {
+          itemString += items.get(x);
+        } else {
+          itemString += items.get(x) + ",";
+        }
+      }
+      prep.setString(9, itemString);
       prep.addBatch();
       prep.executeBatch();
     } catch (SQLException exc) {
       exc.printStackTrace();
     }
-    try (PreparedStatement prep = Database.getConnection().prepareStatement(
-        "INSERT INTO items VALUES (?, ?)")) {
-      for (String item : items) {
-        prep.setString(1, super.getId());
-        prep.setString(2, item);
-        prep.addBatch();
-      }
+    try (PreparedStatement prep = Database.getConnection().prepareStatement(addStatus)) {
+      prep.setString(1, super.getId());
+      prep.setInt(2, status.ordinal());
+      prep.addBatch();
       prep.executeBatch();
     } catch (SQLException exc) {
       exc.printStackTrace();
     }
   }
 
+  private static final String orderRemove = "DELETE FROM orders WHERE id = ?";
+  private static final String statusRemove = "DELETE FROM order_status WHERE order_id = ?";
+
+  @Override
+  public void removeFromDatabase() {
+    try (PreparedStatement prep = Database.getConnection().prepareStatement(orderRemove)) {
+      prep.setString(1, super.getId());
+      prep.executeUpdate();
+    } catch (SQLException exc) {
+      // TODO Auto-generated catch block
+      exc.printStackTrace();
+    }
+    try (PreparedStatement prep = Database.getConnection().prepareStatement(statusRemove)) {
+      prep.setString(1, super.getId());
+      prep.executeUpdate();
+    } catch (SQLException exc) {
+      // TODO Auto-generated catch block
+      exc.printStackTrace();
+    }
+  }
+
   /**
-   * OrderBuilder offers a way to construct an order if it is not yet in the
-   * database. Also inserts it in the database.
+   * OrderBuilder offers a way to construct an order. If any of the order
+   * elements are not set, the Builder returns null.
    * @author jacksonchaiken
    *
    */
   public static class OrderBuilder {
     private User ordererB;
     private User delivererB;
-    private String pickupB;
-    private String dropoffB;
+    private Location pickupB;
+    private Location dropoffB;
     private List<String> itemsB;
     private String idB;
     private double pickupT;
     private double dropoffT;
     private Status status;
+    private double price;
 
     OrderBuilder setId(String id) {
       idB = id;
@@ -172,6 +205,7 @@ public final class OrderBean extends DeliveryObjectBean<Order> implements
       return this;
     }
 
+    
     OrderBuilder setOrderer(User orderer) {
       ordererB = orderer;
       return this;
@@ -182,12 +216,12 @@ public final class OrderBean extends DeliveryObjectBean<Order> implements
       return this;
     }
 
-    OrderBuilder setPickup(String pickup) {
+    OrderBuilder setPickup(Location pickup) {
       pickupB = pickup;
       return this;
     }
 
-    OrderBuilder setDropoff(String dropoff) {
+    OrderBuilder setDropoff(Location dropoff) {
       dropoffB = dropoff;
       return this;
     }
@@ -207,11 +241,21 @@ public final class OrderBean extends DeliveryObjectBean<Order> implements
       return this;
     }
 
+    OrderBuilder setPrice(double newPrice) {
+      price = newPrice;
+      return this;
+    }
+
     Order build() {
+      if (idB == null || ordererB == null || delivererB == null || pickupB
+          == null || dropoffB == null || status == null) {
+        return null;
+      }
       OrderBean bean = new OrderBean(idB, ordererB, delivererB, pickupB,
           dropoffB, pickupT, dropoffT);
       bean.addItems(itemsB);
       bean.addStatus(status);
+      bean.setPrice(price);
       return bean;
     }
   }

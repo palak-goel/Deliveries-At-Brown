@@ -23,12 +23,6 @@ public interface User extends DeliveryObject {
   String getName();
 
   /**
-   * Return's the User's email.
-   * @return the email.
-   */
-  String getEmail();
-
-  /**
    * Return's the User's cell phone number.
    * @return the number.
    */
@@ -118,15 +112,6 @@ public interface User extends DeliveryObject {
    */
   static User byId(String id) {
     return new UserProxy(id);
-  }
-
-  /**
-   * Returns a user by their email, if it exists.
-   * @param email the potential user's email.
-   * @return the user, or null.
-   */
-  static User byEmail(String email) {
-    return UserProxy.byEmail(email);
   }
 
   /**

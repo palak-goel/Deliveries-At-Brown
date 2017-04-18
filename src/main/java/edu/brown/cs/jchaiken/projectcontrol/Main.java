@@ -2,7 +2,6 @@ package edu.brown.cs.jchaiken.projectcontrol;
 
 import edu.brown.cs.jchaiken.database.Database;
 import edu.brown.cs.jchaiken.database.TableBuilder;
-import edu.brown.cs.mhasan3.messaging.Sender;
 import freemarker.template.Configuration;
 
 import java.io.BufferedReader;
@@ -75,10 +74,10 @@ public final class Main {
           if (Database.getConnection() != null) {
             System.out.println("db set to " + command);
             TableBuilder builder = new TableBuilder();
-            builder.buildItems();
             builder.buildLocations();
             builder.buildUsers();
             builder.buildOrders();
+            builder.buildOrderStatus();
           } else {
             System.out.println("ERROR: Cannot connect to database");
           }
@@ -105,7 +104,7 @@ public final class Main {
 	        	  System.out.println("printing");
 	        	  break;
 	          case "message":
-	        	  Sender sender = new Sender();
+	        	  //Sender sender = new Sender();
 	          case "db":
 	        	  if(inputs.length < 2 || inputs.length > 2){
 	        		  System.out.println("Invalid Command");

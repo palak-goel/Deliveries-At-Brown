@@ -28,8 +28,8 @@ public abstract class DeliveryObjectProxy<T extends DeliveryObject> {
     if (newId == null) {
       throw new IllegalArgumentException("ID is null");
     }
-    this.data = null;
     this.id = newId;
+    this.data = null;
     checkCache();
   }
 
@@ -59,7 +59,7 @@ public abstract class DeliveryObjectProxy<T extends DeliveryObject> {
     data = newData;
   }
 
-  protected Cache<String, DeliveryObject> getCache() {
+  protected static Cache<String, DeliveryObject> getCache() {
     return cache;
   }
 
@@ -71,6 +71,8 @@ public abstract class DeliveryObjectProxy<T extends DeliveryObject> {
       } catch (SQLException exc) {
         exc.printStackTrace();
       }
+    }
+    if (data != null) {
       cache.put(id, data);
     }
   }

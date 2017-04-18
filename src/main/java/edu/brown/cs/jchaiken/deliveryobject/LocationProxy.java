@@ -2,17 +2,18 @@ package edu.brown.cs.jchaiken.deliveryobject;
 
 import edu.brown.cs.jchaiken.database.Database;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 
 /**
  * Proxy pattern class that interacts with the database to model a location.
  * @author jacksonchaiken
  *
  */
-public class LocationProxy extends DeliveryObjectProxy<Location> implements
+class LocationProxy extends DeliveryObjectProxy<Location> implements
     Location {
 
   LocationProxy(String id) {
@@ -22,27 +23,42 @@ public class LocationProxy extends DeliveryObjectProxy<Location> implements
   @Override
   public double getLatitude() {
     check();
+    if (super.getData() == null) {
+      return Double.MAX_VALUE;
+    }
     return super.getData().getLatitude();
   }
 
   @Override
   public double getLongitude() {
     check();
+    if (super.getData() == null) {
+      return Double.MAX_VALUE;
+    }
     return super.getData().getLongitude();
   }
 
+  private final String cacheQuery = "SELECT * FROM locations WHERE"
+      + " id = ?";
+
   @Override
   protected void cache() throws SQLException {
-    String query = "SELECT * FROM locations WHERE id = " + super.getId();
-    List<List<Object>> results = Database.query(query);
-    if (results.size() == 1) {
-      List<Object> location = results.get(0);
-      double lat = (double) location.get(1);
-      double lng = (double) location.get(2);
-      Location loc = new LocationBean(super.getId(), lat, lng);
-      super.setData(loc);
+    try (PreparedStatement prep = Database.getConnection().prepareStatement(cacheQuery)) {
+      assert prep != null;
+      prep.setString(1, super.getId());
+      try (ResultSet rs = prep.executeQuery()) {
+        if (rs.next()) {
+          double lat = rs.getDouble(2);
+          double lng = rs.getDouble(3);
+          Location loc = new LocationBean(super.getId(), lat, lng);
+          super.setData(loc);
+        }
+      }
     }
   }
+
+  private static final String latLngQuery = "SELECT id FROM locations WHERE"
+      + " latitude = ? AND longitude = ?";
 
   /**
    * Returns a location from the database.
@@ -51,16 +67,23 @@ public class LocationProxy extends DeliveryObjectProxy<Location> implements
    * @return return the location, or null if it does not exist.
    */
   public static Location byLatLng(double lat, double lng) {
-    String query = "SELECT id FROM locations WHERE latitude = "
-        + lat + " AND longitude = " + lng;
-    List<List<Object>> results = Database.query(query);
-    if (results.size() == 1) {
-      List<Object> loc = results.get(0);
-      Location location = new LocationProxy((String) loc.get(0));
-      return location;
+    try (PreparedStatement prep = Database.getConnection().prepareStatement(latLngQuery)) {
+      prep.setDouble(1, lat);
+      prep.setDouble(2, lng);
+      try (ResultSet rs = prep.executeQuery()) {
+        if (rs.next()) {
+          return new LocationProxy(rs.getString(1));
+        }
+      }
+    } catch (SQLException exc) {
+      exc.printStackTrace();
     }
     return null;
   }
+
+  private static final String bbQuery = "SELECT id FROM locations WHERE"
+      + " latitude > ? AND longitude > ? AND latitude < ? AND longitude"
+      + " < ?";
 
   /**
    * Returns a collection of locations that are inside a bounding box.
@@ -72,14 +95,19 @@ public class LocationProxy extends DeliveryObjectProxy<Location> implements
    */
   public static Collection<Location> byBoundingBox(double seLat, double seLng,
       double neLat, double neLng) {
-    String query = "SELECT id FROM locations WHERE latitude > " + seLat
-        + " AND longitude > " + seLng + " AND latitude < " + neLat
-        + " AND longtiude < " + neLng;
-    List<List<Object>> box = Database.query(query);
     Collection<Location> results = new HashSet<>();
-    for (List<Object> point : box) {
-      Location location = new LocationProxy((String) point.get(0));
-      results.add(location);
+    try (PreparedStatement prep = Database.getConnection().prepareStatement(bbQuery)) {
+      prep.setDouble(1, seLat);
+      prep.setDouble(2, seLng);
+      prep.setDouble(3, neLat);
+      prep.setDouble(4, neLng);
+      try (ResultSet rs = prep.executeQuery()) {
+        while (rs.next()) {
+          results.add(new LocationProxy(rs.getString(1)));
+        }
+      }
+    } catch (SQLException exc) {
+      exc.printStackTrace();
     }
     return results;
   }
@@ -88,5 +116,11 @@ public class LocationProxy extends DeliveryObjectProxy<Location> implements
   public void addToDatabase() {
     check();
     super.getData().addToDatabase();
+  }
+
+  @Override
+  public void deleteFromDatabase() {
+    check();
+    super.getData().deleteFromDatabase();
   }
 }

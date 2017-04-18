@@ -1,6 +1,11 @@
 package edu.brown.cs.jchaiken.deliveryobject;
 
+import edu.brown.cs.jchaiken.database.Database;
+
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.List;
+
 
 /**
  * Represents an order once it has been read in from the database. Order's can
@@ -10,6 +15,7 @@ import java.util.List;
  */
 public final class OrderBean extends DeliveryObjectBean<Order> implements
     Order {
+  private static final int SEVEN = 7;
   private User orderer;
   private User deliverer;
   private String pickupL;
@@ -22,19 +28,24 @@ public final class OrderBean extends DeliveryObjectBean<Order> implements
   private double dropoffTime;
 
   private OrderBean(String newId, User newOrderer, User newDeliverer,
-      String newPickup, String newDropoff, List<String> newItems, double 
-      pickupT, double dropoffT) {
+      String newPickup, String newDropoff, double pickupT, double dropoffT) {
     super(newId);
-    status = Status.UNASSIGNED;
     orderer = newOrderer;
     deliverer = newDeliverer;
     pickupL = newPickup;
     dropoffL = newDropoff;
-    items = newItems;
     price = -1;
     fee = -1;
     pickupTime = pickupT;
     dropoffTime = dropoffT;
+  }
+
+  private void addStatus(Status newStatus) {
+    status = newStatus;
+  }
+
+  private void addItems(List<String> newItems) {
+    items = newItems;
   }
 
   @Override
@@ -64,19 +75,16 @@ public final class OrderBean extends DeliveryObjectBean<Order> implements
 
   @Override
   public String getDropoffLocation() {
-    // TODO Auto-generated method stub
     return dropoffL;
   }
 
   @Override
   public double getPrice() {
-    // TODO Auto-generated method stub
     return price;
   }
 
   @Override
   public void setPrice(double newPrice) {
-    // TODO Auto-generated method stub
     price = newPrice;
     //TODO set fee here
   }
@@ -108,6 +116,35 @@ public final class OrderBean extends DeliveryObjectBean<Order> implements
     return dropoffTime;
   }
 
+  @Override
+  public void addToDatabase() {
+    try (PreparedStatement prep = Database.getConnection().prepareStatement(
+        "INSERT INTO orders VALUES (?,?,?,?,?,?,?)")) {
+      prep.setString(1, super.getId());
+      prep.setString(2, orderer.getId());
+      prep.setString(3, deliverer.getId());
+      prep.setDouble(4,  pickupTime);
+      prep.setDouble(5,  dropoffTime);
+      prep.setString(6, pickupL);
+      prep.setString(SEVEN,  dropoffL);
+      prep.addBatch();
+      prep.executeBatch();
+    } catch (SQLException exc) {
+      exc.printStackTrace();
+    }
+    try (PreparedStatement prep = Database.getConnection().prepareStatement(
+        "INSERT INTO items VALUES (?, ?)")) {
+      for (String item : items) {
+        prep.setString(1, super.getId());
+        prep.setString(2, item);
+        prep.addBatch();
+      }
+      prep.executeBatch();
+    } catch (SQLException exc) {
+      exc.printStackTrace();
+    }
+  }
+
   /**
    * OrderBuilder offers a way to construct an order if it is not yet in the
    * database. Also inserts it in the database.
@@ -123,9 +160,15 @@ public final class OrderBean extends DeliveryObjectBean<Order> implements
     private String idB;
     private double pickupT;
     private double dropoffT;
+    private Status status;
 
     OrderBuilder setId(String id) {
       idB = id;
+      return this;
+    }
+
+    OrderBuilder setStatus(Status newStatus) {
+      status = newStatus;
       return this;
     }
 
@@ -165,8 +208,11 @@ public final class OrderBean extends DeliveryObjectBean<Order> implements
     }
 
     Order build() {
-      return new OrderBean(idB, ordererB, delivererB, pickupB, dropoffB,
-          itemsB, pickupT, dropoffT);
+      OrderBean bean = new OrderBean(idB, ordererB, delivererB, pickupB,
+          dropoffB, pickupT, dropoffT);
+      bean.addItems(itemsB);
+      bean.addStatus(status);
+      return bean;
     }
   }
 }

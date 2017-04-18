@@ -6,9 +6,9 @@ import com.google.common.cache.CacheBuilder;
 
 import edu.brown.cs.jchaiken.database.Database;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 /**
  * DeliveryObjectProxy is a superclass for the User and Order subclasses
@@ -22,7 +22,7 @@ public abstract class DeliveryObjectProxy<T extends DeliveryObject> {
   private T data;
   private static final int MAX_CACHE = 50000;
   private static Cache<String, DeliveryObject> cache = CacheBuilder.newBuilder()
-      .maximumSize(MAX_CACHE).build();
+      .maximumSize(MAX_CACHE).expireAfterAccess(125, TimeUnit.MINUTES).build();
 
   DeliveryObjectProxy(String newId) {
     if (newId == null) {

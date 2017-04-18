@@ -10,6 +10,10 @@ import java.util.Collection;
  */
 public interface User extends DeliveryObject {
 
+  /**
+   * Returns the User's id.
+   * @return the id.
+   */
   String getId();
 
   /**
@@ -25,10 +29,10 @@ public interface User extends DeliveryObject {
   String getEmail();
 
   /**
-   * Return's the User's cell phone number
+   * Return's the User's cell phone number.
    * @return the number.
    */
-  int getCell();
+  String getCell();
 
   /**
    * Returns the User's past deliveries.
@@ -101,6 +105,11 @@ public interface User extends DeliveryObject {
    * @param order the order to add.
    */
   void addCurrentDelivery(Order order);
+
+  /**
+   * Adds a user to the database.
+   */
+  void addToDatabase();
 
   /**
    * Returns a user based on their id.

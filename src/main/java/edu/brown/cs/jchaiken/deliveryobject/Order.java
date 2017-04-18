@@ -20,7 +20,7 @@ public interface Order extends DeliveryObject {
     ASSIGNED,
     AT_LOCATION,
     HAVE_FOOD,
-    DROPPED_OFF
+    COMPLETED
   }
 
   /**
@@ -90,12 +90,66 @@ public interface Order extends DeliveryObject {
 
   /**
    * Gets the time the order was dropped off (if it has been).
-   * @return the time, or null otherwiase.
+   * @return the time, or null otherwise.
    */
   double getDropoffTime();
+
   /**
    * Returns the order status.
    * @return status
    */
   Status status();
+
+  /**
+   * Adds an order to the database.
+   */
+  void addToDatabase();
+
+  /**
+   * Returns an order based on its id.
+   * @param id the order's id.
+   * @return the order.
+   */
+  static Order byId(String id) {
+    return new OrderProxy(id);
+  }
+
+  /**
+   * Returns a list of orders with a given pickup location.
+   * @param pickup the pickup location.
+   * @return a list of orders.
+   */
+  static List<Order> byPickupLocation(String pickup) {
+    return OrderProxy.byPickupLocation(pickup);
+  }
+
+  /**
+   * Returns orders that contain a given item.
+   * @param item the item to find.
+   * @return the list of orders
+   */
+  static List<Order> byItem(String item) {
+    return OrderProxy.byItem(item);
+  }
+
+  /**
+   * IdGenerator for unique hashing and database ids.
+   * @author jacksonchaiken
+   *
+   */
+  class IdGenerator {
+    private static int counter = 0;
+
+    private IdGenerator() {
+    }
+
+    /**
+     * Returns the next id for an order.
+     * @return the id.
+     */
+    static String getNextId() {
+      counter++;
+      return "/o/" + counter;
+    }
+  }
 }

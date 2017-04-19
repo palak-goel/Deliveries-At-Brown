@@ -42,6 +42,14 @@ public class Manager {
     return Collections.<Order>emptyList();
   }
 
+  static void addOrder(Order o) {
+    pendingOrders.add(o);
+  }
+
+  static void removeOrder(Order o) {
+    pendingOrders.remove(o);
+  }
+
   private static class OrderHandler implements Route {
     @Override
     public String handle(Request req, Response res) {

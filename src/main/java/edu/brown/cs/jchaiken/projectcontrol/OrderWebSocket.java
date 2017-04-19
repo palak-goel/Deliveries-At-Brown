@@ -12,6 +12,9 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
+import edu.brown.cs.jchaiken.deliveryobject.Order;
+import edu.brown.cs.jchaiken.deliveryobject.User;
+
 /**
  * Web socket class to handle live interactions between orders,
  * deliverers/requesters, and actual users.
@@ -23,6 +26,7 @@ public class OrderWebSocket {
   private static final Gson GSON = new Gson();
   private static final Queue<Session> SESSIONS = new ConcurrentLinkedQueue<>();
   private static int nextId = 0;
+  private static final Manager MGR = new Manager();
 
   private enum MESSAGE_TYPE {
     CONNECT, ORDER_TAKEN, ORDER_ADDED
@@ -64,20 +68,37 @@ public class OrderWebSocket {
   public void message(Session session, String message) throws IOException {
     System.out.println(message);
     JsonObject received = GSON.fromJson(message, JsonObject.class);
-    assert received.get("type").getAsInt() == MESSAGE_TYPE.SCORE.ordinal();
-    JsonObject payload = received.get("payload").getAsJsonObject();
-    int id = payload.get("id").getAsInt();
-    String text = payload.get("text").getAsString();
-    int score = 0;
     JsonObject msg = new JsonObject();
-    msg.addProperty("type", MESSAGE_TYPE.ORDER_ADDED.ordinal());
-    JsonObject msg_p = new JsonObject();
-    msg_p.addProperty("id", id);
-    msg_p.addProperty("score", score);
-    msg.add("payload", msg_p);
-    // TODO Compute the player's score
-    // TODO Send an UPDATE message to all users
-    for (Session s : sessions) {
+    if (received.get("type").getAsInt() == MESSAGE_TYPE.ORDER_ADDED.ordinal()) {
+      JsonObject payload = received.get("payload").getAsJsonObject();
+      int id = payload.get("id").getAsInt();
+      String text = payload.get("order").getAsString();
+      Order o = null; // get from map
+      msg.addProperty("type", MESSAGE_TYPE.ORDER_ADDED.ordinal());
+      JsonObject msg_p = new JsonObject();
+      msg_p.addProperty("id", id);
+      msg_p.addProperty("order", o.toString());
+      msg.add("payload", msg_p);
+    } else if (received.get("type").getAsInt() == MESSAGE_TYPE.ORDER_TAKEN
+        .ordinal()) {
+      JsonObject payload = received.get("payload").getAsJsonObject();
+      int id = payload.get("id").getAsInt();
+      String ord = payload.get("order").getAsString();
+      String usr = payload.get("user").getAsString();
+      Order o = null; // get from map
+      User u = null; // get from map
+      Manager.select(u, o);
+      msg.addProperty("type", MESSAGE_TYPE.ORDER_TAKEN.ordinal());
+      JsonObject msg_p = new JsonObject();
+      msg_p.addProperty("id", id);
+      msg_p.addProperty("order", o.toString());
+      msg_p.addProperty("user", u.toString());
+      msg.add("payload", msg_p);
+    } else {
+      // raise error
+    }
+
+    for (Session s : SESSIONS) {
       s.getRemote().sendString(GSON.toJson(msg));
     }
   }

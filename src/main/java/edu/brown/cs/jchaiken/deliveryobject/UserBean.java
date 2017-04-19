@@ -2,6 +2,7 @@ package edu.brown.cs.jchaiken.deliveryobject;
 
 import edu.brown.cs.jchaiken.database.Database;
 
+import java.io.Serializable;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Collection;
@@ -15,7 +16,7 @@ import java.util.Objects;
  * @author jacksonchaiken
  *
  */
-final class UserBean extends DeliveryObjectBean<User> implements User {
+final class UserBean extends DeliveryObjectBean<User> implements User, Serializable{
   private String name;
   private Collection<Order> pastDeliveries;
   private Collection<Order> pastOrders;

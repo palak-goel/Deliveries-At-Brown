@@ -64,7 +64,7 @@ public class TableBuilder {
   
   public void buildUserSerializable() {
 	  try (PreparedStatement prep = Database.getConnection().prepareStatement(
-		 "CREATE TABLE IF NOT EXISTS user (user_id TEXT, user_obj LONGBLOB,"
+		 "CREATE TABLE IF NOT EXISTS user (user_id TEXT, user_obj BLOB,"
 		 + " PRIMARY KEY (user_id));")) {
 		  prep.executeUpdate();
 	  } catch (SQLException e) {
@@ -74,8 +74,19 @@ public class TableBuilder {
   
   public void buildOrderSerializable() {
 	  try (PreparedStatement prep = Database.getConnection().prepareStatement(
-		 "CREATE TABLE IF NOT EXISTS order (order_id TEXT, order_obj LONGBLOB,"
+		 "CREATE TABLE IF NOT EXISTS order (order_id TEXT, order_obj BLOB,"
 		 + " PRIMARY KEY (order_id));")) {
+		  prep.executeUpdate();
+	  } catch (SQLException e) {
+		e.printStackTrace();
+	}
+  }
+  
+  public void buildLocation() {
+	  try (PreparedStatement prep = Database.getConnection().prepareStatement(
+		 "CREATE TABLE IF NOT EXISTS location (location_name TEXT, "
+		 + " lat REAL, lon REAL"
+		 + " PRIMARY KEY (location_name));")) {
 		  prep.executeUpdate();
 	  } catch (SQLException e) {
 		e.printStackTrace();

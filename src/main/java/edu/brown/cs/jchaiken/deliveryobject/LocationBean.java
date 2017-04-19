@@ -11,12 +11,12 @@ import java.sql.SQLException;
  * @author jacksonchaiken
  *
  */
-class LocationBean extends DeliveryObjectBean<Location> implements
+public class LocationBean extends DeliveryObjectBean<Location> implements
     Location {
   private double lat;
   private double lng;
 
-  LocationBean(String newId, double newLat, double newLng) {
+  public LocationBean(String newId, double newLat, double newLng) {
     super(newId);
     lat = newLat;
     lng = newLng;

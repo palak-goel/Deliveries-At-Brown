@@ -2,6 +2,7 @@ package edu.brown.cs.jchaiken.deliveryobject;
 
 import edu.brown.cs.jchaiken.database.Database;
 
+import java.io.Serializable;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
@@ -14,7 +15,7 @@ import java.util.List;
  *
  */
 final class OrderBean extends DeliveryObjectBean<Order> implements
-    Order {
+    Order, Serializable {
   private static final int SEVEN = 7;
   private User orderer;
   private User deliverer;

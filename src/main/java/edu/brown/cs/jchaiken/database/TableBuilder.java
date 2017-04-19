@@ -61,4 +61,26 @@ public class TableBuilder {
       exc.printStackTrace();
     }
   }
+  
+  public void buildUserSerializable() {
+	  try (PreparedStatement prep = Database.getConnection().prepareStatement(
+		 "CREATE TABLE IF NOT EXISTS user (user_id TEXT, user_obj LONGBLOB,"
+		 + " PRIMARY KEY (user_id));")) {
+		  prep.executeUpdate();
+	  } catch (SQLException e) {
+		e.printStackTrace();
+	}
+  }
+  
+  public void buildOrderSerializable() {
+	  try (PreparedStatement prep = Database.getConnection().prepareStatement(
+		 "CREATE TABLE IF NOT EXISTS order (order_id TEXT, order_obj LONGBLOB,"
+		 + " PRIMARY KEY (order_id));")) {
+		  prep.executeUpdate();
+	  } catch (SQLException e) {
+		e.printStackTrace();
+	}
+  }
+  
+  
 }

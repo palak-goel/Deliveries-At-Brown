@@ -1,5 +1,6 @@
 package edu.brown.cs.jchaiken.projectcontrol;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +33,13 @@ public class Manager {
   void onQuitUser(User u) {
     Order o = pendingMatches.get(u);
     pendingOrders.add(o);
+    // UNDO user transactions
+    // Finish payment
+  }
+
+  void onQuitOrder(Order o) {
+    pendingOrders.remove(o);
+    // Handle order quitting
   }
 
   void onEntryUser(User u) {
@@ -48,6 +56,15 @@ public class Manager {
 
   static void removeOrder(Order o) {
     pendingOrders.remove(o);
+  }
+
+  static void checkStatus() {
+    Collection<Order> os = pendingMatches.values();
+    for (Order o : os) {
+      // Look at time of order
+      // Do some sort of check based on that, possibly message order
+      // o.message()?
+    }
   }
 
   private static class OrderHandler implements Route {

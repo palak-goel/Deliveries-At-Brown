@@ -63,4 +63,12 @@ public class Manager {
     }
   }
 
+  private static class LoginHandler implements Route {
+    @Override
+    public String handle(Request req, Response res) {
+      // Todo
+      return "";
+    }
+  }
+
 }

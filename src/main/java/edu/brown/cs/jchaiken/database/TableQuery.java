@@ -59,6 +59,7 @@ public class TableQuery {
 			prep.setString(1, user.getId());
 			prep.setObject(2, user);
 			prep.executeUpdate();
+			prep.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -87,7 +88,7 @@ public class TableQuery {
 			}
 
 			user = (User) objectIn.readObject();
-
+			prep.close();
 		} catch (SQLException | IOException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -103,6 +104,7 @@ public class TableQuery {
 			prep.setString(1, order.getId());
 			prep.setObject(2, order);
 			prep.executeUpdate();
+			prep.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -131,7 +133,7 @@ public class TableQuery {
 			}
 
 			order = (Order) objectIn.readObject();
-			
+			prep.close();
 		} catch (SQLException | IOException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -151,6 +153,7 @@ public class TableQuery {
 			prep.setDouble(2, lat);
 			prep.setDouble(2, lon);
 			prep.executeUpdate();
+			prep.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -171,9 +174,46 @@ public class TableQuery {
 				LocationBean lb = new LocationBean(locationId, lat, lon);
 				locations.add(lb);
 			}
+			prep.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return locations;
 	}
+	
+	public void insertOrderStatus(String id, int status) {
+		PreparedStatement prep = null;
+		try {
+			prep = conn.prepareStatement(
+					"INSERT INTO order_status(order_id, status) VALUES(?, ?)"
+					);
+			prep.setString(1, id);
+			prep.setInt(2, status);
+			prep.executeUpdate();
+			prep.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public List<String> getOrderByStatus(int status) {
+		PreparedStatement prep = null;
+		List<String> orderIDs = new ArrayList<>();
+		try {
+			prep = conn.prepareStatement(
+					"SELECT * FROM order_status WHERE status = ?"
+					);
+			prep.setInt(1, status);
+			ResultSet rs = prep.executeQuery();
+			while (rs.next()) {
+				String orderId = rs.getString(1);
+				orderIDs.add(orderId);
+			}
+			prep.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return orderIDs;
+	}
+	
 }

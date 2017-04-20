@@ -48,6 +48,10 @@ public class Manager {
         .expireAfterAccess(125, TimeUnit.MINUTES).build();
   }
 
+  public List<Order> getPendingOrders() {
+    return new ArrayList<>(pendingOrders);
+  }
+
   // Trigger handler
   static synchronized boolean select(User u, Order o) {
     activeUsers.remove(u);
@@ -98,8 +102,7 @@ public class Manager {
     public String handle(Request req, Response res) {
 
       QueryParamsMap qm = req.queryMap();
-      String u = qm.value("user");
-      User user = null; // get from User global map and String u
+      User user = User.byId(qm.value("user"));
       List<Order> ords = rank(user);
       Map<String, Object> variables = ImmutableMap.of("order", ords);
       return GSON.toJson(variables);

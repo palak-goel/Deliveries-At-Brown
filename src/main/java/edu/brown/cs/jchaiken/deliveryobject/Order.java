@@ -1,5 +1,6 @@
 package edu.brown.cs.jchaiken.deliveryobject;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -24,15 +25,15 @@ public interface Order extends DeliveryObject {
 
     public static Status valueOf(int status) {
       switch (status) {
-        case 0:
+        case 4:
           return Status.UNASSIGNED;
-        case 1:
+        case 3:
           return Status.ASSIGNED;
         case 2:
           return Status.AT_LOCATION;
-        case 3:
+        case 1:
           return Status.HAVE_FOOD;
-        case 4:
+        case 0:
           return Status.COMPLETED;
         default:
           return null;
@@ -141,7 +142,7 @@ public interface Order extends DeliveryObject {
    * @param pickup the pickup location.
    * @return a list of orders.
    */
-  static List<Order> byPickupLocation(String pickup) {
+  static Collection<Order> byPickupLocation(String pickup) {
     return OrderProxy.byPickupLocation(pickup);
   }
 
@@ -150,7 +151,7 @@ public interface Order extends DeliveryObject {
    * @param item the item to find.
    * @return the list of orders
    */
-  static List<Order> byItem(String item) {
+  static Collection<Order> byItem(String item) {
     return OrderProxy.byItem(item);
   }
 

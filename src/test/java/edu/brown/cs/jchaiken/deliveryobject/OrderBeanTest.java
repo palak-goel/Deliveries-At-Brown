@@ -1,5 +1,7 @@
 package edu.brown.cs.jchaiken.deliveryobject;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.ArrayList;
 
 import org.junit.Test;
@@ -61,8 +63,8 @@ public class OrderBeanTest {
     Database.setUrl("data/test.sqlite3");
     OrderBuilder builder = new OrderBuilder();
     Order newOrder = builder.setId("hey")
-        .setDeliverer(User.byId("user"))
-        .setOrderer(User.byId("user2"))
+        .setDeliverer(User.byId("jackson_chaiken@brown.edu"))
+        .setOrderer(User.byId("palak_goel@brown.edu"))
         .setDropoff(Location.byId("/l/1"))
         .setPickup(Location.byId("/l/2"))
         .setItems(new ArrayList<String>())
@@ -74,8 +76,9 @@ public class OrderBeanTest {
     newOrder.addToDatabase();
     //now retrieve record
     Order test = Order.byId("hey");
-    assert test.getDeliverer().getId().equals("user");
+    assert test.getDeliverer().getId().equals("jackson_chaiken@brown.edu");
     assert test.status() == Status.COMPLETED;
+    assertEquals(test.getOrderItems().size(), 0);
   }
 
   @Test
@@ -83,9 +86,8 @@ public class OrderBeanTest {
     //remove the bad record we just created
     Database.setUrl("data/test.sqlite3");
     Order test = Order.byId("hey");
+    assert test.getOrderer().getId().contains("palak");
+    DeliveryObjectProxy.clearCache();
     test.removeFromDatabase();
-    //check it was removed
-    Order check = Order.byId("hey");
-    assert check.getDeliverer() == null;
   }
 }

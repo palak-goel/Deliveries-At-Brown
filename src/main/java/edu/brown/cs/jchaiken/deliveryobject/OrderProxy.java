@@ -7,7 +7,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -17,16 +18,22 @@ import java.util.List;
  */
 class OrderProxy extends DeliveryObjectProxy<Order> implements Order {
   private static final int SEVEN = 7;
+  private static final int EIGHT = 8;
 
   OrderProxy(String newId) {
     super(newId);
   }
 
-  private static final String cacheQuery = "SELECT * FROM orders WHERE id = ?";
-  private static final String statusQ = "SELECT * FROM order_status WHERE order_id = ?";
+  private static final String CACHE_QUERY
+      = "SELECT * FROM orders WHERE id = ?";
+  private static final String STATUS_QUERY
+      = "SELECT status FROM order_status WHERE order_id = ?";
+  private static final String ITEM_QUERY
+      = "SELECT item FROM items WHERE order_id = ?";
   @Override
   protected void cache() throws SQLException {
-    try (PreparedStatement prep = Database.getConnection().prepareStatement(cacheQuery)) {
+    try (PreparedStatement prep = Database.getConnection()
+        .prepareStatement(CACHE_QUERY)) {
       prep.setString(1, super.getId());
       try (ResultSet rs = prep.executeQuery()) {
         if (rs.next()) {
@@ -36,8 +43,7 @@ class OrderProxy extends DeliveryObjectProxy<Order> implements Order {
           double dropoffTime = rs.getDouble(5);
           Location pickupLoc = Location.byId(rs.getString(6));
           Location dropoffLoc = Location.byId(rs.getString(SEVEN));
-          double price = rs.getDouble(8);
-          List<String> items = Arrays.asList(rs.getString(9).split(","));
+          double price = rs.getDouble(EIGHT);
           OrderBuilder builder = new OrderBuilder();
           builder.setId(super.getId())
               .setOrderer(orderer)
@@ -46,17 +52,28 @@ class OrderProxy extends DeliveryObjectProxy<Order> implements Order {
               .setDropoffTime(dropoffTime)
               .setDropoff(dropoffLoc)
               .setPickup(pickupLoc)
-              .setItems(items)
               .setPrice(price);
-          try (PreparedStatement prep2 = Database.getConnection().prepareStatement(statusQ)) {
+          try (PreparedStatement prep2 = Database.getConnection()
+              .prepareStatement(STATUS_QUERY)) {
             prep.setString(1, super.getId());
             try (ResultSet rs2 = prep.executeQuery()) {
-              if (rs.next()) {
-                Status status = Status.valueOf(rs.getInt(2));
+              if (rs2.next()) {
+                Status status = Status.valueOf(rs2.getInt(1));
                 builder.setStatus(status);
               }
             }
           }
+          List<String> dbItems = new ArrayList<>();
+          try (PreparedStatement prep3 = Database.getConnection()
+              .prepareStatement(ITEM_QUERY)) {
+            prep3.setString(1,  super.getId());
+            try (ResultSet rs3 = prep3.executeQuery()) {
+              while (rs3.next()) {
+                dbItems.add(rs3.getString(1));
+              }
+            }
+          }
+          builder.setItems(dbItems);
           Order newOrder = builder.build();
           assert newOrder != null;
           super.setData(newOrder);
@@ -194,8 +211,8 @@ class OrderProxy extends DeliveryObjectProxy<Order> implements Order {
     super.getData().removeFromDatabase();
   }
 
-  private static final String itemQuery = "SELECT id FROM orders WHERE"
-      + " item LIKE '%?%'";
+  private static final String ITEM_SEARCH
+      = "SELECT * FROM items WHERE item = ?";
 
 
   /**
@@ -203,9 +220,10 @@ class OrderProxy extends DeliveryObjectProxy<Order> implements Order {
    * @param item the item to search for.
    * @return the list of orders with that item.
    */
-  public static List<Order> byItem(String item) {
-    List<Order> orders = new ArrayList<>();
-    try (PreparedStatement prep = Database.getConnection().prepareStatement(itemQuery)) {
+  public static Collection<Order> byItem(String item) {
+    Collection<Order> orders = new HashSet<>();
+    try (PreparedStatement prep = Database.getConnection()
+        .prepareStatement(ITEM_SEARCH)) {
       prep.setString(1, item);
       try (ResultSet rs = prep.executeQuery()) {
         while (rs.next()) {
@@ -218,16 +236,18 @@ class OrderProxy extends DeliveryObjectProxy<Order> implements Order {
     return orders;
   }
 
-  private static final String pickupQuery = "SELECT id FROM orders WHERE pickup_location = ?";
+  private static final String PICKUP_SEARCH
+      = "SELECT * FROM orders WHERE pickup_location = ?";
 
   /**
    * Returns a list of orders from a given pickup location.
    * @param pickup the location id where orders are picked up.
    * @return the list of orders.
    */
-  public static List<Order> byPickupLocation(String pickup) {
-    List<Order> orders = new ArrayList<>();
-    try (PreparedStatement prep = Database.getConnection().prepareStatement(pickupQuery)) {
+  public static Collection<Order> byPickupLocation(String pickup) {
+    Collection<Order> orders = new ArrayList<>();
+    try (PreparedStatement prep = Database.getConnection()
+        .prepareStatement(PICKUP_SEARCH)) {
       prep.setString(1, pickup);
       try (ResultSet rs = prep.executeQuery()) {
         while (rs.next()) {

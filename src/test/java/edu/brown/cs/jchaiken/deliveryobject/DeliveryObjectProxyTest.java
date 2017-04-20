@@ -21,7 +21,7 @@ public class DeliveryObjectProxyTest {
     Database.setUrl("data/test.sqlite3");
     DeliveryObjectProxy<Location> test = new LocationProxy("/l/5");
     test.check();
-    assertEquals(test.getCache().size(), 1);
+    assertEquals(DeliveryObjectProxy.getCache().size(), 1);
   }
 
   @Test
@@ -30,9 +30,9 @@ public class DeliveryObjectProxyTest {
     DeliveryObjectProxy<Location> test = new LocationProxy("/l/1");
     test.check();
     assert test.getData() != null;
-    assertEquals(test.getCache().size(), 1);
+    assertEquals(DeliveryObjectProxy.getCache().size(), 1);
     DeliveryObjectProxy.clearCache();
-    assertEquals(test.getCache().size(), 0);
+    assertEquals(DeliveryObjectProxy.getCache().size(), 0);
   }
 
   @Test

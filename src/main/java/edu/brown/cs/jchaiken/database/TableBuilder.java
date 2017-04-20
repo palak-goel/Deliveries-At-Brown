@@ -26,10 +26,24 @@ public class TableBuilder {
         "CREATE TABLE IF NOT"
         + " EXISTS orders (id TEXT, orderer_id TEXT, deliverer_id TEXT,"
         + " pickup_time REAL, dropoff_time REAL, pickup_location TEXT,"
-        + " dropoff_location TEXT, price REAL, items TEXT, PRIMARY KEY (id),"
+        + " dropoff_location TEXT, price REAL, PRIMARY KEY (id),"
         + " FOREIGN KEY (orderer_id)"
         + " REFERENCES users(id), FOREIGN KEY (deliverer_id) REFERENCES"
         + " users(id) ON DELETE CASCADE ON UPDATE CASCADE);")) {
+      prep.executeUpdate();
+    } catch (SQLException exc) {
+      exc.printStackTrace();
+    }
+  }
+
+  /**
+   * Builds the items table if it does not exist.
+   */
+  public void buildItems() {
+    try (PreparedStatement prep = Database.getConnection().prepareStatement(
+        "CREATE TABLE IF NOT"
+        + " EXISTS items (order_id TEXT, item TEXT, FOREIGN KEY (order_id)"
+        + " REFERENCES orders(id) ON DELETE CASCADE ON UPDATE CASCADE);")) {
       prep.executeUpdate();
     } catch (SQLException exc) {
       exc.printStackTrace();

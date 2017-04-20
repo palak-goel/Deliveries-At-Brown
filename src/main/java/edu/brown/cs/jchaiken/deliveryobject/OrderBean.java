@@ -16,7 +16,9 @@ import java.util.List;
  */
 final class OrderBean extends DeliveryObjectBean<Order> implements
     Order, Serializable {
+  private static final long serialVersionUID = -5373772066047212712L;
   private static final int SEVEN = 7;
+  private static final int EIGHT = 8;
   private User orderer;
   private User deliverer;
   private Location pickupL;
@@ -118,13 +120,17 @@ final class OrderBean extends DeliveryObjectBean<Order> implements
     return dropoffTime;
   }
 
-  private static final String addOrder = "INSERT INTO orders VALUES (?,?,?,?,?"
-      + ",?,?,?,?)";
-  private static final String addStatus = "INSERT INTO order_status VALUES (?,?)";
+  private static final String ORDER_ADD
+      = "INSERT INTO orders VALUES (?,?,?,?,?,?,?,?)";
+  private static final String STATUS_ADD
+      = "INSERT INTO order_status VALUES (?,?)";
 
+  private static final String ITEM_ADD
+      = "INSERT INTO items VALUES (?,?)";
   @Override
   public void addToDatabase() {
-    try (PreparedStatement prep = Database.getConnection().prepareStatement(addOrder)) {
+    try (PreparedStatement prep = Database.getConnection()
+        .prepareStatement(ORDER_ADD)) {
       prep.setString(1, super.getId());
       prep.setString(2, orderer.getId());
       prep.setString(3, deliverer.getId());
@@ -132,22 +138,25 @@ final class OrderBean extends DeliveryObjectBean<Order> implements
       prep.setDouble(5, dropoffTime);
       prep.setString(6, pickupL.getId());
       prep.setString(SEVEN, dropoffL.getId());
-      prep.setDouble(8, price);
-      String itemString = "";
-      for (int x = 0; x < items.size(); x++) {
-        if (x + 1 == items.size()) {
-          itemString += items.get(x);
-        } else {
-          itemString += items.get(x) + ",";
-        }
-      }
-      prep.setString(9, itemString);
+      prep.setDouble(EIGHT, price);
       prep.addBatch();
       prep.executeBatch();
     } catch (SQLException exc) {
       exc.printStackTrace();
     }
-    try (PreparedStatement prep = Database.getConnection().prepareStatement(addStatus)) {
+    try (PreparedStatement prep = Database.getConnection()
+        .prepareStatement(ITEM_ADD)) {
+      for (String item : items) {
+        prep.setString(1, super.getId());
+        prep.setString(2, item);
+        prep.addBatch();
+      }
+      prep.executeBatch();
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+    try (PreparedStatement prep = Database.getConnection()
+        .prepareStatement(STATUS_ADD)) {
       prep.setString(1, super.getId());
       prep.setInt(2, status.ordinal());
       prep.addBatch();
@@ -157,23 +166,33 @@ final class OrderBean extends DeliveryObjectBean<Order> implements
     }
   }
 
-  private static final String orderRemove = "DELETE FROM orders WHERE id = ?";
-  private static final String statusRemove = "DELETE FROM order_status WHERE order_id = ?";
-
+  private static final String ORDER_REM
+      = "DELETE FROM orders WHERE id = ?";
+  private static final String STATUS_REM
+      = "DELETE FROM order_status WHERE order_id = ?";
+  private static final String ITEM_REM
+      = "DELETE FROM items WHERE order_id = ?";
   @Override
   public void removeFromDatabase() {
-    try (PreparedStatement prep = Database.getConnection().prepareStatement(orderRemove)) {
+    try (PreparedStatement prep = Database.getConnection()
+        .prepareStatement(STATUS_REM)) {
       prep.setString(1, super.getId());
       prep.executeUpdate();
     } catch (SQLException exc) {
-      // TODO Auto-generated catch block
       exc.printStackTrace();
     }
-    try (PreparedStatement prep = Database.getConnection().prepareStatement(statusRemove)) {
+    try (PreparedStatement prep = Database.getConnection()
+        .prepareStatement(ITEM_REM)) {
       prep.setString(1, super.getId());
       prep.executeUpdate();
     } catch (SQLException exc) {
-      // TODO Auto-generated catch block
+      exc.printStackTrace();
+    }
+    try (PreparedStatement prep = Database.getConnection()
+        .prepareStatement(ORDER_REM)) {
+      prep.setString(1, super.getId());
+      prep.executeUpdate();
+    } catch (SQLException exc) {
       exc.printStackTrace();
     }
   }
@@ -206,7 +225,6 @@ final class OrderBean extends DeliveryObjectBean<Order> implements
       return this;
     }
 
-    
     OrderBuilder setOrderer(User orderer) {
       ordererB = orderer;
       return this;

@@ -71,6 +71,14 @@ public interface Location extends DeliveryObject {
   }
 
   /**
+   * Returns a collection of all locations in the database.
+   * @return the collection of locations.
+   */
+  static Collection<Location> allLocations() {
+    return LocationProxy.allLocations();
+  }
+
+  /**
    * Class that provides unique ids for locations for proper
    * database insertion and hashing.
    * @author jacksonchaiken

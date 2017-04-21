@@ -89,6 +89,15 @@ class UserProxy extends DeliveryObjectProxy<User> implements User {
   }
 
   @Override
+  public boolean validatePassword(String password) {
+    check();
+    if (super.getData() == null) {
+      return false;
+    }
+    return super.getData().validatePassword(password);
+  }
+
+  @Override
   public void addCurrentOrder(Order order) {
     check();
     if (super.getData() == null) {
@@ -383,5 +392,42 @@ class UserProxy extends DeliveryObjectProxy<User> implements User {
       return;
     }
     super.getData().addDelivererRating(rating);
+  }
+
+  private static final String PASS_RESET = "UPDATE users SET password = ?"
+      + " WHERE id = ?";
+
+  /**
+   * Resets the password of a given user, updating the database
+   * and returning the new user.
+   * @param id the account id.
+   * @param oldPassword The existing password.
+   * @param newPassword the new password.
+   * @return The new user, or null if the old password is incorrect.
+   */
+  public static boolean resetPassword(String id, String oldPassword,
+      String newPassword) {
+    int pass = newPassword.hashCode();
+    if (!User.byId(id).validatePassword(oldPassword)) {
+      return false;
+    }
+    try (PreparedStatement prep = Database.getConnection().prepareStatement(
+        PASS_RESET)) {
+      prep.setInt(1, pass);
+      prep.setString(2, id);
+      prep.executeUpdate();
+    } catch (SQLException e) {
+      e.printStackTrace();
+      return false;
+    }
+    //ensure we will get proper update in new bean
+    DeliveryObjectProxy.getCache().invalidate(id);
+    return true;
+  }
+
+  @Override
+  public User setPendingUpdate() {
+    super.getCache().invalidate(super.getId());
+    return User.byId(super.getId());
   }
 }

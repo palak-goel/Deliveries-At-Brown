@@ -2,7 +2,6 @@ package edu.brown.cs.jchaiken.deliveryobject;
 
 import edu.brown.cs.jchaiken.database.Database;
 
-import java.io.Serializable;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -17,9 +16,7 @@ import java.util.List;
  * @author jacksonchaiken
  *
  */
-final class UserBean extends DeliveryObjectBean<User> implements User,
-    Serializable {
-  private static final long serialVersionUID = -3254567965198728L;
+final class UserBean extends DeliveryObjectBean<User> implements User {
   private String name;
   private Collection<Order> pastDeliveries;
   private Collection<Order> pastOrders;
@@ -260,8 +257,20 @@ final class UserBean extends DeliveryObjectBean<User> implements User,
     return status;
   }
 
+  private static final String STATUS_UPDATE
+      = "UPDATE account_status SET status = ? WHERE user_id = ?";
+
   @Override
   public void setAccountStatus(AccountStatus newStatus) {
+    try (PreparedStatement prep = Database.getConnection()
+        .prepareStatement(STATUS_UPDATE)) {
+      prep.setInt(1, status.ordinal());
+      prep.setString(2, super.getId());
+      prep.executeUpdate();
+    } catch (SQLException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
     status = newStatus;
   }
 
@@ -338,5 +347,19 @@ final class UserBean extends DeliveryObjectBean<User> implements User,
       exc.printStackTrace();
     }
     delivererRatings.add(rating);
+  }
+
+  @Override
+  public boolean validatePassword(String check) {
+    if (check.hashCode() == password) {
+      return true;
+    }
+    return false;
+  }
+
+  @Override
+  public User setPendingUpdate() {
+    DeliveryObjectProxy.getCache().invalidate(super.getId());
+    return User.byId(super.getId());
   }
 }

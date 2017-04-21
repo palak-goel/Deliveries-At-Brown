@@ -202,12 +202,18 @@ class OrderProxy extends DeliveryObjectProxy<Order> implements Order {
   @Override
   public void addToDatabase() {
     check();
+    if (super.getData() == null) {
+      return;
+    }
     super.getData().addToDatabase();
   }
 
   @Override
   public void removeFromDatabase() {
     check();
+    if (super.getData() == null) {
+      return;
+    }
     super.getData().removeFromDatabase();
   }
 
@@ -258,6 +264,31 @@ class OrderProxy extends DeliveryObjectProxy<Order> implements Order {
       exc.printStackTrace();
     }
     return orders;
+  }
+
+  private static final String ALL_STATUS
+      = "SELECT * FROM order_status WHERE status = ?";
+
+  /**
+   * Returns a collection of orders with a given status.
+   * @param status the orders' status.
+   * @return the orders with that status.
+   */
+  public static Collection<Order> byStatus(OrderStatus status) {
+    Collection<Order> results = new HashSet<>();
+    try (PreparedStatement prep = Database.getConnection()
+        .prepareStatement(ALL_STATUS)) {
+      prep.setInt(1, status.ordinal());
+      try (ResultSet rs = prep.executeQuery()) {
+        while (rs.next()) {
+          results.add(new OrderProxy(rs.getString(1)));
+        }
+      }
+    } catch (SQLException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    return results;
   }
 
   @Override

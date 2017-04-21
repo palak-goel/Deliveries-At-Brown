@@ -95,7 +95,7 @@ public interface Order extends DeliveryObject {
   void chargeCustomer();
 
   /**
-   * Sets the order's status.
+   * Sets the order's status. Also updates the status in the database.
    * @param status the status.
    */
   void setOrderStatus(OrderStatus status);
@@ -165,6 +165,15 @@ public interface Order extends DeliveryObject {
    */
   static Collection<Order> byItem(String item) {
     return OrderProxy.byItem(item);
+  }
+
+  /**
+   * Returns a collection of orders with the given status.
+   * @param status the status in question
+   * @return the collection of orders.
+   */
+  static Collection<Order> byStatus(OrderStatus status) {
+    return OrderProxy.byStatus(status);
   }
 
   /**

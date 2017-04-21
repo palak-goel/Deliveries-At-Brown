@@ -2,6 +2,7 @@ package edu.brown.cs.jchaiken.projectcontrol;
 
 import edu.brown.cs.jchaiken.database.Database;
 import edu.brown.cs.jchaiken.database.TableBuilder;
+import edu.brown.cs.mhasan3.messaging.Sender;
 import freemarker.template.Configuration;
 
 import java.io.BufferedReader;
@@ -10,20 +11,15 @@ import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import spark.ExceptionHandler;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.ImmutableMap;
 
-import joptsimple.OptionParser;
-import joptsimple.OptionSet;
-import spark.ExceptionHandler;
 import spark.ModelAndView;
 import spark.Request;
 import spark.Response;
@@ -95,144 +91,154 @@ public final class Main {
     if (options.has("gui")) {
       //TODO: do gui stuff here
     }
-    try (BufferedReader br = new BufferedReader(
-	        new InputStreamReader(System.in))) {
-	      String written;
-	      while ((written = br.readLine()) != null) {
-	        String[] inputs = stringSplit(written);
-	        if (inputs.length > 0) {
-	          switch (inputs[0]) { // switch statement decides which command 
-	          case "print":
-	        	  System.out.println("printing");
-	        	  break;
-	          case "message":
-	        	  //Sender sender = new Sender();
-	          case "db":
-	        	  if(inputs.length < 2 || inputs.length > 2){
-	        		  System.out.println("Invalid Command");
-	        		  break;
-	        	  }
-	        	  if (new File(inputs[1]).exists() && !inputs[1].equals(Database.getUrl())) {
-	                Database.setUrl(inputs[1]);
-	                if (Database.getConnection() != null) {
-	                  System.out.println("db set to " + inputs[1]);
-	                } else {
-	                  System.out.println("ERROR: Cannot connect to database");
-	                }
-	        	  }
-	        	  System.out.println("add database here");
-	        		  break;
-	            default:
-	              System.out.println("ERROR: Invalid command");
-	          }
-	        }
+    try (BufferedReader br = new BufferedReader(new InputStreamReader(
+        System.in))) {
+      String written;
+      while ((written = br.readLine()) != null) {
+        String[] inputs = stringSplit(written);
+        if (inputs.length > 0) {
+          switch (inputs[0]) {
+            // switch statement decides which command
+            case "print":
+              System.out.println("printing");
+              break;
+            case "message":
+              Sender sender = new Sender();
+              break;
+            case "db":
+              if (inputs.length < 2 || inputs.length > 2) {
+                System.out.println("Invalid Command");
+                break;
+              }
+              if (new File(inputs[1]).exists() && !inputs[1].equals(Database
+                  .getUrl())) {
+                Database.setUrl(inputs[1]);
+                if (Database.getConnection() != null) {
+                  System.out.println("db set to " + inputs[1]);
+                } else {
+                  System.out.println("ERROR: Cannot connect to database");
+                }
+              }
+              System.out.println("add database here");
+              break;
+            default:
+              System.out.println("ERROR: Invalid command");
+          }
+        }
+      }
+    } catch (IOException ioe) {
+      ioe.printStackTrace();
+    }
+  }
 
-	      }
-
-	    } catch (IOException ioe) {
-	      ioe.printStackTrace();
-	    }
-	  }
-  
-    
   /**
-	 * Splits the string input into an array to 
-	 * use commands on 	  
-	 * @param toSplit: the String that needs to be split 
-	 * @return a string array that has been split
-	 */
-		  private static String[] stringSplit(String toSplit) {
-			    toSplit += " ";
-			    boolean opening = false;
-			    ArrayList<String> lis = new ArrayList<String>();
-			    StringBuilder builds = new StringBuilder();
-			    return fileRead(toSplit, opening, builds, lis);
-			  }
+   * Splits the string input into an array to
+   * use commands on.
+   * @param toSplit: the String that needs to be split
+   * @return a string array that has been split
+   */
+  private static String[] stringSplit(String toSplit) {
+    toSplit += " ";
+    boolean opening = false;
+    ArrayList<String> lis = new ArrayList<String>();
+    StringBuilder builds = new StringBuilder();
+    return fileRead(toSplit, opening, builds, lis);
+  }
 
-			  private static String[] fileRead(String toSplit, boolean opening,
-			      StringBuilder builds, ArrayList<String> lis) {
-			    for (int i = 0; i < toSplit.length(); i++) {
-			      char c = toSplit.charAt(i);
+  private static String[] fileRead(String toSplit, boolean opening,
+      StringBuilder builds, ArrayList<String> lis) {
+    for (int i = 0; i < toSplit.length(); i++) {
+      char c = toSplit.charAt(i);
+      if (c == '\"' || c == ' ' && !opening) {
+        if (c == '\"') {
+          opening = !opening;
+        }
+        if (!opening && builds.length() > 0) {
+          lis.add(builds.toString());
+          builds.delete(0, builds.length());
+        }
+      } else {
+        builds.append(c);
+      }
+    }
+    return lis.toArray(new String[lis.size()]);
+  }
 
-			      if (c == '\"' || c == ' ' && !opening) {
-			        if (c == '\"') {
-			          opening = !opening;
-			        }
-			        if (!opening && builds.length() > 0) {
-			          lis.add(builds.toString());
-			          builds.delete(0, builds.length());
-			        }
-			      } else {
+  /**
+   * FreeMarker.
+   * @return freemarker engine.
+   */
+  private static FreeMarkerEngine createEngine() {
+    Configuration config = new Configuration();
+    File templates = new File("src/main/resources/spark/template/freemarker");
+    try {
+      config.setDirectoryForTemplateLoading(templates);
+    } catch (IOException ioe) {
+      System.out.printf("ERROR: Unable use %s for template loading.%n",
+          templates);
+      System.exit(1);
+    }
+    return new FreeMarkerEngine(config);
+  }
 
-			        builds.append(c);
-			      }
-			    }
-			    return lis.toArray(new String[lis.size()]);
-			  }
-	/**
-	 * FreeMarker
-	 * @return
-	 */
-			  private static FreeMarkerEngine createEngine() {
-				    Configuration config = new Configuration();
-				    File templates = new File("src/main/resources/spark/template/freemarker");
-				    try {
-				      config.setDirectoryForTemplateLoading(templates);
-				    } catch (IOException ioe) {
-				      System.out.printf("ERROR: Unable use %s for template loading.%n",
-				          templates);
-				      System.exit(1);
-				    }
-				    return new FreeMarkerEngine(config);
-				  }
-	/**
-	 * runSparkServer
-	 * @param port
-	 */
-				  private void runSparkServer(int port) {
-				    Spark.port(port);
-				    Spark.externalStaticFileLocation("src/main/resources/static");
-				    Spark.exception(Exception.class, new ExceptionPrinter());
+  /**
+   * runSparkServer.
+   * @param port the port to run on.
+   */
+  private void runSparkServer(int port) {
+    Spark.port(port);
+    Spark.externalStaticFileLocation("src/main/resources/static");
+    Spark.exception(Exception.class, new ExceptionPrinter());
+    FreeMarkerEngine freeMarker = createEngine();
 
-				    FreeMarkerEngine freeMarker = createEngine();
+    // Setup Spark Routes
+    Spark.get("/login", new LoginHandler(), freeMarker);
+    Spark.get("/home", new HomeHandler(), freeMarker);
+  }
 
-				    // Setup Spark Routes	
-				    Spark.get("/login", new LoginHandler(), freeMarker);
-				    Spark.get("/home", new HomeHandler(), freeMarker);
-				  }
-				  
-				  private static class LoginHandler implements TemplateViewRoute {
-					    @Override
-					    public ModelAndView handle(Request req, Response res) {
-					      Map<String, Object> variables = ImmutableMap.of("title", "Login"
-					       );
+  /**
+   * Handler for the login page.
+   * @author jacksonchaiken
+   *
+   */
+  private static class LoginHandler implements TemplateViewRoute {
+    @Override
+    public ModelAndView handle(Request req, Response res) {
+      Map<String, Object> variables = ImmutableMap.of("title", "Login");
+      return new ModelAndView(variables, "Login.ftl");
+    }
+  }
 
-					      return new ModelAndView(variables, "Login.ftl");
-					    }
-					  }
-				  private static class HomeHandler implements TemplateViewRoute {
-					    @Override
-					    public ModelAndView handle(Request req, Response res) {
-					      Map<String, Object> variables = ImmutableMap.of("title", "Home"
-					       );
+  /**
+   * Handler for the home page.
+   * @author jacksonchaiken
+   *
+   */
+  private static class HomeHandler implements TemplateViewRoute {
+    @Override
+    public ModelAndView handle(Request req, Response res) {
+      Map<String, Object> variables = ImmutableMap.of("title", "Home");
+      return new ModelAndView(variables, "Home.ftl");
+    }
+  }
 
-					      return new ModelAndView(variables, "Home.ftl");
-					    }
-					  }
-				  private static class ExceptionPrinter implements ExceptionHandler {
-					    @Override
-					    public void handle(Exception e, Request req, Response res) {
-					      res.status(500);
-					      StringWriter stacktrace = new StringWriter();
-					      try (PrintWriter pw = new PrintWriter(stacktrace)) {
-					        pw.println("<pre>");
-					        e.printStackTrace(pw);
-					        pw.println("</pre>");
-					      }
-					      res.body(stacktrace.toString());
-					    }
-					  }
-  
-  
+  /**
+   * Handler for exceptions.
+   * @author jacksonchaiken
+   *
+   */
+  private static class ExceptionPrinter implements ExceptionHandler {
+    @Override
+    public void handle(Exception e, Request req, Response res) {
+      res.status(500);
+      StringWriter stacktrace = new StringWriter();
+      try (PrintWriter pw = new PrintWriter(stacktrace)) {
+        pw.println("<pre>");
+        e.printStackTrace(pw);
+        pw.println("</pre>");
+      }
+      res.body(stacktrace.toString());
+    }
+  }
 }
 

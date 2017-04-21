@@ -103,6 +103,15 @@ final class OrderBean extends DeliveryObjectBean<Order> implements
 
   @Override
   public void setOrderStatus(OrderStatus newStatus) {
+    try (PreparedStatement prep = Database.getConnection().prepareStatement(
+        "INSERT INTO order_status(order_id, status) VALUES(?, ?)")) {
+      prep.setString(1, super.getId());
+      prep.setInt(2, newStatus.ordinal());
+      prep.executeUpdate();
+      prep.close();
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
     status = newStatus;
   }
 
@@ -166,6 +175,8 @@ final class OrderBean extends DeliveryObjectBean<Order> implements
     } catch (SQLException exc) {
       exc.printStackTrace();
     }
+    orderer.setPendingUpdate();
+    deliverer.setPendingUpdate();
   }
 
   private static final String ORDER_REM
@@ -197,6 +208,8 @@ final class OrderBean extends DeliveryObjectBean<Order> implements
     } catch (SQLException exc) {
       exc.printStackTrace();
     }
+    orderer.setPendingUpdate();
+    deliverer.setPendingUpdate();
   }
 
   /**

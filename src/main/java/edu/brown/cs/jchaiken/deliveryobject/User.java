@@ -39,7 +39,7 @@ public interface User extends DeliveryObject {
   AccountStatus status();
 
   /**
-   * Sets the accounts status.
+   * Sets the accounts status and updates in the database.
    * @param status new status
    */
   void setAccountStatus(AccountStatus status);
@@ -111,25 +111,25 @@ public interface User extends DeliveryObject {
   void charge(double amount);
 
   /**
-   * Adds a past delivery to the user.
+   * Adds a past delivery to the user. Does not alter database.
    * @param order the order to add.
    */
   void addPastDelivery(Order order);
 
   /**
-   * Adds a past order to the user.
+   * Adds a past order to the user. Does not alter database.
    * @param order the order to add.
    */
   void addPastOrder(Order order);
 
   /**
-   * Adds a current order to the user.
+   * Adds a current order to the user. Does not alter database.
    * @param order the order to add.
    */
   void addCurrentOrder(Order order);
 
   /**
-   * Adds a past delivery to the user.
+   * Adds a past delivery to the user.  Does not alter database.
    * @param order the order to add.
    */
   void addCurrentDelivery(Order order);
@@ -166,6 +166,13 @@ public interface User extends DeliveryObject {
   double getDeliveryFeePreference();
 
   /**
+   * Validates a password, returning true if the input is correct.
+   * @param password the password to check.
+   * @return true or false, depending on the passwords correctness.
+   */
+  boolean validatePassword(String password);
+
+  /**
    * Returns the maximum amount of time the user wants to spend, or -1 if it
    * has not been set.
    * @return the preference.
@@ -197,6 +204,14 @@ public interface User extends DeliveryObject {
   void addDelivererRating(double rating);
 
   /**
+   * Forces a user to be re-read in from the database when being cached by
+   * removing it from the cache. Use the returned User to access changes.
+   * Reflects changes to orders (new order, deleted order).
+   * @return The new user object.
+   */
+  User setPendingUpdate();
+
+  /**
    * Returns a user based on their id.
    * @param id the user id.
    * @return the user.
@@ -206,6 +221,22 @@ public interface User extends DeliveryObject {
       throw new IllegalArgumentException("Id is null");
     }
     return new UserProxy(id);
+  }
+
+  /**
+   * Resets a User's password, if the oldPassword matches.
+   * @param id the user's id.
+   * @param oldPassword the existing password.
+   * @param newPassword the new password.
+   * @return true, if the old passwords matched and reset occurred.
+   *  False otherwise.
+   */
+  static boolean resetPassword(String id, String oldPassword,
+      String newPassword) {
+    if (id == null || newPassword == null) {
+      throw new IllegalArgumentException("Parameters are null");
+    }
+    return UserProxy.resetPassword(id, oldPassword, newPassword);
   }
 
   /**

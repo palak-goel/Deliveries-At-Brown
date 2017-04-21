@@ -38,12 +38,13 @@ class LocationProxy extends DeliveryObjectProxy<Location> implements
     return super.getData().getLongitude();
   }
 
-  private final String cacheQuery = "SELECT * FROM locations WHERE"
+  private static final String CACHE_Q = "SELECT * FROM locations WHERE"
       + " id = ?";
 
   @Override
   protected void cache() throws SQLException {
-    try (PreparedStatement prep = Database.getConnection().prepareStatement(cacheQuery)) {
+    try (PreparedStatement prep = Database.getConnection()
+        .prepareStatement(CACHE_Q)) {
       assert prep != null;
       prep.setString(1, super.getId());
       try (ResultSet rs = prep.executeQuery()) {
@@ -57,7 +58,7 @@ class LocationProxy extends DeliveryObjectProxy<Location> implements
     }
   }
 
-  private static final String latLngQuery = "SELECT id FROM locations WHERE"
+  private static final String LAT_LNG_Q = "SELECT id FROM locations WHERE"
       + " latitude = ? AND longitude = ?";
 
   /**
@@ -67,7 +68,8 @@ class LocationProxy extends DeliveryObjectProxy<Location> implements
    * @return return the location, or null if it does not exist.
    */
   public static Location byLatLng(double lat, double lng) {
-    try (PreparedStatement prep = Database.getConnection().prepareStatement(latLngQuery)) {
+    try (PreparedStatement prep = Database.getConnection()
+        .prepareStatement(LAT_LNG_Q)) {
       prep.setDouble(1, lat);
       prep.setDouble(2, lng);
       try (ResultSet rs = prep.executeQuery()) {
@@ -81,7 +83,7 @@ class LocationProxy extends DeliveryObjectProxy<Location> implements
     return null;
   }
 
-  private static final String bbQuery = "SELECT id FROM locations WHERE"
+  private static final String BB_QUERY = "SELECT id FROM locations WHERE"
       + " latitude > ? AND longitude > ? AND latitude < ? AND longitude"
       + " < ?";
 
@@ -96,7 +98,8 @@ class LocationProxy extends DeliveryObjectProxy<Location> implements
   public static Collection<Location> byBoundingBox(double seLat, double seLng,
       double neLat, double neLng) {
     Collection<Location> results = new HashSet<>();
-    try (PreparedStatement prep = Database.getConnection().prepareStatement(bbQuery)) {
+    try (PreparedStatement prep = Database.getConnection()
+        .prepareStatement(BB_QUERY)) {
       prep.setDouble(1, seLat);
       prep.setDouble(2, seLng);
       prep.setDouble(3, neLat);
@@ -110,6 +113,28 @@ class LocationProxy extends DeliveryObjectProxy<Location> implements
       exc.printStackTrace();
     }
     return results;
+  }
+
+  private static final String ALL_L = "SELECT * FROM locations";
+
+  /**
+   * Returns a collection of all location's in the database.
+   * @return the colleciton of locations.
+   */
+  public static Collection<Location> allLocations() {
+    Collection<Location> locs = new HashSet<>();
+    try (PreparedStatement prep = Database.getConnection()
+        .prepareStatement(ALL_L)) {
+      try (ResultSet rs = prep.executeQuery()) {
+        while (rs.next()) {
+          locs.add(new LocationProxy(rs.getString(1)));
+        }
+      }
+    } catch (SQLException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    return locs;
   }
 
   @Override

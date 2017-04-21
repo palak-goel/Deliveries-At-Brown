@@ -7,14 +7,14 @@ import java.util.Collection;
 import org.junit.Test;
 
 import edu.brown.cs.jchaiken.database.Database;
-import edu.brown.cs.jchaiken.deliveryobject.Order.Status;
+import edu.brown.cs.jchaiken.deliveryobject.Order.OrderStatus;
 
 public class OrderTest {
   @Test
   public void testStatus() {
-    assert Status.valueOf(0) == Status.COMPLETED;
-    assert Status.valueOf(-1) == null;
-    assertEquals(Status.valueOf(1).ordinal(), 3);
+    assert OrderStatus.valueOf(0) == OrderStatus.COMPLETED;
+    assert OrderStatus.valueOf(-1) == null;
+    assertEquals(OrderStatus.valueOf(1).ordinal(), 3);
   }
 
   @Test

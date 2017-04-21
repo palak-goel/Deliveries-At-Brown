@@ -8,7 +8,7 @@ import java.util.Collection;
 import org.junit.Test;
 
 import edu.brown.cs.jchaiken.database.Database;
-import edu.brown.cs.jchaiken.deliveryobject.Order.Status;
+import edu.brown.cs.jchaiken.deliveryobject.Order.OrderStatus;
 
 public class OrderProxyTest {
   @Test
@@ -26,7 +26,7 @@ public class OrderProxyTest {
     assert test.getPickupTime() == 123;
     assert test.getData() != null;
     assert test.getOrderItems().size() == 1;
-    assert test.status() == Status.COMPLETED;
+    assert test.status() == OrderStatus.COMPLETED;
     assertEquals(test.getOrderItems().get(0), "muffin");
   }
 

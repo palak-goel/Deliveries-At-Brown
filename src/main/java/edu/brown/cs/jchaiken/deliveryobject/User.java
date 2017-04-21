@@ -2,6 +2,7 @@ package edu.brown.cs.jchaiken.deliveryobject;
 
 import java.util.Collection;
 
+
 /**
  * Top-level interface that allows for other clients to interact with User
  * objects without knowing their underlying state.
@@ -9,6 +10,39 @@ import java.util.Collection;
  *
  */
 public interface User extends DeliveryObject {
+
+  /**
+   * Represents whether an account is still valid or if it has been
+   * deleted.
+   * @author jacksonchaiken
+   *
+   */
+  enum AccountStatus {
+    ACTIVE,
+    CLOSED;
+    public static AccountStatus valueOf(int status) {
+      switch (status) {
+        case 0:
+          return AccountStatus.ACTIVE;
+        case 1:
+          return AccountStatus.CLOSED;
+        default:
+          return null;
+      }
+    }
+  }
+
+  /**
+   * Returns the account's status.
+   * @return the account's status
+   */
+  AccountStatus status();
+
+  /**
+   * Sets the accounts status.
+   * @param status new status
+   */
+  void setAccountStatus(AccountStatus status);
 
   /**
    * Returns the User's id.
@@ -106,11 +140,71 @@ public interface User extends DeliveryObject {
   void addToDatabase();
 
   /**
+   * Removes a user from the database.
+   */
+  void removeFromDatabase();
+
+  /**
+   * Sets the user's delivery preferences for effective order ranking.
+   * @param distance the maximum distance they are willing to travel.
+   * @param minimumFee the minimum fee they wish to receive from the delivery
+   * @param maximumTime the most time they want to spend on the delivery
+   */
+  void addDeliveryPreferences(double distance, double minimumFee, double
+      maximumTime);
+
+  /**
+   * Returns the User's distance preference, or -1 if it has not been set.
+   * @return the distance preference.
+   */
+  double getDeliveryDistancePreference();
+
+  /**
+   * Returns the User's free preference, or -1 if it has not been set.
+   * @return the preference.
+   */
+  double getDeliveryFeePreference();
+
+  /**
+   * Returns the maximum amount of time the user wants to spend, or -1 if it
+   * has not been set.
+   * @return the preference.
+   */
+  double getDeliveryTimePreference();
+
+  /**
+   * Returns the deliverer's weighted average of ratings (out of 5).
+   * @return the rating
+   */
+  double getDelivererRating();
+
+  /**
+   * Returns the orderer's weighted average of ratings (out of 5).
+   * @return the rating
+   */
+  double getOrdererRating();
+
+  /**
+   * Adds a rating to the orderer average. Also adds to database.
+   * @param rating the rating out of 5.
+   */
+  void addOrdererRating(double rating);
+
+  /**
+   * Adds a rating to the deliverer average. Also adds to database.
+   * @param rating the rating out of 5.
+   */
+  void addDelivererRating(double rating);
+
+  /**
    * Returns a user based on their id.
    * @param id the user id.
    * @return the user.
    */
   static User byId(String id) {
+    if (id == null) {
+      throw new IllegalArgumentException("Id is null");
+    }
     return new UserProxy(id);
   }
 
@@ -122,6 +216,9 @@ public interface User extends DeliveryObject {
    * @return a boolean depending on whether the user exists.
    */
   static boolean userValidator(String email, String password) {
+    if (email == null || password == null) {
+      throw new IllegalArgumentException("Email or password null");
+    }
     return UserProxy.userValidator(email, password);
   }
 }

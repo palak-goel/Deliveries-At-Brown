@@ -7,7 +7,10 @@ import com.google.common.cache.CacheBuilder;
 import edu.brown.cs.jchaiken.database.Database;
 
 import java.sql.SQLException;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -21,9 +24,12 @@ public abstract class DeliveryObjectProxy<T extends DeliveryObject> {
   private String id;
   private T data;
   private static final int MAX_CACHE = 50000;
+  private static final int TIMEOUT = 120;
   private static Cache<String, DeliveryObject> cache = CacheBuilder.newBuilder()
-      .maximumSize(MAX_CACHE).expireAfterAccess(125, TimeUnit.MINUTES).build();
-
+      .maximumSize(MAX_CACHE).expireAfterAccess(TIMEOUT, TimeUnit.MINUTES)
+      .build();
+  private static Set<String> pending = Collections.synchronizedSet(
+      new HashSet<>());
   DeliveryObjectProxy(String newId) {
     if (newId == null) {
       throw new IllegalArgumentException("ID is null");
@@ -65,7 +71,8 @@ public abstract class DeliveryObjectProxy<T extends DeliveryObject> {
 
   protected void check() {
     checkCache();
-    if (data == null && Database.getConnection() != null) {
+    if (pending.contains(id) || (data == null && Database.getConnection()
+        != null)) {
       try {
         cache();
       } catch (SQLException exc) {

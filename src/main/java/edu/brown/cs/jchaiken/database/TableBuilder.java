@@ -3,6 +3,12 @@ package edu.brown.cs.jchaiken.database;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+/**
+ * Class that builds the table if the one given does not hold
+ * any of them.
+ * @author jacksonchaiken
+ *
+ */
 public class TableBuilder {
 
   /**
@@ -69,43 +75,55 @@ public class TableBuilder {
   public void buildOrderStatus() {
     try (PreparedStatement prep = Database.getConnection().prepareStatement(
         "CREATE TABLE IF NOT EXISTS order_status (order_id TEXT, status INT,"
-        + " FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE ON UPDATE CASCADE);")) {
+        + " FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE ON"
+        + " UPDATE CASCADE);")) {
       prep.executeUpdate();
     } catch (SQLException exc) {
       exc.printStackTrace();
     }
   }
-  
-  public void buildUserSerializable() {
-	  try (PreparedStatement prep = Database.getConnection().prepareStatement(
-		 "CREATE TABLE IF NOT EXISTS user (user_id TEXT, user_obj BLOB,"
-		 + " PRIMARY KEY (user_id));")) {
-		  prep.executeUpdate();
-	  } catch (SQLException e) {
-		e.printStackTrace();
-	}
-  }
-  
-  public void buildOrderSerializable() {
-	  try (PreparedStatement prep = Database.getConnection().prepareStatement(
-		 "CREATE TABLE IF NOT EXISTS order (order_id TEXT, order_obj BLOB,"
-		 + " PRIMARY KEY (order_id));")) {
-		  prep.executeUpdate();
-	  } catch (SQLException e) {
-		e.printStackTrace();
-	}
-  }
-  
+
+
+  /**
+   * Builds the location table.
+   */
   public void buildLocation() {
-	  try (PreparedStatement prep = Database.getConnection().prepareStatement(
-		 "CREATE TABLE IF NOT EXISTS location (location_name TEXT, "
-		 + " lat REAL, lon REAL"
-		 + " PRIMARY KEY (location_name));")) {
-		  prep.executeUpdate();
-	  } catch (SQLException e) {
-		e.printStackTrace();
-	}
+    try (PreparedStatement prep = Database.getConnection()
+        .prepareStatement("CREATE TABLE IF NOT EXISTS location (location_name"
+            + " TEXT, lat REAL, lon REAL PRIMARY KEY (location_name));")) {
+      prep.executeUpdate();
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
   }
-  
-  
+
+  /**
+   * Builds the account status table.
+   */
+  public void buildAccountStatus() {
+    try (PreparedStatement prep = Database.getConnection()
+        .prepareStatement("CREATE TABLE IF NOT EXISTS account_status (user_id"
+            + " TEXT, status INT FOREIGN KEY (user_id) REFERENCES users(id)"
+            + " ON DELETE CASCADE ON UPDATE CASCADE);")
+        ) {
+      prep.executeUpdate();
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+  }
+
+  /**
+   * Builds the ratings table in the database.
+   */
+  public void buildRatingsTable() {
+    try (PreparedStatement prep = Database.getConnection()
+        .prepareStatement("CREATE TABLE IF NOT EXISTS user_ratings (user_id"
+            + " TEXT, rating REAL, user_type TEXT, FOREIGN KEY (user_ID)"
+            + " REFERENCES users(id) ON UPDATE CASADE ON DELETE CASCADE);")) {
+      prep.executeUpdate();
+    } catch (SQLException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+  }
 }

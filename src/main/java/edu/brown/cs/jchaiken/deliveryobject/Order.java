@@ -16,25 +16,25 @@ public interface Order extends DeliveryObject {
    * @author jacksonchaiken
    *
    */
-  enum Status {
+  enum OrderStatus {
     UNASSIGNED,
     ASSIGNED,
     AT_LOCATION,
     HAVE_FOOD,
     COMPLETED;
 
-    public static Status valueOf(int status) {
+    public static OrderStatus valueOf(int status) {
       switch (status) {
         case 4:
-          return Status.UNASSIGNED;
+          return OrderStatus.UNASSIGNED;
         case 3:
-          return Status.ASSIGNED;
+          return OrderStatus.ASSIGNED;
         case 2:
-          return Status.AT_LOCATION;
+          return OrderStatus.AT_LOCATION;
         case 1:
-          return Status.HAVE_FOOD;
+          return OrderStatus.HAVE_FOOD;
         case 0:
-          return Status.COMPLETED;
+          return OrderStatus.COMPLETED;
         default:
           return null;
       }
@@ -98,7 +98,7 @@ public interface Order extends DeliveryObject {
    * Sets the order's status.
    * @param status the status.
    */
-  void setOrderStatus(Status status);
+  void setOrderStatus(OrderStatus status);
 
   /**
    * Gets the pickup time of the order.
@@ -116,7 +116,7 @@ public interface Order extends DeliveryObject {
    * Returns the order status.
    * @return status
    */
-  Status status();
+  OrderStatus status();
 
   /**
    * Adds an order to the database.
@@ -124,9 +124,21 @@ public interface Order extends DeliveryObject {
   void addToDatabase();
 
   /**
-   * Removes order from database;
+   * Removes order from database.
    */
   void removeFromDatabase();
+
+  /**
+   * Returns the orders ranking, if it has been set.
+   * @return the double assigned
+   */
+  double getRanking();
+
+  /**
+   * Sets the orders ranking.
+   * @param rank the ranking weight.
+   */
+  void setRanking(double rank);
 
   /**
    * Returns an order based on its id.

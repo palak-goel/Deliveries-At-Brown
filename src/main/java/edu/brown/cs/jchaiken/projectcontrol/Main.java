@@ -79,6 +79,7 @@ public final class Main {
             builder.buildOrders();
             builder.buildOrderStatus();
             builder.buildItems();
+            builder.buildAccountStatus();
           } else {
             System.out.println("ERROR: Cannot connect to database");
           }

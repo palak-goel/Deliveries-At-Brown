@@ -26,9 +26,10 @@ final class OrderBean extends DeliveryObjectBean<Order> implements
   private List<String> items;
   private double price;
   private double fee;
-  private Status status;
+  private OrderStatus status;
   private double pickupTime;
   private double dropoffTime;
+  private double ranking;
 
   private OrderBean(String newId, User newOrderer, User newDeliverer,
       Location newPickup, Location newDropoff, double pickupT,
@@ -42,10 +43,11 @@ final class OrderBean extends DeliveryObjectBean<Order> implements
     fee = -1;
     pickupTime = pickupT;
     dropoffTime = dropoffT;
+    ranking = -1;
   }
 
-  private void addStatus(Status newStatus) {
-    status = newStatus;
+  private void addOrderStatus(OrderStatus newOrderStatus) {
+    status = newOrderStatus;
   }
 
   private void addItems(List<String> newItems) {
@@ -100,12 +102,12 @@ final class OrderBean extends DeliveryObjectBean<Order> implements
   }
 
   @Override
-  public void setOrderStatus(Status newStatus) {
+  public void setOrderStatus(OrderStatus newStatus) {
     status = newStatus;
   }
 
   @Override
-  public Status status() {
+  public OrderStatus status() {
     return status;
   }
 
@@ -212,7 +214,7 @@ final class OrderBean extends DeliveryObjectBean<Order> implements
     private String idB;
     private double pickupT;
     private double dropoffT;
-    private Status status;
+    private OrderStatus status;
     private double price;
 
     OrderBuilder setId(String id) {
@@ -220,8 +222,8 @@ final class OrderBean extends DeliveryObjectBean<Order> implements
       return this;
     }
 
-    OrderBuilder setStatus(Status newStatus) {
-      status = newStatus;
+    OrderBuilder setOrderStatus(OrderStatus newOrderStatus) {
+      status = newOrderStatus;
       return this;
     }
 
@@ -268,14 +270,25 @@ final class OrderBean extends DeliveryObjectBean<Order> implements
     Order build() {
       if (idB == null || ordererB == null || delivererB == null || pickupB
           == null || dropoffB == null || status == null) {
-        return null;
+        throw new IllegalArgumentException("Not all paramters set");
       }
       OrderBean bean = new OrderBean(idB, ordererB, delivererB, pickupB,
           dropoffB, pickupT, dropoffT);
       bean.addItems(itemsB);
-      bean.addStatus(status);
+      bean.addOrderStatus(status);
       bean.setPrice(price);
       return bean;
     }
+  }
+
+  @Override
+  public double getRanking() {
+    // TODO Auto-generated method stub
+    return ranking;
+  }
+
+  @Override
+  public void setRanking(double rank) {
+    ranking = rank;
   }
 }

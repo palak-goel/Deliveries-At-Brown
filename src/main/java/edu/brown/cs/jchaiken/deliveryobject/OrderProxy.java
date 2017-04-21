@@ -58,8 +58,8 @@ class OrderProxy extends DeliveryObjectProxy<Order> implements Order {
             prep.setString(1, super.getId());
             try (ResultSet rs2 = prep.executeQuery()) {
               if (rs2.next()) {
-                Status status = Status.valueOf(rs2.getInt(1));
-                builder.setStatus(status);
+                OrderStatus status = OrderStatus.valueOf(rs2.getInt(1));
+                builder.setOrderStatus(status);
               }
             }
           }
@@ -164,7 +164,7 @@ class OrderProxy extends DeliveryObjectProxy<Order> implements Order {
   }
 
   @Override
-  public void setOrderStatus(Status status) {
+  public void setOrderStatus(OrderStatus status) {
     check();
     if (super.getData() == null) {
       return;
@@ -173,7 +173,7 @@ class OrderProxy extends DeliveryObjectProxy<Order> implements Order {
   }
 
   @Override
-  public Status status() {
+  public OrderStatus status() {
     check();
     if (super.getData() == null) {
       return null;
@@ -258,5 +258,24 @@ class OrderProxy extends DeliveryObjectProxy<Order> implements Order {
       exc.printStackTrace();
     }
     return orders;
+  }
+
+  @Override
+  public double getRanking() {
+    check();
+    if (super.getData() == null) {
+      return -1;
+    }
+    return super.getData().getRanking();
+  }
+
+  @Override
+  public void setRanking(double rank) {
+    // TODO Auto-generated method stub
+    check();
+    if (super.getData() == null) {
+      return;
+    }
+    super.getData().setRanking(rank);
   }
 }

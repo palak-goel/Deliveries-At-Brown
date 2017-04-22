@@ -17,7 +17,8 @@ public class TableBuilder {
   public void buildUsers() {
     try (PreparedStatement prep = Database.getConnection().prepareStatement(
         "CREATE TABLE IF NOT EXISTS users (id TEXT, name TEXT,"
-          + " cell TEXT, password INT, stripe_id TEXT, PRIMARY KEY (id));")) {
+          + " cell TEXT, password INT, stripe_id TEXT, url TEXT,"
+          + " PRIMARY KEY (id));")) {
       prep.executeUpdate();
     } catch (SQLException exc) {
       exc.printStackTrace();
@@ -102,7 +103,7 @@ public class TableBuilder {
   public void buildAccountStatus() {
     try (PreparedStatement prep = Database.getConnection()
         .prepareStatement("CREATE TABLE IF NOT EXISTS account_status (user_id"
-            + " TEXT, status INT FOREIGN KEY (user_id) REFERENCES users(id)"
+            + " TEXT, status INT, FOREIGN KEY (user_id) REFERENCES users(id)"
             + " ON DELETE CASCADE ON UPDATE CASCADE);")
         ) {
       prep.executeUpdate();

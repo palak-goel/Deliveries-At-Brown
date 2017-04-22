@@ -97,6 +97,15 @@ class UserProxy extends DeliveryObjectProxy<User> implements User {
   }
 
   @Override
+  public String getWebId() {
+    check();
+    if (super.getData() == null) {
+      return null;
+    }
+    return super.getData().getWebId();
+  }
+
+  @Override
   public void addCurrentOrder(Order order) {
     check();
     if (super.getData() == null) {
@@ -299,20 +308,28 @@ class UserProxy extends DeliveryObjectProxy<User> implements User {
    * @return true or false whether it exists or not.
    */
   public static boolean userValidator(String email, String password) {
+    System.out.println("in validator");
     int hash = password.hashCode();
+    System.out.println("here");
     try (PreparedStatement prep = Database.getConnection()
         .prepareStatement(VAL)) {
+      System.out.println("setting strings");
       prep.setString(1, email);
       prep.setInt(2, hash);
+      System.out.println("querying");
       try (ResultSet rs = prep.executeQuery()) {
+        System.out.println("queriedm");
         if (rs.next()) {
+          System.out.println("validated");
           return true;
         }
       }
     } catch (SQLException exc) {
       // TODO Auto-generated catch block
       exc.printStackTrace();
+      return false;
     }
+    System.out.println("returned");
     return false;
   }
 
@@ -430,7 +447,10 @@ class UserProxy extends DeliveryObjectProxy<User> implements User {
     return User.byId(super.getId());
   }
 
-  private static final String EXIST_Q = "SELECT * FROM users WHERE id = ?";
+  private static final String EXIST_Q
+      = "SELECT * FROM users, account_status"
+          + " WHERE users.id = ? AND account_status.status = 0";
+
   /**
    * Returns true if the account already exists.
    * @param id the id in question
@@ -460,5 +480,22 @@ class UserProxy extends DeliveryObjectProxy<User> implements User {
         return false;
       }
     }
+  }
+
+  private static final String URL_Q = "SELECT id FROM users WHERE url = ?";
+
+  protected static User byWebId(String id) {
+    try (PreparedStatement prep
+        = Database.getConnection().prepareStatement(URL_Q)) {
+      prep.setString(1, id);
+      try (ResultSet rs = prep.executeQuery()) {
+        if (rs.next()) {
+          return User.byId(rs.getString(1));
+        }
+      }
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+    return null;
   }
 }

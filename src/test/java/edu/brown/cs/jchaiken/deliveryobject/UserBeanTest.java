@@ -7,7 +7,7 @@ import org.junit.Test;
 
 import edu.brown.cs.jchaiken.database.Database;
 import edu.brown.cs.jchaiken.deliveryobject.User.AccountStatus;
-import edu.brown.cs.jchaiken.deliveryobject.UserBean.UserBuilder;
+import edu.brown.cs.jchaiken.deliveryobject.User.UserBuilder;
 
 public class UserBeanTest {
   @Test

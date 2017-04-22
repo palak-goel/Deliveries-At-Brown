@@ -1,6 +1,32 @@
 let stripe = Stripe('pk_test_yPfZvsWaYgNY7wT5KiP0S2B5'),
 elements = stripe.elements(),
+loggedIn = false,
+url = "",
 card;
+
+function login() {
+	let params = {
+		id: $("#email").value,
+		password: $("#account_password").value,
+		ip: getIp()
+	}
+	$.post("/validate-login", params, responseJSON =>{
+		$responseObject = JSON.parse(responseJSON);
+		if ($responseObject.result == true) {
+			console.log("good login")
+			//bounce to home page
+			url = $responseObject.url;
+    		let u = "/home" + url; 
+   			xmlHttp = new XMLHttpRequest(); 
+    		xmlHttp.onreadystatechange = ProcessRequest;
+    		xmlHttp.open("GET", u, true);
+    		xmlHttp.send(params);
+		} else {
+			console.log("bad login")
+			//display error
+		}
+	});
+}
 
 function createAccount(token) {
 	console.log("ca");
@@ -9,15 +35,22 @@ function createAccount(token) {
 		email: $("#email").value,
 		stripe: token,
 		cell: $("#cell").value,
-		password: $("#password").value
+		password: $("#password").value,
+		ip: getIp()
 	}
 	$.post("/create-account", account, responseJSON =>{
 		$responseObject = JSON.parse(responseJSON);
 		if ($responseObject.success == true) {
 			//go to main page
 			console.log("good")
+			let u = "/home/" + $responseJSON.url; 
+   			xmlHttp = new XMLHttpRequest(); 
+    		xmlHttp.onreadystatechange = ProcessRequest;
+    		xmlHttp.open( "GET", u, true );
+    		xmlHttp.send(params);
 		} else {
 			console.log("bad")
+			//display error
 		}
 	});
 }
@@ -36,6 +69,7 @@ function createToken() {
   	console.log(e);
   });
 };
+
 
 // Create a token when the form is submitted.
 document.getElementById("create_account").addEventListener('click', function(e) {

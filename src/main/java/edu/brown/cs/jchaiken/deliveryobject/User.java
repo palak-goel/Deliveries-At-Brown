@@ -48,6 +48,7 @@ public interface User extends DeliveryObject {
     private AccountStatus status = null;
     private List<Double> oRatings;
     private List<Double> dRatings;
+
     public UserBuilder setStatus(AccountStatus stat) {
       status = stat;
       return this;
@@ -102,7 +103,6 @@ public interface User extends DeliveryObject {
         DeliveryObjectProxy.getCache().put(id, user);
       }
       return user;
-
     }
   }
 
@@ -286,6 +286,12 @@ public interface User extends DeliveryObject {
   User setPendingUpdate();
 
   /**
+   * Returns the User's web id.
+   * @return the web id.
+   */
+  String getWebId();
+
+  /**
    * Returns a user based on their id.
    * @param id the user id.
    * @return the user.
@@ -337,5 +343,17 @@ public interface User extends DeliveryObject {
       throw new IllegalArgumentException("Email or password null");
     }
     return UserProxy.userValidator(email, password);
+  }
+
+  /**
+   * Returns a user based on their unique URL IDs.
+   * @param id the User's web id.
+   * @return the User.
+   */
+  static User byWebId(String id) {
+    if (id == null) {
+      throw new IllegalArgumentException("Id is null");
+    }
+    return UserProxy.byWebId(id);
   }
 }

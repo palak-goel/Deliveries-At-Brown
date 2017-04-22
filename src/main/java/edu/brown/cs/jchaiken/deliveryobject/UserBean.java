@@ -9,7 +9,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-
+import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * UserBean models a user after it has been read in from the database.
@@ -30,8 +31,10 @@ final class UserBean extends DeliveryObjectBean<User> implements User {
   private double timePref;
   private List<Double> ordererRatings;
   private List<Double> delivererRatings;
-
   private AccountStatus status;
+  private String webId;
+  private static Set<String> webIds = Collections.synchronizedSet(
+      new HashSet<String>());
   UserBean(String email, String newName, String newPaymentId, String
       cellNum, Integer newPass, AccountStatus newStatus) {
     super(email);
@@ -130,9 +133,10 @@ final class UserBean extends DeliveryObjectBean<User> implements User {
     //TODO : Stripe stuff
   }
 
-  private static final String USER_A = "INSERT INTO users VALUES (?,?,?,?,?)";
-  private static final String STATUS_A =
-      "INSERT INTO account_status VALUES (?,?)";
+  private static final String USER_A
+      = "INSERT INTO users VALUES (?,?,?,?,?,?)";
+  private static final String STATUS_A
+      = "INSERT INTO account_status VALUES (?,?)";
 
   @Override
   public void addToDatabase() {
@@ -143,6 +147,7 @@ final class UserBean extends DeliveryObjectBean<User> implements User {
       prep.setString(3, cell);
       prep.setInt(4, password);
       prep.setString(5, paymentId);
+      prep.setString(6, getWebId());
       prep.executeUpdate();
     } catch (SQLException exc) {
       exc.printStackTrace();
@@ -288,5 +293,33 @@ final class UserBean extends DeliveryObjectBean<User> implements User {
   public User setPendingUpdate() {
     DeliveryObjectProxy.getCache().invalidate(super.getId());
     return User.byId(super.getId());
+  }
+
+  @Override
+  public String getWebId() {
+    if (webId == null) {
+      webId = UserBean.getNextWebId();
+    }
+    return webId;
+  }
+
+
+  protected void setWebId(String newId) {
+    webId = newId;
+  }
+
+  private static final int TEN = 10;
+  private static final int ID_LENGTH = 15;
+  private static String getNextWebId() {
+    String id = "";
+    for (int x = 0; x < ID_LENGTH; x++) {
+      int rand = ThreadLocalRandom.current().nextInt(0, TEN);
+      id = id + String.valueOf(rand);
+    }
+    if (webIds.contains(id)) {
+      return UserBean.getNextWebId();
+    }
+    webIds.add(id);
+    return id;
   }
 }

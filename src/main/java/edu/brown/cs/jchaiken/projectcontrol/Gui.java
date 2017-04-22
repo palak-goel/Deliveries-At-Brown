@@ -7,7 +7,10 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 
@@ -32,6 +35,12 @@ import spark.template.freemarker.FreeMarkerEngine;
  */
 public class Gui {
   private static final Gson GSON = new Gson();
+  private static final int MAX_CACHE = 50000;
+  private static final int TIMEOUT = 120;
+  private static Cache<String, Boolean> iPCache
+      = CacheBuilder.newBuilder()
+      .maximumSize(MAX_CACHE).expireAfterWrite(TIMEOUT, TimeUnit.MINUTES)
+      .build();
 
   /**
    * Instantiates a Gui instance on the specified port number.
@@ -76,8 +85,14 @@ public class Gui {
 
     // Setup Spark Routes
     Spark.get("/login", new LoginHandler(), freeMarker);
+    Spark.post("check-ip", new IpChecker());
     Spark.get("/home/:id", (request, response) -> {
       Map<String, Object> variables = ImmutableMap.of("title", "Home");
+      String id = request.params(":id");
+      User user = User.byWebId(id);
+      if (user == null) {
+        //TODO: not a user!!!
+      }
       /*
        * 
        * 
@@ -139,14 +154,20 @@ public class Gui {
             .setOrdererRatings(new ArrayList<Double>())
             .build();
         user.addToDatabase();
+        iPCache.put(qm.value("ip"), true);
         toServer.put("success", true);
+        toServer.put("url", user.getWebId());
       }
       return GSON.toJson(toServer);
     }
   }
 
+  /**
+   * Handles login requests to the server.
+   * @author jacksonchaiken
+   *
+   */
   private static class LoginValidator implements Route {
-
     @Override
     public Object handle(Request arg0, Response arg1) throws Exception {
       QueryParamsMap qm = arg0.queryMap();
@@ -155,10 +176,30 @@ public class Gui {
       Map<String, Object> toServer = new HashMap<>();
       if (User.userValidator(id, password)) {
         toServer.put("result", true);
+        toServer.put("url", User.byId(id).getWebId());
+        iPCache.put(qm.value("ip"), true);
       } else {
         toServer.put("result", false);
       }
       return GSON.toJson(toServer);
+    }
+  }
+
+  /**
+   * Checks the IP address to see if it is logged in.
+   * @author jacksonchaiken
+   *
+   */
+  private static class IpChecker implements Route {
+    @Override
+    public Object handle(Request arg0, Response arg1) throws Exception {
+      Map<String, Object> response = new HashMap<>();
+      if (iPCache.getIfPresent(arg0.queryMap().value("ip")) == null) {
+        response.put("valid", false);
+      } else {
+        response.put("valid", true);
+      }
+      return GSON.toJson(response);
     }
   }
 

@@ -1,7 +1,7 @@
 package edu.brown.cs.jchaiken.deliveryobject;
 
 import java.util.Collection;
-
+import java.util.List;
 
 /**
  * Top-level interface that allows for other clients to interact with User
@@ -29,6 +29,80 @@ public interface User extends DeliveryObject {
         default:
           return null;
       }
+    }
+  }
+
+
+  /**
+   * UserBuilder provides a way to build a User if it must be created for
+   * the first time and it should be added to the database.
+   * @author jacksonchaiken
+   *
+   */
+  class UserBuilder {
+    private String id = null;
+    private String name = null;
+    private String paymentId = null;
+    private String cell = null;
+    private Integer pass = null;
+    private AccountStatus status = null;
+    private List<Double> oRatings;
+    private List<Double> dRatings;
+    public UserBuilder setStatus(AccountStatus stat) {
+      status = stat;
+      return this;
+    }
+
+    public UserBuilder setId(String newId) {
+      this.id = newId;
+      return this;
+    }
+
+    public UserBuilder setName(String newName) {
+      this.name = newName;
+      return this;
+    }
+
+    public UserBuilder setPassword(Integer password) {
+      pass = password;
+      return this;
+    }
+
+    public UserBuilder setPayment(String newPaymentId) {
+      this.paymentId = newPaymentId;
+      return this;
+    }
+
+    public UserBuilder setCell(String cellNumber) {
+      this.cell = cellNumber;
+      return this;
+    }
+
+    public UserBuilder setDelivererRatings(List<Double> ratings) {
+      dRatings = ratings;
+      return this;
+    }
+
+    public UserBuilder setOrdererRatings(List<Double> ratings) {
+      oRatings = ratings;
+      return this;
+    }
+
+    public User build() {
+      if (id == null || name == null || paymentId == null || cell == null
+          || pass == null || status == null || dRatings == null
+          || oRatings == null) {
+        throw new IllegalArgumentException("There are parameters that have"
+            + " not been set");
+      }
+      UserBean user = new UserBean(id, name, paymentId, cell, pass, status);
+      user.setDelivererRatings(dRatings);
+      user.setOrdererRatings(oRatings);
+      if (DeliveryObjectProxy.getCache().getIfPresent(id) == null) {
+        DeliveryObjectProxy.getCache().put(id, user);
+      }
+      return user;
+
     }
   }
 
@@ -221,6 +295,18 @@ public interface User extends DeliveryObject {
       throw new IllegalArgumentException("Id is null");
     }
     return new UserProxy(id);
+  }
+
+  /**
+   * Returns true if a given ID is already attached to a user.
+   * @param id the id in question.
+   * @return true or false, if it exists.
+   */
+  static boolean accountExists(String id) {
+    if (id == null) {
+      throw new IllegalArgumentException("Id is null");
+    }
+    return UserProxy.accountExists(id);
   }
 
   /**

@@ -2,7 +2,6 @@ package edu.brown.cs.jchaiken.deliveryobject;
 
 import edu.brown.cs.jchaiken.database.Database;
 import edu.brown.cs.jchaiken.deliveryobject.Order.OrderStatus;
-import edu.brown.cs.jchaiken.deliveryobject.UserBean.UserBuilder;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -405,7 +404,7 @@ class UserProxy extends DeliveryObjectProxy<User> implements User {
    * @param newPassword the new password.
    * @return The new user, or null if the old password is incorrect.
    */
-  public static boolean resetPassword(String id, String oldPassword,
+  protected static boolean resetPassword(String id, String oldPassword,
       String newPassword) {
     int pass = newPassword.hashCode();
     if (!User.byId(id).validatePassword(oldPassword)) {
@@ -429,5 +428,37 @@ class UserProxy extends DeliveryObjectProxy<User> implements User {
   public User setPendingUpdate() {
     super.getCache().invalidate(super.getId());
     return User.byId(super.getId());
+  }
+
+  private static final String EXIST_Q = "SELECT * FROM users WHERE id = ?";
+  /**
+   * Returns true if the account already exists.
+   * @param id the id in question
+   * @return a boolean value tied to account status.
+   */
+  protected static boolean accountExists(String id) {
+    User user = User.byId(id);
+    if (user.status() != null) {
+      if (user.status() == AccountStatus.ACTIVE) {
+        return false;
+      }
+      return true;
+    } else {
+      //check database
+      try (PreparedStatement prep = Database.getConnection()
+          .prepareStatement(EXIST_Q)) {
+        prep.setString(1, id);
+        try (ResultSet rs = prep.executeQuery()) {
+          if (rs.next()) {
+            return true;
+          }
+          return false;
+        }
+      } catch (SQLException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+        return false;
+      }
+    }
   }
 }

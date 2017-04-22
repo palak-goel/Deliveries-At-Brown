@@ -2,30 +2,16 @@ package edu.brown.cs.jchaiken.projectcontrol;
 
 import edu.brown.cs.jchaiken.database.Database;
 import edu.brown.cs.jchaiken.database.TableBuilder;
-import edu.brown.cs.mhasan3.messaging.Sender;
-import freemarker.template.Configuration;
 
 import java.io.BufferedReader;
 import java.io.File;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
-import spark.ExceptionHandler;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+
 import java.util.ArrayList;
-import java.util.Map;
-
-import com.google.common.collect.ImmutableMap;
-
-import spark.ModelAndView;
-import spark.Request;
-import spark.Response;
-import spark.Spark;
-import spark.TemplateViewRoute;
-import spark.template.freemarker.FreeMarkerEngine;
 
 /**
  * Starts the program and delegates functionality to the REPL and GUI.
@@ -88,8 +74,9 @@ public final class Main {
         System.out.println("Database url must end in .sqlite3");
       }
     }
+    Gui gui = null;
     if (options.has("gui")) {
-      //TODO: do gui stuff here
+      gui = new Gui((int) options.valueOf("port"));
     }
     try (BufferedReader br = new BufferedReader(new InputStreamReader(
         System.in))) {
@@ -103,7 +90,7 @@ public final class Main {
               System.out.println("printing");
               break;
             case "message":
-              Sender sender = new Sender();
+              //Sender sender = new Sender();
               break;
             case "db":
               if (inputs.length < 2 || inputs.length > 2) {
@@ -128,6 +115,11 @@ public final class Main {
       }
     } catch (IOException ioe) {
       ioe.printStackTrace();
+    }
+    //shutdown gui before exit.
+    if (gui != null) {
+      gui.stop();
+
     }
   }
 
@@ -162,83 +154,6 @@ public final class Main {
       }
     }
     return lis.toArray(new String[lis.size()]);
-  }
-
-  /**
-   * FreeMarker.
-   * @return freemarker engine.
-   */
-  private static FreeMarkerEngine createEngine() {
-    Configuration config = new Configuration();
-    File templates = new File("src/main/resources/spark/template/freemarker");
-    try {
-      config.setDirectoryForTemplateLoading(templates);
-    } catch (IOException ioe) {
-      System.out.printf("ERROR: Unable use %s for template loading.%n",
-          templates);
-      System.exit(1);
-    }
-    return new FreeMarkerEngine(config);
-  }
-
-  /**
-   * runSparkServer.
-   * @param port the port to run on.
-   */
-  private void runSparkServer(int port) {
-    Spark.port(port);
-    Spark.externalStaticFileLocation("src/main/resources/static");
-    Spark.exception(Exception.class, new ExceptionPrinter());
-    FreeMarkerEngine freeMarker = createEngine();
-
-    // Setup Spark Routes
-    Spark.get("/login", new LoginHandler(), freeMarker);
-    Spark.get("/home", new HomeHandler(), freeMarker);
-  }
-
-  /**
-   * Handler for the login page.
-   * @author jacksonchaiken
-   *
-   */
-  private static class LoginHandler implements TemplateViewRoute {
-    @Override
-    public ModelAndView handle(Request req, Response res) {
-      Map<String, Object> variables = ImmutableMap.of("title", "Login");
-      return new ModelAndView(variables, "Login.ftl");
-    }
-  }
-
-  /**
-   * Handler for the home page.
-   * @author jacksonchaiken
-   *
-   */
-  private static class HomeHandler implements TemplateViewRoute {
-    @Override
-    public ModelAndView handle(Request req, Response res) {
-      Map<String, Object> variables = ImmutableMap.of("title", "Home");
-      return new ModelAndView(variables, "Home.ftl");
-    }
-  }
-
-  /**
-   * Handler for exceptions.
-   * @author jacksonchaiken
-   *
-   */
-  private static class ExceptionPrinter implements ExceptionHandler {
-    @Override
-    public void handle(Exception e, Request req, Response res) {
-      res.status(500);
-      StringWriter stacktrace = new StringWriter();
-      try (PrintWriter pw = new PrintWriter(stacktrace)) {
-        pw.println("<pre>");
-        e.printStackTrace(pw);
-        pw.println("</pre>");
-      }
-      res.body(stacktrace.toString());
-    }
   }
 }
 

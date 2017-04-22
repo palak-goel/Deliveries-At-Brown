@@ -32,7 +32,7 @@ final class UserBean extends DeliveryObjectBean<User> implements User {
   private List<Double> delivererRatings;
 
   private AccountStatus status;
-  private UserBean(String email, String newName, String newPaymentId, String
+  UserBean(String email, String newName, String newPaymentId, String
       cellNum, Integer newPass, AccountStatus newStatus) {
     super(email);
     password = newPass;
@@ -51,11 +51,11 @@ final class UserBean extends DeliveryObjectBean<User> implements User {
     timePref = -1;
   }
 
-  private void setOrdererRatings(List<Double> oRatings) {
+  void setOrdererRatings(List<Double> oRatings) {
     ordererRatings = oRatings;
   }
 
-  private void setDelivererRatings(List<Double> dRatings) {
+  void setDelivererRatings(List<Double> dRatings) {
     delivererRatings = dRatings;
   }
 
@@ -176,79 +176,6 @@ final class UserBean extends DeliveryObjectBean<User> implements User {
       prep.executeUpdate();
     } catch (SQLException exc) {
       exc.printStackTrace();
-    }
-  }
-
-  /**
-   * UserBuilder provides a way to build a User if it must be created for
-   * the first time and it should be added to the database.
-   * @author jacksonchaiken
-   *
-   */
-  public static class UserBuilder {
-    private String id = null;
-    private String name = null;
-    private String paymentId = null;
-    private String cell = null;
-    private Integer pass = null;
-    private AccountStatus status = null;
-    private List<Double> oRatings;
-    private List<Double> dRatings;
-    UserBuilder setStatus(AccountStatus stat) {
-      status = stat;
-      return this;
-    }
-
-    UserBuilder setId(String newId) {
-      this.id = newId;
-      return this;
-    }
-
-    UserBuilder setName(String newName) {
-      this.name = newName;
-      return this;
-    }
-
-    UserBuilder setPassword(Integer password) {
-      pass = password;
-      return this;
-    }
-
-    UserBuilder setPayment(String newPaymentId) {
-      this.paymentId = newPaymentId;
-      return this;
-    }
-
-    UserBuilder setCell(String cellNumber) {
-      this.cell = cellNumber;
-      return this;
-    }
-
-    UserBuilder setDelivererRatings(List<Double> ratings) {
-      dRatings = ratings;
-      return this;
-    }
-
-    UserBuilder setOrdererRatings(List<Double> ratings) {
-      oRatings = ratings;
-      return this;
-    }
-
-    User build() {
-      if (id == null || name == null || paymentId == null || cell == null
-          || pass == null || status == null || dRatings == null
-          || oRatings == null) {
-        throw new IllegalArgumentException("There are parameters that have"
-            + " not been set");
-      }
-      UserBean user = new UserBean(id, name, paymentId, cell, pass, status);
-      user.setDelivererRatings(dRatings);
-      user.setOrdererRatings(oRatings);
-      if (DeliveryObjectProxy.getCache().getIfPresent(id) == null) {
-        DeliveryObjectProxy.getCache().put(id, user);
-      }
-      return user;
-
     }
   }
 

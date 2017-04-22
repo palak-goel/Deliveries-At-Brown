@@ -83,7 +83,6 @@ public class TableBuilder {
     }
   }
 
-
   /**
    * Builds the location table.
    */

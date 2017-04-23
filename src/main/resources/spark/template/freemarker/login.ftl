@@ -21,7 +21,7 @@
     <!-- Used to display form errors -->
     <div id="card-errors"></div>
   </div>
-<input button onclick = "createAccount()" id = "create_account" type = "submit" value = "Create Account">
+<input id = "create_account" type = "submit" value = "Create Account">
 </#assign>
 <#include "main.ftl">
 <script src = "/js/login.js"></script>

@@ -6,9 +6,8 @@ card;
 
 function login() {
 	let params = {
-		id: $("#email").value,
-		password: $("#account_password").value,
-		ip: getIp()
+		id: document.getElementById("account_id").value,
+		password: document.getElementById("account_password").value,
 	}
 	$.post("/validate-login", params, responseJSON =>{
 		$responseObject = JSON.parse(responseJSON);
@@ -16,11 +15,10 @@ function login() {
 			console.log("good login")
 			//bounce to home page
 			url = $responseObject.url;
-    		let u = "/home" + url; 
+    		let u = "/home/" + url; 
    			xmlHttp = new XMLHttpRequest(); 
-    		xmlHttp.onreadystatechange = ProcessRequest;
     		xmlHttp.open("GET", u, true);
-    		xmlHttp.send(params);
+    		xmlHttp.send();
 		} else {
 			console.log("bad login")
 			//display error
@@ -31,23 +29,22 @@ function login() {
 function createAccount(token) {
 	console.log("ca");
 	let account = {
-		name: $("#first_name").value + " " + $("#last_name").value,
-		email: $("#email").value,
+		name: document.getElementById("first_name").value + " " + document.getElementById("last_name").value,
+		email: document.getElementById("new_email").value,
 		stripe: token,
-		cell: $("#cell").value,
-		password: $("#password").value,
-		ip: getIp()
+		cell: document.getElementById("cell").value,
+		password: document.getElementById("password").value,
 	}
+	console.log(account)
 	$.post("/create-account", account, responseJSON =>{
 		$responseObject = JSON.parse(responseJSON);
 		if ($responseObject.success == true) {
 			//go to main page
 			console.log("good")
-			let u = "/home/" + $responseJSON.url; 
+			let u = "/home/" + $responseObject.url; 
    			xmlHttp = new XMLHttpRequest(); 
-    		xmlHttp.onreadystatechange = ProcessRequest;
     		xmlHttp.open( "GET", u, true );
-    		xmlHttp.send(params);
+    		xmlHttp.send();
 		} else {
 			console.log("bad")
 			//display error
@@ -63,6 +60,7 @@ function createToken() {
       errorElement.textContent = result.error.message;
     } else {
       //create the new account
+
       createAccount(result.token);
     }
   }).catch(e =>{
@@ -81,5 +79,13 @@ $(document).ready(() => {
 	card = elements.create('card');
 	// Add an instance of the card UI component into the `card-element` <div>
 	card.mount('#card-element');
+	card.addEventListener('change', function(event) {
+  		displayError = document.getElementById('card-errors');
+  		if (event.error) {
+    		displayError.textContent = event.error.message;
+  		} else {
+    		displayError.textContent = '';
+  		}
+	});
 });
 

@@ -7,10 +7,14 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
+
+import com.stripe.model.Charge;
 
 /**
  * UserBean models a user after it has been read in from the database.
@@ -131,6 +135,16 @@ final class UserBean extends DeliveryObjectBean<User> implements User {
   @Override
   public void charge(double amount) {
     //TODO : Stripe stuff
+    Map<String, Object> chargeParams = new HashMap<String, Object>();
+    chargeParams.put("amount", amount);
+    chargeParams.put("currency", "usd");
+    chargeParams.put("customer", paymentId);
+    try {
+      Charge charge = Charge.create(chargeParams);
+      assert charge.getPaid();
+    } catch (Exception exc) {
+      exc.printStackTrace();
+    }
   }
 
   private static final String USER_A

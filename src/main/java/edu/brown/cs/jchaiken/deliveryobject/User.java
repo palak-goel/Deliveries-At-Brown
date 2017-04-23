@@ -48,9 +48,15 @@ public interface User extends DeliveryObject {
     private AccountStatus status = null;
     private List<Double> oRatings;
     private List<Double> dRatings;
+    private String webId = null;
 
     public UserBuilder setStatus(AccountStatus stat) {
       status = stat;
+      return this;
+    }
+
+    public UserBuilder setPersonalUrl(String url) {
+      webId = url;
       return this;
     }
 
@@ -99,6 +105,9 @@ public interface User extends DeliveryObject {
       UserBean user = new UserBean(id, name, paymentId, cell, pass, status);
       user.setDelivererRatings(dRatings);
       user.setOrdererRatings(oRatings);
+      if (webId != null) {
+        user.setWebId(webId);
+      }
       if (DeliveryObjectProxy.getCache().getIfPresent(id) == null) {
         DeliveryObjectProxy.getCache().put(id, user);
       }
@@ -310,6 +319,7 @@ public interface User extends DeliveryObject {
    */
   static boolean accountExists(String id) {
     if (id == null) {
+      System.out.println("bad id");
       throw new IllegalArgumentException("Id is null");
     }
     return UserProxy.accountExists(id);

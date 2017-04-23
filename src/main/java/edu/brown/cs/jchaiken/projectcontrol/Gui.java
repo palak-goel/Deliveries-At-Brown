@@ -13,8 +13,10 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
+import com.stripe.Stripe;
 
 import edu.brown.cs.jchaiken.deliveryobject.User;
+import edu.brown.cs.jchaiken.deliveryobject.User.AccountStatus;
 import edu.brown.cs.jchaiken.deliveryobject.User.UserBuilder;
 import freemarker.template.Configuration;
 import spark.ExceptionHandler;
@@ -37,7 +39,7 @@ public class Gui {
   private static final Gson GSON = new Gson();
   private static final int MAX_CACHE = 50000;
   private static final int TIMEOUT = 120;
-  private static Cache<String, Boolean> iPCache
+  private static Cache<String, String> iPCache
       = CacheBuilder.newBuilder()
       .maximumSize(MAX_CACHE).expireAfterWrite(TIMEOUT, TimeUnit.MINUTES)
       .build();
@@ -48,6 +50,7 @@ public class Gui {
    */
   public Gui(int port) {
     this.runSparkServer(port);
+    Stripe.apiKey = "sk_test_esEbCKY1kAoxod12YXCJe0IS";
   }
 
   /**
@@ -125,6 +128,8 @@ public class Gui {
     }
   }
 
+  private static final double TEST_CHARGE = .08;
+
   /**
    * Handles account creation and validation.
    * @author jacksonchaiken
@@ -136,7 +141,7 @@ public class Gui {
       QueryParamsMap qm = arg0.queryMap();
       String name = qm.value("name");
       String email = qm.value("email");
-      String stripe = qm.value("stripe");
+      //TODO: figure out stripe
       String cell = qm.value("cell");
       int password = qm.value("password").hashCode();
       Map<String, Object> toServer = new HashMap<>();
@@ -144,17 +149,21 @@ public class Gui {
         toServer.put("success", false);
         toServer.put("error", "Account already exists");
       } else {
+        //TODO: stripe stuff here
         UserBuilder builder = new UserBuilder();
         User user = builder.setId(email)
             .setName(name)
             .setPassword(password)
             .setCell(cell)
-            .setPayment(stripe)
+            .setPayment("TODO: SET TO STRIPE")
+            .setOrdererRatings(new ArrayList<Double>())
+            .setDelivererRatings(new ArrayList<Double>())
+            .setStatus(AccountStatus.ACTIVE)
             .setDelivererRatings(new ArrayList<Double>())
             .setOrdererRatings(new ArrayList<Double>())
             .build();
         user.addToDatabase();
-        iPCache.put(qm.value("ip"), true);
+        iPCache.put(arg0.ip(), user.getWebId());
         toServer.put("success", true);
         toServer.put("url", user.getWebId());
       }
@@ -177,7 +186,7 @@ public class Gui {
       if (User.userValidator(id, password)) {
         toServer.put("result", true);
         toServer.put("url", User.byId(id).getWebId());
-        iPCache.put(qm.value("ip"), true);
+        iPCache.put(arg0.ip(), User.byId(id).getWebId());
       } else {
         toServer.put("result", false);
       }
@@ -194,7 +203,7 @@ public class Gui {
     @Override
     public Object handle(Request arg0, Response arg1) throws Exception {
       Map<String, Object> response = new HashMap<>();
-      if (iPCache.getIfPresent(arg0.queryMap().value("ip")) == null) {
+      if (iPCache.getIfPresent(arg0.ip()) == null) {
         response.put("valid", false);
       } else {
         response.put("valid", true);

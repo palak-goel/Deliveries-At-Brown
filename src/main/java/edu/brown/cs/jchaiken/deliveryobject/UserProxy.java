@@ -189,6 +189,7 @@ class UserProxy extends DeliveryObjectProxy<User> implements User {
           String cell = rs.getString(3);
           int pass = rs.getInt(4);
           String stripe = rs.getString(5);
+          String url = rs.getString(6);
           UserBuilder bean = new UserBuilder();
           try (PreparedStatement statusPrep = Database.getConnection()
               .prepareStatement(STATUS_Q)) {
@@ -214,13 +215,14 @@ class UserProxy extends DeliveryObjectProxy<User> implements User {
               }
             }
           }
-          bean.setDelivererRatings(dRatings);
-          bean.setOrdererRatings(oRatings);
           User newUser = bean.setCell(cell)
               .setPayment(stripe)
               .setId(super.getId())
               .setName(name)
+              .setPersonalUrl(url)
               .setPassword(pass)
+              .setDelivererRatings(dRatings)
+              .setOrdererRatings(oRatings)
               .build();
           try (PreparedStatement orderPrep =  Database.getConnection()
               .prepareStatement(ORDER_Q)) {
@@ -308,28 +310,20 @@ class UserProxy extends DeliveryObjectProxy<User> implements User {
    * @return true or false whether it exists or not.
    */
   public static boolean userValidator(String email, String password) {
-    System.out.println("in validator");
     int hash = password.hashCode();
-    System.out.println("here");
     try (PreparedStatement prep = Database.getConnection()
         .prepareStatement(VAL)) {
-      System.out.println("setting strings");
       prep.setString(1, email);
       prep.setInt(2, hash);
-      System.out.println("querying");
       try (ResultSet rs = prep.executeQuery()) {
-        System.out.println("queriedm");
         if (rs.next()) {
-          System.out.println("validated");
           return true;
         }
       }
     } catch (SQLException exc) {
-      // TODO Auto-generated catch block
       exc.printStackTrace();
       return false;
     }
-    System.out.println("returned");
     return false;
   }
 
@@ -457,28 +451,20 @@ class UserProxy extends DeliveryObjectProxy<User> implements User {
    * @return a boolean value tied to account status.
    */
   protected static boolean accountExists(String id) {
-    User user = User.byId(id);
-    if (user.status() != null) {
-      if (user.status() == AccountStatus.ACTIVE) {
-        return false;
-      }
-      return true;
-    } else {
-      //check database
-      try (PreparedStatement prep = Database.getConnection()
-          .prepareStatement(EXIST_Q)) {
-        prep.setString(1, id);
-        try (ResultSet rs = prep.executeQuery()) {
-          if (rs.next()) {
-            return true;
-          }
-          return false;
+    //check database
+    try (PreparedStatement prep = Database.getConnection()
+        .prepareStatement(EXIST_Q)) {
+      prep.setString(1, id);
+      try (ResultSet rs = prep.executeQuery()) {
+        if (rs.next()) {
+          return true;
         }
-      } catch (SQLException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
         return false;
       }
+    } catch (SQLException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+      return false;
     }
   }
 

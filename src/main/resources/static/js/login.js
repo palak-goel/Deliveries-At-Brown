@@ -1,7 +1,6 @@
 let stripe = Stripe('pk_test_yPfZvsWaYgNY7wT5KiP0S2B5'),
 elements = stripe.elements(),
 loggedIn = false,
-url = "",
 card;
 
 function login() {
@@ -14,11 +13,8 @@ function login() {
 		if ($responseObject.result == true) {
 			console.log("good login")
 			//bounce to home page
-			url = $responseObject.url;
-    		let u = "/home/" + url; 
-   			xmlHttp = new XMLHttpRequest(); 
-    		xmlHttp.open("GET", u, true);
-    		xmlHttp.send();
+    		window.location.replace("/home/" + $responseObject.url);
+
 		} else {
 			console.log("bad login")
 			//display error
@@ -41,10 +37,7 @@ function createAccount(token) {
 		if ($responseObject.success == true) {
 			//go to main page
 			console.log("good")
-			let u = "/home/" + $responseObject.url; 
-   			xmlHttp = new XMLHttpRequest(); 
-    		xmlHttp.open( "GET", u, true );
-    		xmlHttp.send();
+			window.location.replace("/home/" + $responseObject.url);
 		} else {
 			console.log("bad")
 			//display error

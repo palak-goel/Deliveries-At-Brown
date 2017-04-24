@@ -96,6 +96,7 @@ public class Gui {
       if (user == null) {
         //TODO: not a user!!!
       }
+      System.out.println("home stuff");
       /*
        * 
        * 

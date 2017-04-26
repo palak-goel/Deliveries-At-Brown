@@ -80,7 +80,7 @@ public class Manager {
     return Collections.<Order>emptyList();
   }
 
-  synchronized static void addOrder(Order o) {
+  public synchronized static void addOrder(Order o) {
     pendingOrders.add(o);
   }
 

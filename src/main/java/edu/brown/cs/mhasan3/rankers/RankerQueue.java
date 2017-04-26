@@ -4,6 +4,12 @@ import java.util.Comparator;
 
 import edu.brown.cs.jchaiken.deliveryobject.Order;
 
+/**
+ * Class describes comparator for priority queue.
+ * 
+ * @author shehryarhasan
+ *
+ */
 public class RankerQueue implements Comparator<Order> {
 
   /**

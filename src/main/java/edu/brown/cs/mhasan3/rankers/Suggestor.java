@@ -9,18 +9,32 @@ import java.util.PriorityQueue;
 
 import edu.brown.cs.jchaiken.deliveryobject.Order;
 import edu.brown.cs.jchaiken.deliveryobject.User;
-import edu.brown.cs.jchaiken.projectcontrol.Manager;
 
+/**
+ * Class describes the generation of suggestions for users inputting data.
+ * 
+ * @author shehryarhasan
+ *
+ */
 public class Suggestor {
 
-  private Manager manage;
   private User user;
 
-  public Suggestor(Manager m, User curr) {
-    manage = m;
+  /**
+   * Constructor takes in the current user.
+   *
+   * @param curr
+   *          Current User
+   */
+  public Suggestor(User curr) {
     user = curr;
   }
 
+  /**
+   * Provides suggestions for the items that a user might want.
+   * 
+   * @return List<String> of items
+   */
   public List<String> suggestItem() {
     List<String> res = new ArrayList<String>();
     Collection<Order> past = user.pastOrders();
@@ -44,6 +58,13 @@ public class Suggestor {
     return res;
   }
 
+  /**
+   * Returns a list from a priority queue.
+   * 
+   * @param q
+   *          queue
+   * @return list of strings
+   */
   public List<String> getList(PriorityQueue<SuggestionItem> q) {
     List<String> ans = new ArrayList<String>();
     while (!q.isEmpty()) {
@@ -53,6 +74,11 @@ public class Suggestor {
     return ans;
   }
 
+  /**
+   * Suggests pickup locations.
+   * 
+   * @return List<String> of locations.
+   */
   public List<String> suggestPickup() {
     List<String> res = new ArrayList<String>();
     Collection<Order> past = user.pastOrders();
@@ -72,6 +98,13 @@ public class Suggestor {
     return res;
   }
 
+  /**
+   * Helper Method that adds items to a priority queue from a HashMap.
+   * 
+   * @param ma
+   *          HashMap
+   * @return priority queue
+   */
   public PriorityQueue<SuggestionItem> addQueue(
       Map<String, SuggestionItem> ma) {
     PriorityQueue<SuggestionItem> queue = new PriorityQueue<SuggestionItem>(
@@ -82,6 +115,12 @@ public class Suggestor {
     return queue;
   }
 
+  /**
+   * Suggests dropoff locations.
+   * 
+   * @return List<String> locations
+   */
+  // CHANGE FROM LOCATION ID TO LOCATION NAME
   public List<String> suggestDropoff() {
     List<String> res = new ArrayList<String>();
     Collection<Order> past = user.pastOrders();
@@ -101,6 +140,13 @@ public class Suggestor {
     return res;
   }
 
+  /**
+   * Suggests a time for the user to input.
+   * 
+   * @return List<String> of times
+   */
+
+  // CHANGE AND IMPROVE TIME DIFFENCE
   public List<String> suggestUserTime() {
     List<String> res = new ArrayList<String>();
     Collection<Order> past = user.pastOrders();
@@ -123,6 +169,13 @@ public class Suggestor {
     return res;
   }
 
+  /**
+   * Suggests a payment amount for the deliverer.
+   * 
+   * @return List<String> Payments
+   */
+
+  // Change - should be changed from getPrice
   public List<String> suggestPayment() {
     List<String> res = new ArrayList<String>();
     Collection<Order> past = user.pastOrders();
@@ -142,6 +195,12 @@ public class Suggestor {
     return res;
   }
 
+  /**
+   * Suggests a timeframe that a deliverer should desire.
+   * 
+   * @return List<String> of times
+   */
+  // CHANGE AND MAKE TIME DIFFERENCES BETTER
   public List<String> suggestDeliverTime() {
     List<String> res = new ArrayList<String>();
     Collection<Order> past = user.pastDeliveries();
@@ -164,6 +223,12 @@ public class Suggestor {
     return res;
   }
 
+  /**
+   * Suggests how much of a payment a deliverer should want.
+   * 
+   * @return List<String> of payments
+   */
+  // CHANGE FROM GET PRICE
   public List<String> suggestUserPayment() {
     List<String> res = new ArrayList<String>();
     Collection<Order> past = user.pastDeliveries();

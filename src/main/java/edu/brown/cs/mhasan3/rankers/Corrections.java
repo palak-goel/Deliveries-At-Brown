@@ -8,8 +8,17 @@ import java.util.List;
 import edu.brown.cs.jchaiken.deliveryobject.Order;
 import edu.brown.cs.jchaiken.deliveryobject.User;
 
+/**
+ * Class is used to generate autocorrect suggestions.
+ * 
+ * @author shehryarhasan
+ *
+ */
 public class Corrections {
 
+  /**
+   * Constructor.
+   */
   public Corrections() {
 
   }
@@ -43,14 +52,17 @@ public class Corrections {
   }
 
   /**
-   * Gives a list of suggestions for the input string that we want auto
-   * corrected
+   * Gives a list of suggestions for the place that we want auto corrected.
    * 
    * @param str:
    *          string to be auto corrected
-   * @return
+   * @return List<String> Suggestions
    * @throws SQLException
+   *           e
    */
+
+  // CHANGES - SHOULD BE GET NAME OF SOME SORT, NOT GET ID
+  // MAYBE ADD ALL LOCATIONS TO THE DATABASE
   public List<String> correctPlace(String[] str, User u) throws SQLException {
     CommandCorrect corr = new CommandCorrect();
     Collection<Order> past = u.pastDeliveries();
@@ -70,6 +82,19 @@ public class Corrections {
     return las;
   }
 
+  /**
+   * Returns suggestions for item names.
+   * 
+   * @param str
+   *          string
+   * @param u
+   *          user
+   * @return List<String> Suggestions
+   * @throws SQLException
+   *           e
+   */
+
+  // TO CHANGE - GET ACCESS TO ALL ITEMS IN DATABASE
   public List<String> correctItems(String[] str, User u) throws SQLException {
     CommandCorrect corr = new CommandCorrect();
     Collection<Order> past = u.pastDeliveries();

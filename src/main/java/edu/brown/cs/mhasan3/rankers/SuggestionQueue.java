@@ -2,6 +2,12 @@ package edu.brown.cs.mhasan3.rankers;
 
 import java.util.Comparator;
 
+/**
+ * Describes the comparator for the queue for Suggestion items.
+ *
+ * @author shehryarhasan
+ *
+ */
 public class SuggestionQueue implements Comparator<SuggestionItem> {
 
   /**

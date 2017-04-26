@@ -16,6 +16,8 @@ import edu.brown.cs.jchaiken.deliveryobject.User;
  * @author shehryarhasan
  *
  */
+
+// TODO - POSSIBLY CHANGE ALL INDIVIDUAL USERS TO AN OVERALL HISTORY?
 public class Suggestor {
 
   private User user;
@@ -38,6 +40,10 @@ public class Suggestor {
   public List<String> suggestItem() {
     List<String> res = new ArrayList<String>();
     Collection<Order> past = user.pastOrders();
+    if (past == null) {
+      return res;
+    }
+    // System.out.println(past);
     List<Order> p = new ArrayList<Order>(past);
     Map<String, SuggestionItem> map = new HashMap<String, SuggestionItem>();
     for (Order o : p) {
@@ -82,6 +88,9 @@ public class Suggestor {
   public List<String> suggestPickup() {
     List<String> res = new ArrayList<String>();
     Collection<Order> past = user.pastOrders();
+    if (past == null) {
+      return res;
+    }
     List<Order> p = new ArrayList<Order>(past);
     Map<String, SuggestionItem> map = new HashMap<String, SuggestionItem>();
     for (Order o : p) {
@@ -124,6 +133,9 @@ public class Suggestor {
   public List<String> suggestDropoff() {
     List<String> res = new ArrayList<String>();
     Collection<Order> past = user.pastOrders();
+    if (past == null) {
+      return res;
+    }
     List<Order> p = new ArrayList<Order>(past);
     Map<String, SuggestionItem> map = new HashMap<String, SuggestionItem>();
     for (Order o : p) {
@@ -150,6 +162,9 @@ public class Suggestor {
   public List<String> suggestUserTime() {
     List<String> res = new ArrayList<String>();
     Collection<Order> past = user.pastOrders();
+    if (past == null) {
+      return res;
+    }
     List<Order> p = new ArrayList<Order>(past);
     Map<String, SuggestionItem> map = new HashMap<String, SuggestionItem>();
     for (Order o : p) {
@@ -179,6 +194,9 @@ public class Suggestor {
   public List<String> suggestPayment() {
     List<String> res = new ArrayList<String>();
     Collection<Order> past = user.pastOrders();
+    if (past == null) {
+      return res;
+    }
     List<Order> p = new ArrayList<Order>(past);
     Map<String, SuggestionItem> map = new HashMap<String, SuggestionItem>();
     for (Order o : p) {
@@ -204,6 +222,9 @@ public class Suggestor {
   public List<String> suggestDeliverTime() {
     List<String> res = new ArrayList<String>();
     Collection<Order> past = user.pastDeliveries();
+    if (past == null) {
+      return res;
+    }
     List<Order> p = new ArrayList<Order>(past);
     Map<String, SuggestionItem> map = new HashMap<String, SuggestionItem>();
     for (Order o : p) {
@@ -232,6 +253,9 @@ public class Suggestor {
   public List<String> suggestUserPayment() {
     List<String> res = new ArrayList<String>();
     Collection<Order> past = user.pastDeliveries();
+    if (past == null) {
+      return res;
+    }
     List<Order> p = new ArrayList<Order>(past);
     Map<String, SuggestionItem> map = new HashMap<String, SuggestionItem>();
     for (Order o : p) {

@@ -97,6 +97,36 @@ public class Gui {
     Spark.post("check-ip", new IpChecker());
     Spark.post("/create-account", new AccountCreator());
     Spark.post("validate-login", new LoginValidator());
+
+    //Palak's Stuff
+    Spark.get("/request", (request, response) -> {
+      Map<String, Object> variables = ImmutableMap.of("title", "Request");
+      return freeMarker.render(new ModelAndView(variables, "request.ftl"));
+    });
+    Spark.get("/requesting", (request, response) -> {
+      Map<String, Object> variables = ImmutableMap.of("title", "Request");
+      return freeMarker.render(new ModelAndView(variables, "requesting.ftl"));
+    });
+    Spark.get("/requested", (request, response) -> {
+      Map<String, Object> variables = ImmutableMap.of("title", "Request");
+      return freeMarker.render(new ModelAndView(variables, "requested.ftl"));
+    });
+    Spark.get("/deliver", (request, response) -> {
+      Map<String, Object> variables = ImmutableMap.of("title", "Request");
+      return freeMarker.render(new ModelAndView(variables, "deliver.ftl"));
+    });
+    Spark.get("/delivering", (request, response) -> {
+      Map<String, Object> variables = ImmutableMap.of("title", "Request");
+      return freeMarker.render(new ModelAndView(variables, "delivering.ftl"));
+    });
+    Spark.get("/delivered", (request, response) -> {
+      Map<String, Object> variables = ImmutableMap.of("title", "Request");
+      return freeMarker.render(new ModelAndView(variables, "delivered.ftl"));
+    });
+    Spark.get("/map", (request, response) -> {
+      Map<String, Object> variables = ImmutableMap.of("title", "Request");
+      return freeMarker.render(new ModelAndView(variables, "maps.ftl"));
+    });
   }
 
 	/**

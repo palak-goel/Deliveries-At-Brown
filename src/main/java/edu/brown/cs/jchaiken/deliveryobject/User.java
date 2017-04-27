@@ -319,7 +319,6 @@ public interface User extends DeliveryObject {
    */
   static boolean accountExists(String id) {
     if (id == null) {
-      System.out.println("bad id");
       throw new IllegalArgumentException("Id is null");
     }
     return UserProxy.accountExists(id);

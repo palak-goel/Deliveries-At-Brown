@@ -27,7 +27,7 @@ function createAccount(token) {
 	let account = {
 		name: document.getElementById("first_name").value + " " + document.getElementById("last_name").value,
 		email: document.getElementById("new_email").value,
-		stripe: token,
+		stripe: token.id,
 		cell: document.getElementById("cell").value,
 		password: document.getElementById("password").value,
 	}
@@ -46,14 +46,17 @@ function createAccount(token) {
 }
 
 function createToken() {
+	console.log("creating token")
   stripe.createToken(card).then(function(result) {
+  	console.log("created")
     if (result.error) {
+    	console.log("error")
       // Inform the user if there was an error
       let errorElement = document.getElementById('card-errors');
       errorElement.textContent = result.error.message;
     } else {
       //create the new account
-
+      console.log("no error: " + result.token.id);
       createAccount(result.token);
     }
   }).catch(e =>{

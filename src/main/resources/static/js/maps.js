@@ -88,6 +88,34 @@ function displayDeliverer(map, pos) {
     })
 }
 
+function addPickup(location) {
+   var marker = new google.maps.Marker({
+        position: location,
+        icon: {
+            path: fontawesome.markers.CUTLERY,
+            scale: 0.4,
+            strokeWeight: 1.0,
+            fillColor: 'black',
+            fillOpacity: 1.0
+        },
+        map: map
+    }); 
+}
+
+function addDropoff(location) {
+   var marker = new google.maps.Marker({
+        position: location,
+        icon: {
+            path: fontawesome.markers.MAP_MARKER,
+            scale: 0.4,
+            strokeWeight: 1.0,
+            fillColor: 'black',
+            fillOpacity: 1.0
+        },
+        map: map
+    }); 
+}
+
 //Adds Markers for Campus Eateries/Cafeterias
 function addEateries() {
     var campusFoodKeys = Object.keys(campusFood);

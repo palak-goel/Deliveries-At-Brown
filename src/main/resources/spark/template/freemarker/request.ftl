@@ -12,7 +12,7 @@
 
   </head>
   <body>
-    <h3>Deliveries At Brown</h3>
+    <h1>Deliveries At Brown</h1>
     <div id="map"></div>
     <div id="form">
             <center>

@@ -14,7 +14,7 @@ function initMap() {
 
     addEateries(map);
     userLocation(map, 'Blue');
-    displayDeliverer(map, {lat: 41.826920, lng: -71.402731})
+    //displayDeliverer(map, {lat: 41.826920, lng: -71.402731})
 
     //console.log(coord.length);
     //calcRoute("Kabob And Curry", {lat: 41.830556, lng: -71.402381});

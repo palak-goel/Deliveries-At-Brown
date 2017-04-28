@@ -1,0 +1,12 @@
+#map {
+  height: 600px;
+  width: 70%;
+  float: left;
+}
+
+#form {
+  height: 600px;
+  width: 28%;
+  float: right;
+  border: 1px solid black;
+}

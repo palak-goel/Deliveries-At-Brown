@@ -20,6 +20,10 @@ function calcRoute(start, end) {
         if (status == 'OK') {
             directionsDisplay.setDirections(result);
             //distance of route             
+            var directions = result.routes[0].legs[0].steps;
+            for (var i = 0; i < directions.length; i++) {
+                console.log(directions[i].instructions)
+            }
             console.log(result.routes[0].legs[0].distance.text);
             //duration of route
             console.log(result.routes[0].legs[0].duration.text);
@@ -93,7 +97,7 @@ function addPickup(location) {
         position: location,
         icon: {
             path: fontawesome.markers.CUTLERY,
-            scale: 0.4,
+            scale: 0.7,
             strokeWeight: 1.0,
             fillColor: 'black',
             fillOpacity: 1.0
@@ -107,7 +111,7 @@ function addDropoff(location) {
         position: location,
         icon: {
             path: fontawesome.markers.MAP_MARKER,
-            scale: 0.4,
+            scale: 0.8,
             strokeWeight: 1.0,
             fillColor: 'black',
             fillOpacity: 1.0

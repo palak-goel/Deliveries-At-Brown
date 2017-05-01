@@ -98,7 +98,6 @@ public class OrderWebSocket {
 		} else {
 			// raise error
 		}
-
 		for (Session s : SESSIONS) {
 			s.getRemote().sendString(GSON.toJson(msg));
 		}

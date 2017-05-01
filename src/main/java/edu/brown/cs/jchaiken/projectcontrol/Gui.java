@@ -262,7 +262,8 @@ public class Gui {
       }
       return GSON.toJson(toServer);
     }
-  }
+	}
+
 
 	/**
 	 * Handler for exceptions.

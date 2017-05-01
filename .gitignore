@@ -71,3 +71,8 @@ local.properties
 ########
 
 .DS_Store
+
+############
+# Database #
+############
+data/test.sqlite3

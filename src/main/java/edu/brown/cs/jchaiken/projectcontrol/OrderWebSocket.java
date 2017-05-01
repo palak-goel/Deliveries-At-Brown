@@ -103,4 +103,16 @@ public class OrderWebSocket {
 		}
 	}
 
+	public static void sendMsg() {
+		try {
+			JsonObject msg = new JsonObject();
+			msg.addProperty("hi", "hello");
+			for (Session s : SESSIONS) {
+				s.getRemote().sendString(GSON.toJson(msg));
+			}
+		} catch (IOException e) {
+
+		}
+	}
+
 }

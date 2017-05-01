@@ -17,7 +17,7 @@ function login() {
 			console.log(from)
     		if (from == "") {
     			//go to home page
-    			window.location.replace("/home")
+    			window.location.replace("/profile")
     		} else {
     			window.location.replace("/" + from);
     		}
@@ -48,7 +48,7 @@ function createAccount(token) {
 			from = document.getElementById("from").value;
     		if (from == "") {
     			//go to home page
-    			window.location.replace("/home")
+    			window.location.replace("/profile")
     		} else {
     			window.location.replace("/" + from);
     		}		

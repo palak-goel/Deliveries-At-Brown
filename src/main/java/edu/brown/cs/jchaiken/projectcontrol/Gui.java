@@ -72,26 +72,25 @@ public class Gui {
     return new FreeMarkerEngine(config);
   }
 
-	/**
-	 * runSparkServer.
-	 *
-	 * @param port
-	 *            the port to run on.
-	 */
+  /**
+   * runSparkServer.
+   *
+   * @param port
+   *            the port to run on.
+   */
   private void runSparkServer(int port) {
     Spark.port(port);
     Spark.externalStaticFileLocation("src/main/resources/static");
     Spark.exception(Exception.class, new ExceptionPrinter());
     FreeMarkerEngine freeMarker = createEngine();
     Spark.webSocket("/deliverysocket", OrderWebSocket.class);
-
-		// Setup Spark Routes
+    // Setup Spark Routes
     Spark.get("/login", new LoginHandler(""), freeMarker);
     Spark.post("/create-account", new AccountCreator());
     Spark.post("validate-login", new LoginValidator());
     Spark.post("/submit-request", new Manager.OrderMaker());
 
-		// Palak's Stuff
+    // Palak's Stuff
     Spark.get("/request", (request, response) -> {
       String webId = request.session().attribute("webId");
       if (webId == null || User.byWebId(webId) == null) {
@@ -262,7 +261,7 @@ public class Gui {
       }
       return GSON.toJson(toServer);
     }
-	}
+  }
 
 
 	/**

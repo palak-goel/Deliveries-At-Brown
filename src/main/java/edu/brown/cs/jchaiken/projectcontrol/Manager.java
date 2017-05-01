@@ -10,15 +10,16 @@ import java.util.concurrent.TimeUnit;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 
 import edu.brown.cs.jchaiken.deliveryobject.Order;
+import edu.brown.cs.jchaiken.deliveryobject.PendingOrder;
 import edu.brown.cs.jchaiken.deliveryobject.User;
 import spark.QueryParamsMap;
 import spark.Request;
 import spark.Response;
 import spark.Route;
+import spark.Session;
 
 /**
  * A "controller" class for the application which handles the main user
@@ -30,91 +31,92 @@ import spark.Route;
  */
 public class Manager {
 
-  private static List<User> activeUsers;
-  private static List<Order> pendingOrders;
-  private static Map<User, Order> pendingMatches;
-  private static final Gson GSON = new Gson();
-  private static final int MAX_CACHE = 50000;
-  private static Cache<User, Order> completedOrder;
+	private static List<User> activeDeliverers = Collections.synchronizedList(new ArrayList<>());
+	private static List<Order> pendingOrders = Collections.synchronizedList(new ArrayList<>());
+	private static List<PendingOrder> pendingOs = Collections.synchronizedList(new ArrayList<>());
+	private static Map<User, Order> pendingMatches = Collections.synchronizedMap(new HashMap<>());
+	private static final Gson GSON = new Gson();
+	private static final int MAX_CACHE = 50000;
+	private static Cache<User, Order> completedOrder = CacheBuilder.newBuilder().maximumSize(MAX_CACHE)
+			.expireAfterAccess(125, TimeUnit.MINUTES).build();
+	private static Map<String, Session> sessionMap = Collections.synchronizedMap(new HashMap<>());
 
-  /**
-   * Constructor for Manager.
-   */
-  public Manager() {
-    activeUsers = Collections.synchronizedList(new ArrayList<>());
-    pendingOrders = Collections.synchronizedList(new ArrayList<>());
-    pendingMatches = Collections.synchronizedMap(new HashMap<>());
-    completedOrder = CacheBuilder.newBuilder().maximumSize(MAX_CACHE)
-        .expireAfterAccess(125, TimeUnit.MINUTES).build();
-  }
+	/**
+	 * Constructor for Manager.
+	 */
+	public Manager() {
+	}
 
-  public List<Order> getPendingOrders() {
-    return new ArrayList<>(pendingOrders);
-  }
+	public static void saveSession(String id, Session session) {
+		sessionMap.put(id, session);
+	}
 
-  // Trigger handler
-  static synchronized boolean select(User u, Order o) {
-    activeUsers.remove(u);
-    pendingOrders.remove(o);
-    pendingMatches.put(u, o);
-    return true;
-  }
+	public static Session getSession(String id) {
+		return sessionMap.get(id);
+	}
 
-  synchronized void onQuitUser(User u) {
-    Order o = pendingMatches.get(u);
-    pendingOrders.add(o);
-    // UNDO user transactions
-    // Finish payment
-  }
+	public List<Order> getPendingOrders() {
+		return new ArrayList<>(pendingOrders);
+	}
 
-  synchronized void onQuitOrder(Order o) {
-    pendingOrders.remove(o);
-    // Handle order quitting
-  }
+	// Trigger handler
+	static synchronized boolean select(User u, Order o) {
+		activeDeliverers.remove(u);
+		pendingOrders.remove(o);
+		pendingMatches.put(u, o);
+		return true;
+	}
 
-  synchronized void onEntryUser(User u) {
-    activeUsers.add(u);
-  }
+	synchronized void onQuitUser(User u) {
+		Order o = pendingMatches.get(u);
+		pendingOrders.add(o);
+		// UNDO user transactions
+		// Finish payment
+	}
 
-  synchronized static List<Order> rank(User u) {
-    return Collections.<Order>emptyList();
-  }
+	synchronized void onQuitOrder(Order o) {
+		pendingOrders.remove(o);
+		// Handle order quitting
+	}
 
-  public synchronized static void addOrder(Order o) {
-    pendingOrders.add(o);
-  }
+	synchronized void onEntryUser(User u) {
+		activeDeliverers.add(u);
+	}
 
-  synchronized static void removeOrder(Order o) {
-    pendingOrders.remove(o);
-  }
+	synchronized static List<Order> rank(User u) {
+		return Collections.<Order>emptyList();
+	}
 
-  static void checkStatus() {
-    Collection<Order> os = pendingMatches.values();
-    for (Order o : os) {
-      // Look at time of order
-      // Do some sort of check based on that, possibly message order
-      // o.message()?
-    }
-  }
+	public synchronized static void addOrder(Order o) {
+		pendingOrders.add(o);
+	}
 
-  private static class OrderHandler implements Route {
-    @Override
-    public String handle(Request req, Response res) {
+	synchronized static void removeOrder(Order o) {
+		pendingOrders.remove(o);
+	}
 
-      QueryParamsMap qm = req.queryMap();
-      User user = User.byId(qm.value("user"));
-      List<Order> ords = rank(user);
-      Map<String, Object> variables = ImmutableMap.of("order", ords);
-      return GSON.toJson(variables);
-    }
-  }
+	static void checkStatus() {
+		Collection<Order> os = pendingMatches.values();
+		for (Order o : os) {
+			// Look at time of order
+			// Do some sort of check based on that, possibly message order
+			// o.message()?
+		}
+	}
 
-  private static class LoginHandler implements Route {
-    @Override
-    public String handle(Request req, Response res) {
-      // Todo
-      return "";
-    }
-  }
-
+	public static class OrderMaker implements Route {
+		@Override
+		public Object handle(Request arg0, Response arg1) {
+			Map<String, Object> response = new HashMap<>();
+			QueryParamsMap qm = arg0.queryMap();
+			double pickupT = Double.parseDouble(qm.value("latLongP"));
+			// double pickupT = Double.parseDouble(qm.value("latLongP"));
+			// double pickupT = Double.parseDouble(qm.value("latLongP"));
+			qm.value("dropoff");
+			qm.value("item");
+			qm.value("time");
+			qm.value("price");
+			return GSON.toJson(response);
+		}
+	}
 }

@@ -23,21 +23,16 @@ const setup_socket = () => {
   conn.onmessage = msg => {
     const data = JSON.parse(msg.data);
     console.log(data)
-    switch (data.type) {
+    /*
+    switch () {
       default:
         console.log('Unknown message type!', data.type);
         break;
       case MESSAGE_TYPE.CONNECT:
-        // TODO Assign myId
-        myId = data.payload.id
-        $("#userId").text(myId)
         break;
       case MESSAGE_TYPE.UPDATE:
-         score += data.payload.score
-          $("#score").text(score);
-        // TODO Update the relevant row or add a new row to the scores table
         break;
-    }
+    }*/
   };
 
 }

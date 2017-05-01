@@ -7,6 +7,7 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import com.stripe.Stripe;
@@ -34,43 +35,42 @@ import spark.template.freemarker.FreeMarkerEngine;
  *
  */
 public class Gui {
-  private static final Gson GSON = new Gson();
-  private static final Manager MANAGER = new Manager();
+	private static final Gson GSON = new Gson();
+	private static final Manager MANAGER = new Manager();
 
- /**
-  * Instantiates a Gui instance on the specified port number.
-  *
-  * @param port
-  *            the port used for hosting.
-  */
-  public Gui(int port) {
-    this.runSparkServer(port);
-    Stripe.apiKey = "sk_test_esEbCKY1kAoxod12YXCJe0IS";
-  }
+	/**
+	 * Instantiates a Gui instance on the specified port number.
+	 *
+	 * @param port
+	 *            the port used for hosting.
+	 */
+	public Gui(int port) {
+		this.runSparkServer(port);
+		Stripe.apiKey = "sk_test_esEbCKY1kAoxod12YXCJe0IS";
+	}
 
-  /**
-   * Stops the server.
-   */
-  public void stop() {
-    Spark.stop();
-  }
+	/**
+	 * Stops the server.
+	 */
+	public void stop() {
+		Spark.stop();
+	}
 
-  /**
-   * FreeMarker.
-   *
-   * @return freemarker engine.
-   */
-  private static FreeMarkerEngine createEngine() {
-    Configuration config = new Configuration();
-    File templates = new File("src/main/resources/spark/template/freemarker");
-    try {
-      config.setDirectoryForTemplateLoading(templates);
-    } catch (IOException ioe) {
-      System.out.printf("ERROR: Unable use %s for template loading.%n",
-          templates);
-    }
-    return new FreeMarkerEngine(config);
-  }
+	/**
+	 * FreeMarker.
+	 *
+	 * @return freemarker engine.
+	 */
+	private static FreeMarkerEngine createEngine() {
+		Configuration config = new Configuration();
+		File templates = new File("src/main/resources/spark/template/freemarker");
+		try {
+			config.setDirectoryForTemplateLoading(templates);
+		} catch (IOException ioe) {
+			System.out.printf("ERROR: Unable use %s for template loading.%n", templates);
+		}
+		return new FreeMarkerEngine(config);
+	}
 
   /**
    * runSparkServer.
@@ -164,26 +164,27 @@ public class Gui {
 	 * @author jacksonchaiken
 	 *
 	 */
-  private static class LoginHandler implements TemplateViewRoute {
-    private String from = "";
-    LoginHandler(String redirect) {
-      if (redirect == null) {
-        throw new IllegalArgumentException("redirect is null");
-      }
-      from = redirect;
-    }
+	private static class LoginHandler implements TemplateViewRoute {
+		private String from = "";
 
-    @Override
+		LoginHandler(String redirect) {
+			if (redirect == null) {
+				throw new IllegalArgumentException("redirect is null");
+			}
+			from = redirect;
+		}
+
+		@Override
 		public ModelAndView handle(Request req, Response res) {
-      Map<String, Object> variables = new HashMap<>();
-      variables.put("title", "Login");
-      variables.put("from", from);
-      System.out.println(from);
-      return new ModelAndView(variables, "login.ftl");
-    }
-  }
+			Map<String, Object> variables = new HashMap<>();
+			variables.put("title", "Login");
+			variables.put("from", from);
+			System.out.println(from);
+			return new ModelAndView(variables, "login.ftl");
+		}
+	}
 
-  private static final int TEST_CHARGE = 50;
+	private static final int TEST_CHARGE = 50;
 
 	/**
 	 * Handles account creation and validation.
@@ -191,52 +192,49 @@ public class Gui {
 	 * @author jacksonchaiken
 	 *
 	 */
-  private static class AccountCreator implements Route {
-    @Override
-    public Object handle(Request arg0, Response arg1) throws Exception {
-      QueryParamsMap qm = arg0.queryMap();
-      String name = qm.value("name");
-      String email = qm.value("email");
-      String stripeToken = qm.value("stripe");
-      String cell = qm.value("cell");
-      int password = qm.value("password").hashCode();
-      Map<String, Object> toServer = new HashMap<>();
-      if (User.accountExists(email)) {
-        toServer.put("success", false);
-        toServer.put("error", "Account already exists");
-      } else {
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("amount", TEST_CHARGE);
-        params.put("currency", "usd");
-        params.put("description", "Test charge");
-        params.put("source", stripeToken);
-        try {
-          Charge charge = Charge.create(params);
-          if (!charge.getPaid()) {
-            toServer.put("error", "stripe error");
-          } else {
-            charge.refund();
-          }
-        } catch (Exception e) {
-          e.printStackTrace();
-        }
-        UserBuilder builder = new UserBuilder();
-        User user = builder.setId(email).setName(name)
-            .setPassword(password).setCell(cell)
-            .setPayment(stripeToken).setOrdererRatings(new ArrayList<Double>())
-            .setDelivererRatings(new ArrayList<Double>())
-            .setStatus(AccountStatus.ACTIVE)
-            .setDelivererRatings(new ArrayList<Double>())
-            .setOrdererRatings(new ArrayList<Double>())
-            .build();
-        user.addToDatabase();
-        arg0.session().attribute("webId", user.getWebId());
-        Manager.saveSession(arg0.session().id(), arg0.session());
-        toServer.put("success", true);
-      }
-      return GSON.toJson(toServer);
-    }
-  }
+	private static class AccountCreator implements Route {
+		@Override
+		public Object handle(Request arg0, Response arg1) throws Exception {
+			QueryParamsMap qm = arg0.queryMap();
+			String name = qm.value("name");
+			String email = qm.value("email");
+			String stripeToken = qm.value("stripe");
+			String cell = qm.value("cell");
+			int password = qm.value("password").hashCode();
+			Map<String, Object> toServer = new HashMap<>();
+			if (User.accountExists(email)) {
+				toServer.put("success", false);
+				toServer.put("error", "Account already exists");
+			} else {
+				Map<String, Object> params = new HashMap<String, Object>();
+				params.put("amount", TEST_CHARGE);
+				params.put("currency", "usd");
+				params.put("description", "Test charge");
+				params.put("source", stripeToken);
+				try {
+					Charge charge = Charge.create(params);
+					if (!charge.getPaid()) {
+						toServer.put("error", "stripe error");
+					} else {
+						charge.refund();
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				UserBuilder builder = new UserBuilder();
+				User user = builder.setId(email).setName(name).setPassword(password).setCell(cell)
+						.setPayment(stripeToken).setOrdererRatings(new ArrayList<Double>())
+						.setDelivererRatings(new ArrayList<Double>()).setStatus(AccountStatus.ACTIVE)
+						.setDelivererRatings(new ArrayList<Double>()).setOrdererRatings(new ArrayList<Double>())
+						.build();
+				user.addToDatabase();
+				arg0.session().attribute("webId", user.getWebId());
+				Manager.saveSession(arg0.session().id(), arg0.session());
+				toServer.put("success", true);
+			}
+			return GSON.toJson(toServer);
+		}
+	}
 
 	/**
 	 * Handles login requests to the server.
@@ -244,8 +242,8 @@ public class Gui {
 	 * @author jacksonchaiken
 	 *
 	 */
-  private static class LoginValidator implements Route {
-    @Override
+	private static class LoginValidator implements Route {
+		@Override
 		public Object handle(Request arg0, Response arg1) {
       QueryParamsMap qm = arg0.queryMap();
       String id = qm.value("id");
@@ -262,7 +260,6 @@ public class Gui {
       return GSON.toJson(toServer);
     }
   }
-
 
 	/**
 	 * Handler for exceptions.

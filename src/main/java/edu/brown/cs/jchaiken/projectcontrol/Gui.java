@@ -88,7 +88,7 @@ public class Gui {
     Spark.get("/login", new LoginHandler(""), freeMarker);
     Spark.post("/create-account", new AccountCreator());
     Spark.post("validate-login", new LoginValidator());
-    Spark.post("/submit-request", new Manager.OrderMaker());
+    //Spark.post("/submit-request", new Manager.OrderMaker());
 
     // Palak's Stuff
     Spark.get("/request", (request, response) -> {

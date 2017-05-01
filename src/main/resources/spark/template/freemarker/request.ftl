@@ -34,33 +34,33 @@
     </div>
     <div id="map"></div>
     <div id="form">
+        <center>
+        <h3>Make a Request</h3>
+        </center>
+        <form action = "http://localhost:4567/requesting">
+            <div class="form-group">
+                <label for="formGroupExampleInput">Pick Up</label>
+                <input id = "pick-up-loc" type="text" class="form-control" id="formGroupExampleInput" placeholder="Example input">
+            </div>
+            <div class="form-group">
+                <label for="formGroupExampleInput">Drop Off</label>
+                <input id = "drop-off-loc" type="text" class="form-control" id="formGroupExampleInput" placeholder="Example input">
+            </div>
+            <div class="form-group">
+                <label for="formGroupExampleInput">Item</label>
+                <input id = "item" type="text" class="form-control" id="formGroupExampleInput" placeholder="Example input">
+            </div>
+            <div class="form-group">
+                <label for="formGroupExampleInput">Time</label>
+                <input id = "time" type="text" class="form-control" id="formGroupExampleInput" placeholder="Example input">
+            </div>
+            <div class="form-group">
+                <label for="formGroupExampleInput">Price</label>
+                <input id = "price" type="text" class="form-control" id="formGroupExampleInput" placeholder="Example input">
+            </div>
             <center>
-            <h3>Make a Request</h3>
+                <button onclick = "sendFormToServer();"> Submit Order </button>
             </center>
-            <form action = "http://localhost:4567/requesting">
-                <div class="form-group">
-                    <label for="formGroupExampleInput">Pick Up</label>
-                    <input id = "pick-up-loc" type="text" class="form-control" id="formGroupExampleInput" placeholder="Example input">
-                </div>
-                <div class="form-group">
-                    <label for="formGroupExampleInput">Drop Off</label>
-                    <input id = "drop-off-loc" type="text" class="form-control" id="formGroupExampleInput" placeholder="Example input">
-                </div>
-                <div class="form-group">
-                    <label for="formGroupExampleInput">Item</label>
-                    <input id = "item" type="text" class="form-control" id="formGroupExampleInput" placeholder="Example input">
-                </div>
-                <div class="form-group">
-                    <label for="formGroupExampleInput">Time</label>
-                    <input id = "time" type="text" class="form-control" id="formGroupExampleInput" placeholder="Example input">
-                </div>
-                <div class="form-group">
-                    <label for="formGroupExampleInput">Price</label>
-                    <input id = "price" type="text" class="form-control" id="formGroupExampleInput" placeholder="Example input">
-                </div>
-                <center>
-                    <button onclick = "sendFormToServer();"> Submit Order </button>
-                </center>
             </form>
         </div>
      </body>

@@ -80,10 +80,12 @@ function sendFormToServer() {
         console.log(price);
         console.log("About to submit!")
         $.post("/submit-request", 
-            {pickupLat: pickupLocation.lat, 
-                pickupLon: pickupLocation.lng, 
+            {pickupLat: pickUpLocation.lat, 
+                pickupLon: pickUpLocation.lng, 
                 dropoffLat: dropOffLocation.lat, 
-                dropffLon: dropOffLocation.lng, 
+                dropoffLon: dropOffLocation.lng, 
+                pickup: pickUpLoc,
+                dropoff: dropOffLoc,
                 item: item, time: time, price: price}, responseJSON => {
                 console.log(responseJSON);
         });

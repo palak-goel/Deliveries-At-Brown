@@ -1,4 +1,12 @@
 
+$(document).ready(() => {
+    console.log(localStorage.dropoff);
+    $("#pickup-loc").attr("placeholder", localStorage.pickup)
+    $("#dropoff-loc").attr("placeholder", localStorage.dropoff)
+    $("#item").attr("placeholder", localStorage.item)
+    $("#time").attr("placeholder", localStorage.time)
+    $("#price").attr("placeholder", localStorage.price)
+});
 //pick up location
 var pickup = {lat: 41.830556, lng: -71.402381}
 //drop off location

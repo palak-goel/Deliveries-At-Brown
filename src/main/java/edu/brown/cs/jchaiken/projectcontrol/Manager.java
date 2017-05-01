@@ -20,8 +20,8 @@ import spark.ModelAndView;
 import spark.QueryParamsMap;
 import spark.Request;
 import spark.Response;
+import spark.Route;
 import spark.Session;
-import spark.TemplateViewRoute;
 
 /**
  * A "controller" class for the application which handles the main user
@@ -106,9 +106,9 @@ public class Manager {
 		}
 	}
 
-	public static class OrderMaker implements TemplateViewRoute {
+	public static class OrderMaker implements Route {
 		@Override
-		public ModelAndView handle(Request req, Response res) {
+		public Object handle(Request req, Response res) {
 			QueryParamsMap qm = req.queryMap();
 			try {
 				double pLat = Double.parseDouble(qm.value("pickupLat"));

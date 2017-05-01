@@ -1,9 +1,3 @@
-$(document).ready(function() {
-    console.log( "ready!" );
-    //addEateries(map);
-
-});
-
 function initMap() {
     
     //Initial Map Centered Around Brown University
@@ -63,6 +57,15 @@ function sendFormToServer() {
 
     //user Location
 
+
+
+    function setCookie(cname, cval) {
+        console.log(document.cookie);
+        const add = document.cookie + ";" + cname + "=" + cval;
+        console.log(add)
+        document.cookie = add
+    }
+
     Promise.all(promises).then(function() {
         console.log("Pick Up:");
         console.log(pickUpLocation);
@@ -76,6 +79,18 @@ function sendFormToServer() {
         console.log(price);
         console.log("About to submit!!!!")
         console.log(pickUpLoc)
+
+        //set cookie
+        localStorage.pickupLat = pickUpLocation.lat
+        localStorage.pickupLon = pickUpLocation.lng 
+        localStorage.dropoffLat = dropOffLocation.lat
+        localStorage.dropoffLon = dropOffLocation.lng
+        localStorage.pickup = pickUpLoc
+        localStorage.dropoff = dropOffLoc
+        localStorage.item = item
+        localStorage.time = time
+        localStorage.price = price
+        console.log(document.cookie)
         $.post("/submit-request", 
             {pickupLat: pickUpLocation.lat, 
                 pickupLon: pickUpLocation.lng, 
@@ -85,7 +100,8 @@ function sendFormToServer() {
                 dropoff: dropOffLoc,
                 item: item, time: time, price: price}, responseJSON => {
                 console.log(responseJSON);
+                window.location.href = 'http://localhost:4567/requesting';
         });
     });
-    //window.location.href = 'http://localhost:4567/requesting';
+    
 }

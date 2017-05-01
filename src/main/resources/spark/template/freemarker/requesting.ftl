@@ -34,23 +34,23 @@
 				<fieldset disabled>
 				    <div class="form-group">
 				      <label for="disabledTextInput">Pick Up Location</label>
-				      <input type="text" id="disabledTextInput" class="form-control" placeholder="Disabled input">
+				      <input type="text" id = "pickup-loc" class="form-control" placeholder="Disabled input">
 				    </div>
 				    <div class="form-group">
 				      <label for="disabledTextInput">Drop Off Location</label>
-				      <input type="text" id="disabledTextInput" class="form-control" placeholder="Disabled input">
+				      <input type="text" id = "dropoff-loc" class="form-control" placeholder="Disabled input">
 				    </div>
 				    <div class="form-group">
 				      <label for="disabledTextInput">Item</label>
-				      <input type="text" id="disabledTextInput" class="form-control" placeholder="Disabled input">
+				      <input type="text" id = "item" class="form-control" placeholder="Disabled input">
 				    </div>
 				    <div class="form-group">
 				      <label for="disabledTextInput">Time</label>
-				      <input type="text" id="disabledTextInput" class="form-control" placeholder="Disabled input">
+				      <input type="text" id = "time" class="form-control" placeholder="Disabled input">
 				    </div>
 				    <div class="form-group">
 				      <label for="disabledTextInput">Price</label>
-				      <input type="text" id="disabledTextInput" class="form-control" placeholder="Disabled input">
+				      <input type="text" id = "price" class="form-control" placeholder="Disabled input">
 				    </div>
 			 	 </fieldset>
 			 	 <input type="submit"></input>

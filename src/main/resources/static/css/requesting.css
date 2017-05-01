@@ -1,10 +1,11 @@
+
 #top-banner {
   top: 0;
-    left: 0;
+  left: 0;
   background-color: black;
   width: 100%;
   padding-top: 10px;
-  padding-bottom: 10px;
+  padding-bottom: 1px;
 }
 
 #map {
@@ -38,4 +39,30 @@
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+}
+
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    display: block; 
+    text-align:center;
+}
+
+li {
+    float: left;
+}
+
+li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 16px;
+    text-decoration: none;
+}
+
+li a:hover {
+    color: #C0B283;
+    text-decoration: none;
 }

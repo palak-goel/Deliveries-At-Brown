@@ -11,12 +11,10 @@
     <link rel="stylesheet" type="text/css" href="css/request.css">
 
     <style>
-
-   
     h1 {
         color: white;
+        padding-left: 15px;
     }
-
     h3 {
         color: #C0B283;
     }

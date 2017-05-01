@@ -13,15 +13,21 @@
     <style>
     h1 {
         color: white;
+        padding-left: 15px;
     }
     h3 {
         color: #C0B283;
     }
     </style>
 </head>
-<body>
+<body style="margin: 0px;">
 	<div id = "top-banner">
 		<h1> Deliveries @ Brown </h1>
+		<ul>
+          <li><a href="http://localhost:4567/profile">Profile</a></li>
+          <li><a href="http://localhost:4567/request">Request</a></li>
+          <li><a href="http://localhost:4567/deliver">Deliver</a></li>
+        </ul>
 	</div>
 	<div id="map"></div>
 	<center>
@@ -34,23 +40,23 @@
 				<fieldset disabled>
 				    <div class="form-group">
 				      <label for="disabledTextInput">Pick Up Location</label>
-				      <input type="text" id = "pickup-loc" class="form-control" placeholder=${pickupLoc}>
+				      <input type="text" id = "pickup-loc" class="form-control" placeholder="text">
 				    </div>
 				    <div class="form-group">
 				      <label for="disabledTextInput">Drop Off Location</label>
-				      <input type="text" id = "dropoff-loc" class="form-control" placeholder=${dropoffLoc}>
+				      <input type="text" id = "dropoff-loc" class="form-control" placeholder="text">
 				    </div>
 				    <div class="form-group">
 				      <label for="disabledTextInput">Item</label>
-				      <input type="text" id = "item" class="form-control" placeholder=${item}>
+				      <input type="text" id = "item" class="form-control" placeholder="text">
 				    </div>
 				    <div class="form-group">
 				      <label for="disabledTextInput">Time</label>
-				      <input type="text" id = "time" class="form-control" placeholder=${time}>
+				      <input type="text" id = "time" class="form-control" placeholder="text">
 				    </div>
 				    <div class="form-group">
 				      <label for="disabledTextInput">Price</label>
-				      <input type="text" id = "price" class="form-control" placeholder=${price}>
+				      <input type="text" id = "price" class="form-control" placeholder="text">
 				    </div>
 			 	 </fieldset>
 			 	 <input type="submit"></input>

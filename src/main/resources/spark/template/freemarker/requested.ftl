@@ -13,6 +13,7 @@
     <style>
     h1 {
         color: white;
+        padding-left: 15px;
     }
     h3 {
         color: #C0B283;
@@ -20,17 +21,25 @@
     </style>
 
 </head>
-<body>
+<body style="margin: 0px;">
 	<div id = "top-banner">
         <h1>Deliveries @ Brown</h1>
+        <ul>
+          <li><a href="http://localhost:4567/profile">Profile</a></li>
+          <li><a href="http://localhost:4567/request">Request</a></li>
+          <li><a href="http://localhost:4567/deliver">Deliver</a></li>
+        </ul>
     </div>
 	<div id="map"></div>
 	<div id="right">
-        <h3 id = "deliverer-name">Deliverer</h3>
-        <h4 id = "deliverer-num">Phone Number</h5>
-        <textarea id = "text-message" placeholder = "Message Deliverer"></textarea>
-        <br>
-        <button type = "Submit" onclick = "sendTextToDeliverer();">Send</button>
+        <center>
+            <h2> Deliverer </h2>
+            <h3 id = "deliverer-name">Deliverer</h3>
+            <h4 id = "deliverer-num">Phone Number</h5>
+            <textarea id = "text-message" placeholder = "Message Deliverer"></textarea>
+            <br>
+            <button type = "Submit" onclick = "sendTextToDeliverer();">Send</button>
+        </center>
     </div>
 </body>
 </html>

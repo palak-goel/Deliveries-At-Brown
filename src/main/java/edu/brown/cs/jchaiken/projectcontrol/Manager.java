@@ -109,20 +109,24 @@ public class Manager {
 	public static class OrderMaker implements TemplateViewRoute {
 		@Override
 		public ModelAndView handle(Request req, Response res) {
+			System.out.println("Here!");
 			QueryParamsMap qm = req.queryMap();
 			try {
 				double pLat = Double.parseDouble(qm.value("pickupLat"));
 				double pLon = Double.parseDouble(qm.value("pickupLon"));
 				double dLat = Double.parseDouble(qm.value("dropoffLat"));
+				System.out.println(dLat);
 				double dLon = Double.parseDouble(qm.value("dropoffLon"));
 				String item = qm.value("item");
 				String time = qm.value("time");
 				String price = qm.value("price");
 				System.out.println("THIS IS IT" + qm.value("pickup"));
 				OrderWebSocket.sendMsg();
-				Map<String, Object> variables = new ImmutableMap.Builder<String, Object>()
+				/*Map<String, Object> variables = new ImmutableMap.Builder<String, Object>()
 						.put("pickupLoc", qm.value("pickup")).put("dropoffLoc", qm.value("dropoff")).put("price", price)
-						.put("time", time).put("item", item).build();
+						.put("time", time).put("item", item).build();*/
+				Map<String, Object> variables = new ImmutableMap.Builder<String, Object>()
+						.put("pickup", "1").build();
 				return new ModelAndView(variables, "requesting.ftl");
 			} catch (Exception e) {
 				e.printStackTrace();

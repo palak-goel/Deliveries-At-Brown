@@ -1,9 +1,3 @@
-$(document).ready(function() {
-    console.log( "ready!" );
-    //addEateries(map);
-
-});
-
 function initMap() {
     
     //Initial Map Centered Around Brown University

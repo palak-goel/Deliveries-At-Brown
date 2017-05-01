@@ -88,7 +88,7 @@ public class Gui {
     Spark.get("/login", new LoginHandler(""), freeMarker);
     Spark.post("/create-account", new AccountCreator());
     Spark.post("validate-login", new LoginValidator());
-    //Spark.post("/submit-request", new Manager.OrderMaker());
+    Spark.post("/submit-request", new Manager.OrderMaker(), freeMarker);
 
     // Palak's Stuff
     Spark.get("/request", (request, response) -> {
@@ -155,6 +155,15 @@ public class Gui {
       }
       Map<String, Object> variables = ImmutableMap.of("title", "Request");
       return freeMarker.render(new ModelAndView(variables, "maps.ftl"));
+    });
+    Spark.get("/profile", (request, response) -> {
+      String webId = request.session().attribute("webId");
+      if (webId == null || User.byWebId(webId) == null) {
+        response.redirect("/login?from=map");
+        return new LoginHandler("map").handle(request, response);
+      }
+      Map<String, Object> variables = ImmutableMap.of("title", "Request");
+      return freeMarker.render(new ModelAndView(variables, "profile.ftl"));
     });
   }
 

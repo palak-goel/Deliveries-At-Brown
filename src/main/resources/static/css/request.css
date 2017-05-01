@@ -16,7 +16,7 @@
 
 #form {
   height: 600px;
-  width: 28%;
+  width: auto;
   float: right;
   padding-right: 10px;
 }

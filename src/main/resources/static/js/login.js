@@ -4,6 +4,7 @@ loggedIn = false,
 card;
 
 function login() {
+	console.log('here')
 	let params = {
 		id: document.getElementById("account_id").value,
 		password: document.getElementById("account_password").value,

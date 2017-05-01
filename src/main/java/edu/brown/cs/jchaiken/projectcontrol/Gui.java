@@ -99,7 +99,7 @@ public class Gui {
 		Spark.post("check-ip", new IpChecker());
 		Spark.post("/create-account", new AccountCreator());
 		Spark.post("validate-login", new LoginValidator());
-		Spark.post("/submit-request", new Manager.OrderMaker());
+		Spark.post("/submit-request", new Manager.OrderMaker(), freeMarker);
 
 		// Palak's Stuff
 		Spark.get("/request", (request, response) -> {

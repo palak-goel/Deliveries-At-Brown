@@ -78,7 +78,8 @@ function sendFormToServer() {
         console.log(time);
         console.log("Price:");
         console.log(price);
-        console.log("About to submit!")
+        console.log("About to submit!!!!")
+        console.log(pickUpLoc)
         $.post("/submit-request", 
             {pickupLat: pickUpLocation.lat, 
                 pickupLon: pickUpLocation.lng, 
@@ -90,5 +91,5 @@ function sendFormToServer() {
                 console.log(responseJSON);
         });
     });
-    window.location.href = 'http://localhost:4567/requesting';
+    //window.location.href = 'http://localhost:4567/requesting';
 }

@@ -10,16 +10,18 @@ import java.util.concurrent.TimeUnit;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 
 import edu.brown.cs.jchaiken.deliveryobject.Order;
 import edu.brown.cs.jchaiken.deliveryobject.PendingOrder;
 import edu.brown.cs.jchaiken.deliveryobject.User;
+import spark.ModelAndView;
 import spark.QueryParamsMap;
 import spark.Request;
 import spark.Response;
-import spark.Route;
 import spark.Session;
+import spark.TemplateViewRoute;
 
 /**
  * A "controller" class for the application which handles the main user
@@ -104,20 +106,29 @@ public class Manager {
 		}
 	}
 
-	public static class OrderMaker implements Route {
+	public static class OrderMaker implements TemplateViewRoute {
 		@Override
-		public Object handle(Request arg0, Response arg1) {
-			Map<String, Object> response = new HashMap<>();
-			QueryParamsMap qm = arg0.queryMap();
-			System.out.println(qm.value("pickupLat"));
-			System.out.println(qm.value("pickupLon"));
-			System.out.println(qm.value("dropoffLat"));
-			System.out.println(qm.value("dropoffLon"));
-			System.out.println(qm.value("item"));
-			System.out.println(qm.value("time"));
-			System.out.println(qm.value("price"));
-			OrderWebSocket.sendMsg();
-			return GSON.toJson(response);
+		public ModelAndView handle(Request req, Response res) {
+			QueryParamsMap qm = req.queryMap();
+			try {
+				double pLat = Double.parseDouble(qm.value("pickupLat"));
+				double pLon = Double.parseDouble(qm.value("pickupLon"));
+				double dLat = Double.parseDouble(qm.value("dropoffLat"));
+				double dLon = Double.parseDouble(qm.value("dropoffLon"));
+				String item = qm.value("item");
+				String time = qm.value("time");
+				String price = qm.value("price");
+				System.out.println("THIS IS IT" + qm.value("pickup"));
+				OrderWebSocket.sendMsg();
+				Map<String, Object> variables = new ImmutableMap.Builder<String, Object>()
+						.put("pickupLoc", qm.value("pickup")).put("dropoffLoc", qm.value("dropoff")).put("price", price)
+						.put("time", time).put("item", item).build();
+				return new ModelAndView(variables, "requesting.ftl");
+			} catch (Exception e) {
+				e.printStackTrace();
+				return null;
+			}
+
 		}
 	}
 }

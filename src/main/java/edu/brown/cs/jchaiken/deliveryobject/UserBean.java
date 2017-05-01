@@ -3,6 +3,7 @@ package edu.brown.cs.jchaiken.deliveryobject;
 import edu.brown.cs.jchaiken.database.Database;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -323,10 +324,13 @@ final class UserBean extends DeliveryObjectBean<User> implements User {
   }
 
   private static final int TEN = 10;
-  private static final int ID_LENGTH = 15;
+  private static final int LENGTH_1 = 15;
+  private static int idLength = LENGTH_1;
+  private static double maxSize = Math.pow(TEN, LENGTH_1);
   private static String getNextWebId() {
     String id = "";
-    for (int x = 0; x < ID_LENGTH; x++) {
+    checkId();
+    for (int x = 0; x < idLength; x++) {
       int rand = ThreadLocalRandom.current().nextInt(0, TEN);
       id = id + String.valueOf(rand);
     }
@@ -335,5 +339,29 @@ final class UserBean extends DeliveryObjectBean<User> implements User {
     }
     webIds.add(id);
     return id;
+  }
+
+  private static final String ID_Q = "SELECT url FROM user";
+  private static void checkId() {
+    if (webIds.size() == 0) {
+      try (PreparedStatement prep = Database.getConnection()
+          .prepareStatement(ID_Q)) {
+        try (ResultSet rs = prep.executeQuery()) {
+          while (rs.next()) {
+            String id = rs.getString(1);
+            if (id.length() == idLength) {
+              webIds.add(rs.getString(1));
+            }
+          }
+        }
+      } catch (SQLException e) {
+        e.printStackTrace();
+      }
+    }
+    if (webIds.size() == maxSize) {
+      idLength++;
+      maxSize = Math.pow(TEN, idLength);
+      webIds = Collections.synchronizedSet(new HashSet<>());
+    }
   }
 }

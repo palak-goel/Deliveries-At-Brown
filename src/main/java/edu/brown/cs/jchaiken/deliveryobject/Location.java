@@ -48,6 +48,17 @@ public interface Location extends DeliveryObject {
   }
 
   /**
+   * Returns a new location, acting as a constructor for location bean.
+   * @param id the location's id, must be unique.
+   * @param latitude the latitude.
+   * @param longitude the longitude.
+   * @return the location object.
+   */
+  static Location newLocation(String id, double latitude, double longitude) {
+    return new LocationBean(id, latitude, longitude);
+  }
+
+  /**
    * Returns a location, given its latitude and longitude.
    * @param lat the latitude
    * @param lng the longitude

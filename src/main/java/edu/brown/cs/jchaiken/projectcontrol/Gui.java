@@ -41,9 +41,6 @@ public class Gui {
   private static final Gson GSON = new Gson();
   private static final int MAX_CACHE = 50000;
   private static final int TIMEOUT = 120;
-  private static Cache<String, String> iPCache = CacheBuilder
-      .newBuilder().maximumSize(MAX_CACHE)
-      .expireAfterWrite(TIMEOUT, TimeUnit.MINUTES).build();
   private static final Manager MANAGER = new Manager();
 
   /**
@@ -190,9 +187,8 @@ public class Gui {
             .setOrdererRatings(new ArrayList<Double>())
             .build();
         user.addToDatabase();
-        iPCache.put(arg0.ip(), user.getWebId());
+        arg0.session().attribute("webId", user.getWebId());
         toServer.put("success", true);
-        toServer.put("url", user.getWebId());
       }
       return GSON.toJson(toServer);
     }
@@ -212,9 +208,9 @@ public class Gui {
       String password = qm.value("password");
       Map<String, Object> toServer = new HashMap<>();
       if (User.userValidator(id, password)) {
+        User user = User.byId(id);
         toServer.put("result", true);
-        toServer.put("url", User.byId(id).getWebId());
-        iPCache.put(arg0.ip(), User.byId(id).getWebId());
+        arg0.session().attribute("webId", user.getWebId());
       } else {
         toServer.put("result", false);
       }

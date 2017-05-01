@@ -26,6 +26,7 @@ import spark.QueryParamsMap;
 import spark.Request;
 import spark.Response;
 import spark.Route;
+import spark.Session;
 import spark.Spark;
 import spark.TemplateViewRoute;
 import spark.template.freemarker.FreeMarkerEngine;
@@ -38,24 +39,23 @@ import spark.template.freemarker.FreeMarkerEngine;
  *
  */
 public class Gui {
-  private static final Gson GSON = new Gson();
-  private static final int MAX_CACHE = 50000;
-  private static final int TIMEOUT = 120;
-  private static Cache<String, String> iPCache = CacheBuilder
-      .newBuilder().maximumSize(MAX_CACHE)
-      .expireAfterWrite(TIMEOUT, TimeUnit.MINUTES).build();
-  private static final Manager MANAGER = new Manager();
+	private static final Gson GSON = new Gson();
+	private static final int MAX_CACHE = 50000;
+	private static final int TIMEOUT = 120;
+	private static Cache<String, String> iPCache = CacheBuilder.newBuilder().maximumSize(MAX_CACHE)
+			.expireAfterWrite(TIMEOUT, TimeUnit.MINUTES).build();
+	private static final Manager MANAGER = new Manager();
 
-  /**
-   * Instantiates a Gui instance on the specified port number.
-   *
-   * @param port
-   *            the port used for hosting.
+	/**
+	 * Instantiates a Gui instance on the specified port number.
+	 *
+	 * @param port
+	 *            the port used for hosting.
 	 */
-  public Gui(int port) {
-    this.runSparkServer(port);
-    Stripe.apiKey = "sk_test_esEbCKY1kAoxod12YXCJe0IS";
-  }
+	public Gui(int port) {
+		this.runSparkServer(port);
+		Stripe.apiKey = "sk_test_esEbCKY1kAoxod12YXCJe0IS";
+	}
 
 	/**
 	 * Stops the server.
@@ -86,48 +86,51 @@ public class Gui {
 	 * @param port
 	 *            the port to run on.
 	 */
-  private void runSparkServer(int port) {
-    Spark.port(port);
-    Spark.externalStaticFileLocation("src/main/resources/static");
-    Spark.exception(Exception.class, new ExceptionPrinter());
-    FreeMarkerEngine freeMarker = createEngine();
+	private void runSparkServer(int port) {
+		Spark.port(port);
+		Spark.externalStaticFileLocation("src/main/resources/static");
+		Spark.exception(Exception.class, new ExceptionPrinter());
+		FreeMarkerEngine freeMarker = createEngine();
+
+		Spark.webSocket("/deliverysocket", OrderWebSocket.class);
 
 		// Setup Spark Routes
-    Spark.get("/login", new LoginHandler(), freeMarker);
-    Spark.post("check-ip", new IpChecker());
-    Spark.post("/create-account", new AccountCreator());
-    Spark.post("validate-login", new LoginValidator());
+		Spark.get("/login", new LoginHandler(), freeMarker);
+		Spark.post("check-ip", new IpChecker());
+		Spark.post("/create-account", new AccountCreator());
+		Spark.post("validate-login", new LoginValidator());
+		Spark.post("/submit-request", new Manager.OrderMaker());
 
-    //Palak's Stuff
-    Spark.get("/request", (request, response) -> {
-      Map<String, Object> variables = ImmutableMap.of("title", "Request");
-      return freeMarker.render(new ModelAndView(variables, "request.ftl"));
-    });
-    Spark.get("/requesting", (request, response) -> {
-      Map<String, Object> variables = ImmutableMap.of("title", "Request");
-      return freeMarker.render(new ModelAndView(variables, "requesting.ftl"));
-    });
-    Spark.get("/requested", (request, response) -> {
-      Map<String, Object> variables = ImmutableMap.of("title", "Request");
-      return freeMarker.render(new ModelAndView(variables, "requested.ftl"));
-    });
-    Spark.get("/deliver", (request, response) -> {
-      Map<String, Object> variables = ImmutableMap.of("title", "Request");
-      return freeMarker.render(new ModelAndView(variables, "deliver.ftl"));
-    });
-    Spark.get("/delivering", (request, response) -> {
-      Map<String, Object> variables = ImmutableMap.of("title", "Request");
-      return freeMarker.render(new ModelAndView(variables, "delivering.ftl"));
-    });
-    Spark.get("/delivered", (request, response) -> {
-      Map<String, Object> variables = ImmutableMap.of("title", "Request");
-      return freeMarker.render(new ModelAndView(variables, "delivered.ftl"));
-    });
-    Spark.get("/map", (request, response) -> {
-      Map<String, Object> variables = ImmutableMap.of("title", "Request");
-      return freeMarker.render(new ModelAndView(variables, "maps.ftl"));
-    });
-  }
+		// Palak's Stuff
+		Spark.get("/request", (request, response) -> {
+			Map<String, Object> variables = ImmutableMap.of("title", "Request");
+			return freeMarker.render(new ModelAndView(variables, "request.ftl"));
+		});
+		Spark.get("/requesting", (request, response) -> {
+			Map<String, Object> variables = ImmutableMap.of("title", "Request");
+			return freeMarker.render(new ModelAndView(variables, "requesting.ftl"));
+		});
+		Spark.get("/requested", (request, response) -> {
+			Map<String, Object> variables = ImmutableMap.of("title", "Request");
+			return freeMarker.render(new ModelAndView(variables, "requested.ftl"));
+		});
+		Spark.get("/deliver", (request, response) -> {
+			Map<String, Object> variables = ImmutableMap.of("title", "Request");
+			return freeMarker.render(new ModelAndView(variables, "deliver.ftl"));
+		});
+		Spark.get("/delivering", (request, response) -> {
+			Map<String, Object> variables = ImmutableMap.of("title", "Request");
+			return freeMarker.render(new ModelAndView(variables, "delivering.ftl"));
+		});
+		Spark.get("/delivered", (request, response) -> {
+			Map<String, Object> variables = ImmutableMap.of("title", "Request");
+			return freeMarker.render(new ModelAndView(variables, "delivered.ftl"));
+		});
+		Spark.get("/map", (request, response) -> {
+			Map<String, Object> variables = ImmutableMap.of("title", "Request");
+			return freeMarker.render(new ModelAndView(variables, "maps.ftl"));
+		});
+	}
 
 	/**
 	 * Handler for the login page.
@@ -135,15 +138,15 @@ public class Gui {
 	 * @author jacksonchaiken
 	 *
 	 */
-  private static class LoginHandler implements TemplateViewRoute {
-    @Override
+	private static class LoginHandler implements TemplateViewRoute {
+		@Override
 		public ModelAndView handle(Request req, Response res) {
-      Map<String, Object> variables = ImmutableMap.of("title", "Login");
-      return new ModelAndView(variables, "login.ftl");
-    }
-  }
+			Map<String, Object> variables = ImmutableMap.of("title", "Login");
+			return new ModelAndView(variables, "login.ftl");
+		}
+	}
 
-  private static final int TEST_CHARGE = 50;
+	private static final int TEST_CHARGE = 50;
 
 	/**
 	 * Handles account creation and validation.
@@ -151,52 +154,53 @@ public class Gui {
 	 * @author jacksonchaiken
 	 *
 	 */
-  private static class AccountCreator implements Route {
-    @Override
-    public Object handle(Request arg0, Response arg1) throws Exception {
-      QueryParamsMap qm = arg0.queryMap();
-      String name = qm.value("name");
-      String email = qm.value("email");
-      String stripeToken = qm.value("stripe");
-      String cell = qm.value("cell");
-      int password = qm.value("password").hashCode();
-      Map<String, Object> toServer = new HashMap<>();
-      if (User.accountExists(email)) {
-        toServer.put("success", false);
-        toServer.put("error", "Account already exists");
-      } else {
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("amount", TEST_CHARGE);
-        params.put("currency", "usd");
-        params.put("description", "Test charge");
-        params.put("source", stripeToken);
-        try {
-          Charge charge = Charge.create(params);
-          if (!charge.getPaid()) {
-            toServer.put("error", "stripe error");
-          } else {
-            charge.refund();
-          }
-        } catch (Exception e) {
-          e.printStackTrace();
-        }
-        UserBuilder builder = new UserBuilder();
-        User user = builder.setId(email).setName(name)
-            .setPassword(password).setCell(cell)
-            .setPayment(stripeToken).setOrdererRatings(new ArrayList<Double>())
-            .setDelivererRatings(new ArrayList<Double>())
-            .setStatus(AccountStatus.ACTIVE)
-            .setDelivererRatings(new ArrayList<Double>())
-            .setOrdererRatings(new ArrayList<Double>())
-            .build();
-        user.addToDatabase();
-        iPCache.put(arg0.ip(), user.getWebId());
-        toServer.put("success", true);
-        toServer.put("url", user.getWebId());
-      }
-      return GSON.toJson(toServer);
-    }
-  }
+	private static class AccountCreator implements Route {
+		@Override
+		public Object handle(Request arg0, Response arg1) throws Exception {
+			QueryParamsMap qm = arg0.queryMap();
+			String name = qm.value("name");
+			String email = qm.value("email");
+			String stripeToken = qm.value("stripe");
+			String cell = qm.value("cell");
+			int password = qm.value("password").hashCode();
+			Map<String, Object> toServer = new HashMap<>();
+			if (User.accountExists(email)) {
+				toServer.put("success", false);
+				toServer.put("error", "Account already exists");
+			} else {
+				Map<String, Object> params = new HashMap<String, Object>();
+				params.put("amount", TEST_CHARGE);
+				params.put("currency", "usd");
+				params.put("description", "Test charge");
+				params.put("source", stripeToken);
+				try {
+					Charge charge = Charge.create(params);
+					if (!charge.getPaid()) {
+						toServer.put("error", "stripe error");
+					} else {
+						charge.refund();
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				UserBuilder builder = new UserBuilder();
+				User user = builder.setId(email).setName(name).setPassword(password).setCell(cell)
+						.setPayment(stripeToken).setOrdererRatings(new ArrayList<Double>())
+						.setDelivererRatings(new ArrayList<Double>()).setStatus(AccountStatus.ACTIVE)
+						.setDelivererRatings(new ArrayList<Double>()).setOrdererRatings(new ArrayList<Double>())
+						.build();
+				user.addToDatabase();
+				iPCache.put(arg0.ip(), user.getWebId());
+				toServer.put("success", true);
+				toServer.put("url", user.getWebId());
+
+				Session s = arg0.session();
+				Manager.saveSession(s.id(), s);
+				s.attribute("user", user.getWebId());
+			}
+			return GSON.toJson(toServer);
+		}
+	}
 
 	/**
 	 * Handles login requests to the server.
@@ -204,23 +208,27 @@ public class Gui {
 	 * @author jacksonchaiken
 	 *
 	 */
-  private static class LoginValidator implements Route {
-    @Override
+	private static class LoginValidator implements Route {
+		@Override
 		public Object handle(Request arg0, Response arg1) {
-      QueryParamsMap qm = arg0.queryMap();
-      String id = qm.value("id");
-      String password = qm.value("password");
-      Map<String, Object> toServer = new HashMap<>();
-      if (User.userValidator(id, password)) {
-        toServer.put("result", true);
-        toServer.put("url", User.byId(id).getWebId());
-        iPCache.put(arg0.ip(), User.byId(id).getWebId());
-      } else {
-        toServer.put("result", false);
-      }
-      return GSON.toJson(toServer);
-    }
-  }
+			QueryParamsMap qm = arg0.queryMap();
+			String id = qm.value("id");
+			String password = qm.value("password");
+			Map<String, Object> toServer = new HashMap<>();
+			if (User.userValidator(id, password)) {
+				toServer.put("result", true);
+				toServer.put("url", User.byId(id).getWebId());
+				iPCache.put(arg0.ip(), User.byId(id).getWebId());
+
+				Session s = arg0.session();
+				Manager.saveSession(s.id(), s);
+				s.attribute("user", User.byId(id).getWebId());
+			} else {
+				toServer.put("result", false);
+			}
+			return GSON.toJson(toServer);
+		}
+	}
 
 	/**
 	 * Checks the IP address to see if it is logged in.
@@ -228,18 +236,18 @@ public class Gui {
 	 * @author jacksonchaiken
 	 *
 	 */
-  private static class IpChecker implements Route {
-    @Override
+	private static class IpChecker implements Route {
+		@Override
 		public Object handle(Request arg0, Response arg1) {
-      Map<String, Object> response = new HashMap<>();
-      if (iPCache.getIfPresent(arg0.ip()) == null) {
-        response.put("valid", false);
-      } else {
-        response.put("valid", true);
-      }
-      return GSON.toJson(response);
-    }
-  }
+			Map<String, Object> response = new HashMap<>();
+			if (iPCache.getIfPresent(arg0.ip()) == null) {
+				response.put("valid", false);
+			} else {
+				response.put("valid", true);
+			}
+			return GSON.toJson(response);
+		}
+	}
 
 	/**
 	 * Handler for exceptions.
@@ -247,18 +255,18 @@ public class Gui {
 	 * @author jacksonchaiken
 	 *
 	 */
-  private static class ExceptionPrinter implements ExceptionHandler {
-    @Override
+	private static class ExceptionPrinter implements ExceptionHandler {
+		@Override
 		public void handle(Exception e, Request req, Response res) {
-      res.status(500);
-      StringWriter stacktrace = new StringWriter();
+			res.status(500);
+			StringWriter stacktrace = new StringWriter();
 			// req.session().
-      try (PrintWriter pw = new PrintWriter(stacktrace)) {
-        pw.println("<pre>");
-        e.printStackTrace(pw);
-        pw.println("</pre>");
-      }
-      res.body(stacktrace.toString());
-    }
-  }
+			try (PrintWriter pw = new PrintWriter(stacktrace)) {
+				pw.println("<pre>");
+				e.printStackTrace(pw);
+				pw.println("</pre>");
+			}
+			res.body(stacktrace.toString());
+		}
+	}
 }

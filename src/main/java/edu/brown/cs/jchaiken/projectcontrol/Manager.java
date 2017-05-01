@@ -109,13 +109,14 @@ public class Manager {
 		public Object handle(Request arg0, Response arg1) {
 			Map<String, Object> response = new HashMap<>();
 			QueryParamsMap qm = arg0.queryMap();
-			double pickupT = Double.parseDouble(qm.value("latLongP"));
-			// double pickupT = Double.parseDouble(qm.value("latLongP"));
-			// double pickupT = Double.parseDouble(qm.value("latLongP"));
-			qm.value("dropoff");
-			qm.value("item");
-			qm.value("time");
-			qm.value("price");
+			System.out.println(qm.value("pickupLat"));
+			System.out.println(qm.value("pickupLon"));
+			System.out.println(qm.value("dropoffLat"));
+			System.out.println(qm.value("dropoffLon"));
+			System.out.println(qm.value("item"));
+			System.out.println(qm.value("time"));
+			System.out.println(qm.value("price"));
+			OrderWebSocket.sendMsg();
 			return GSON.toJson(response);
 		}
 	}

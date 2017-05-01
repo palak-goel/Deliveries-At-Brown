@@ -39,19 +39,12 @@ import spark.template.freemarker.FreeMarkerEngine;
  *
  */
 public class Gui {
-<<<<<<< HEAD
-  private static final Gson GSON = new Gson();
-  private static final int MAX_CACHE = 50000;
-  private static final int TIMEOUT = 120;
-  private static final Manager MANAGER = new Manager();
-=======
 	private static final Gson GSON = new Gson();
 	private static final int MAX_CACHE = 50000;
 	private static final int TIMEOUT = 120;
 	private static Cache<String, String> iPCache = CacheBuilder.newBuilder().maximumSize(MAX_CACHE)
 			.expireAfterWrite(TIMEOUT, TimeUnit.MINUTES).build();
 	private static final Manager MANAGER = new Manager();
->>>>>>> de3dfc175d70e0aece8244b0c73b27f640f3c510
 
 	/**
 	 * Instantiates a Gui instance on the specified port number.
@@ -161,53 +154,6 @@ public class Gui {
 	 * @author jacksonchaiken
 	 *
 	 */
-<<<<<<< HEAD
-  private static class AccountCreator implements Route {
-    @Override
-    public Object handle(Request arg0, Response arg1) throws Exception {
-      QueryParamsMap qm = arg0.queryMap();
-      String name = qm.value("name");
-      String email = qm.value("email");
-      String stripeToken = qm.value("stripe");
-      String cell = qm.value("cell");
-      int password = qm.value("password").hashCode();
-      Map<String, Object> toServer = new HashMap<>();
-      if (User.accountExists(email)) {
-        toServer.put("success", false);
-        toServer.put("error", "Account already exists");
-      } else {
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("amount", TEST_CHARGE);
-        params.put("currency", "usd");
-        params.put("description", "Test charge");
-        params.put("source", stripeToken);
-        try {
-          Charge charge = Charge.create(params);
-          if (!charge.getPaid()) {
-            toServer.put("error", "stripe error");
-          } else {
-            charge.refund();
-          }
-        } catch (Exception e) {
-          e.printStackTrace();
-        }
-        UserBuilder builder = new UserBuilder();
-        User user = builder.setId(email).setName(name)
-            .setPassword(password).setCell(cell)
-            .setPayment(stripeToken).setOrdererRatings(new ArrayList<Double>())
-            .setDelivererRatings(new ArrayList<Double>())
-            .setStatus(AccountStatus.ACTIVE)
-            .setDelivererRatings(new ArrayList<Double>())
-            .setOrdererRatings(new ArrayList<Double>())
-            .build();
-        user.addToDatabase();
-        arg0.session().attribute("webId", user.getWebId());
-        toServer.put("success", true);
-      }
-      return GSON.toJson(toServer);
-    }
-  }
-=======
 	private static class AccountCreator implements Route {
 		@Override
 		public Object handle(Request arg0, Response arg1) throws Exception {
@@ -255,7 +201,6 @@ public class Gui {
 			return GSON.toJson(toServer);
 		}
 	}
->>>>>>> de3dfc175d70e0aece8244b0c73b27f640f3c510
 
 	/**
 	 * Handles login requests to the server.
@@ -266,22 +211,6 @@ public class Gui {
 	private static class LoginValidator implements Route {
 		@Override
 		public Object handle(Request arg0, Response arg1) {
-<<<<<<< HEAD
-      QueryParamsMap qm = arg0.queryMap();
-      String id = qm.value("id");
-      String password = qm.value("password");
-      Map<String, Object> toServer = new HashMap<>();
-      if (User.userValidator(id, password)) {
-        User user = User.byId(id);
-        toServer.put("result", true);
-        arg0.session().attribute("webId", user.getWebId());
-      } else {
-        toServer.put("result", false);
-      }
-      return GSON.toJson(toServer);
-    }
-  }
-=======
 			QueryParamsMap qm = arg0.queryMap();
 			String id = qm.value("id");
 			String password = qm.value("password");
@@ -300,7 +229,6 @@ public class Gui {
 			return GSON.toJson(toServer);
 		}
 	}
->>>>>>> de3dfc175d70e0aece8244b0c73b27f640f3c510
 
 	/**
 	 * Checks the IP address to see if it is logged in.

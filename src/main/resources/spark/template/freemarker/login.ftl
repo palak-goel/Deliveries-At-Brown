@@ -1,15 +1,16 @@
 <#assign content>
 <h1>Login</h1>
-<input type = "text" id = "account_id" placeholder = "Enter email">
-<input type = "text" id = "account_password" placeholder = "Enter password">
+<input type = "email" id = "account_id" placeholder = "Enter email">
+<input type = "password" id = "account_password" placeholder = "Enter password">
 <input button onclick = "login()" type="submit" value="Login">
 <h1> Or create account </h1>
 <input type = "text" name = "first name" id = "first_name" placeholder = "First name">
 <input type = "text" name = "last_name" id = "last_name" placeholder = "Last name"> <br>
-<input type = "text" name = "new_email" id = "new_email" placeholder = "Email"> <br>
+<input type = "email" name = "new_email" id = "new_email" placeholder = "Email"> <br>
 <input type = "text" name = "cell" id = "cell" placeholder = "Phone Number"> <br>
-<input type = "text" name = "password" id = "password" placeholder = "Password"> <br>
-<input type = "text" id = "password_check" placeholder = "Re-enter Password"> <br>
+<input type = "password" name = "password" id = "password" placeholder = "Password"> <br>
+<input type = "password" id = "password_check" placeholder = "Re-enter Password"> <br>
+<input type = "hidden" name = "from" id = "from" value = ${from}>
   <div class="form-row">
     <label for="card-element">
       Credit or debit card

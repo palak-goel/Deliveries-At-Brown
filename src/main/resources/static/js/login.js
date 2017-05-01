@@ -13,7 +13,14 @@ function login() {
 		if ($responseObject.result == true) {
 			console.log("good login")
 			//bounce to home page
-    		window.location.replace("/home/" + $responseObject.url);
+			from = document.getElementById("from").value;
+			console.log(from)
+    		if (from == "") {
+    			//go to home page
+    			window.location.replace("/home")
+    		} else {
+    			window.location.replace("/" + from);
+    		}
 
 		} else {
 			console.log("bad login")
@@ -37,8 +44,15 @@ function createAccount(token) {
 		if ($responseObject.success == true) {
 			//go to main page
 			console.log("good")
-			window.location.replace("/home/" + $responseObject.url);
-		} else {
+			console.log(document.getElementById("from").value);
+			from = document.getElementById("from").value;
+    		if (from == "") {
+    			//go to home page
+    			window.location.replace("/home")
+    		} else {
+    			window.location.replace("/" + from);
+    		}		
+    	} else {
 			console.log("bad")
 			//display error
 		}
@@ -72,6 +86,7 @@ document.getElementById("create_account").addEventListener('click', function(e) 
 });
 
 $(document).ready(() => {
+	console.log(document.getElementById("from").value);
 	card = elements.create('card');
 	// Add an instance of the card UI component into the `card-element` <div>
 	card.mount('#card-element');

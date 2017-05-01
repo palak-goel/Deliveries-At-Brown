@@ -7,10 +7,7 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import com.stripe.Stripe;
@@ -26,7 +23,6 @@ import spark.QueryParamsMap;
 import spark.Request;
 import spark.Response;
 import spark.Route;
-import spark.Session;
 import spark.Spark;
 import spark.TemplateViewRoute;
 import spark.template.freemarker.FreeMarkerEngine;
@@ -40,10 +36,6 @@ import spark.template.freemarker.FreeMarkerEngine;
  */
 public class Gui {
 	private static final Gson GSON = new Gson();
-	private static final int MAX_CACHE = 50000;
-	private static final int TIMEOUT = 120;
-	private static Cache<String, String> iPCache = CacheBuilder.newBuilder().maximumSize(MAX_CACHE)
-			.expireAfterWrite(TIMEOUT, TimeUnit.MINUTES).build();
 	private static final Manager MANAGER = new Manager();
 
 	/**
@@ -91,42 +83,76 @@ public class Gui {
 		Spark.externalStaticFileLocation("src/main/resources/static");
 		Spark.exception(Exception.class, new ExceptionPrinter());
 		FreeMarkerEngine freeMarker = createEngine();
-
 		Spark.webSocket("/deliverysocket", OrderWebSocket.class);
 
 		// Setup Spark Routes
-		Spark.get("/login", new LoginHandler(), freeMarker);
-		Spark.post("check-ip", new IpChecker());
+
+		Spark.get("/login", new LoginHandler(""), freeMarker);
 		Spark.post("/create-account", new AccountCreator());
 		Spark.post("validate-login", new LoginValidator());
 		Spark.post("/submit-request", new Manager.OrderMaker(), freeMarker);
 
 		// Palak's Stuff
 		Spark.get("/request", (request, response) -> {
+			String webId = request.session().attribute("webId");
+			if (webId == null || User.byWebId(webId) == null) {
+				response.redirect("/login?from=request");
+				return new LoginHandler("request").handle(request, response);
+			}
 			Map<String, Object> variables = ImmutableMap.of("title", "Request");
 			return freeMarker.render(new ModelAndView(variables, "request.ftl"));
 		});
 		Spark.get("/requesting", (request, response) -> {
+			String webId = request.session().attribute("webId");
+			if (webId == null || User.byWebId(webId) == null) {
+				response.redirect("/login?from=requesting");
+				return new LoginHandler("requesting").handle(request, response);
+			}
 			Map<String, Object> variables = ImmutableMap.of("title", "Request");
 			return freeMarker.render(new ModelAndView(variables, "requesting.ftl"));
 		});
 		Spark.get("/requested", (request, response) -> {
+			String webId = request.session().attribute("webId");
+			if (webId == null || User.byWebId(webId) == null) {
+				response.redirect("/login?from=requested");
+				return new LoginHandler("requested").handle(request, response);
+			}
 			Map<String, Object> variables = ImmutableMap.of("title", "Request");
 			return freeMarker.render(new ModelAndView(variables, "requested.ftl"));
 		});
 		Spark.get("/deliver", (request, response) -> {
+			String webId = request.session().attribute("webId");
+			if (webId == null || User.byWebId(webId) == null) {
+				response.redirect("/login?from=deliver");
+				return new LoginHandler("deliver").handle(request, response);
+			}
 			Map<String, Object> variables = ImmutableMap.of("title", "Request");
 			return freeMarker.render(new ModelAndView(variables, "deliver.ftl"));
 		});
 		Spark.get("/delivering", (request, response) -> {
+			String webId = request.session().attribute("webId");
+			if (webId == null || User.byWebId(webId) == null) {
+				response.redirect("/login?from=delivering");
+				return new LoginHandler("delivering").handle(request, response);
+			}
 			Map<String, Object> variables = ImmutableMap.of("title", "Request");
 			return freeMarker.render(new ModelAndView(variables, "delivering.ftl"));
 		});
 		Spark.get("/delivered", (request, response) -> {
+			String webId = request.session().attribute("webId");
+			if (webId == null || User.byWebId(webId) == null) {
+				response.redirect("/login?from=delivered");
+				return new LoginHandler("delivered").handle(request, response);
+			}
 			Map<String, Object> variables = ImmutableMap.of("title", "Request");
 			return freeMarker.render(new ModelAndView(variables, "delivered.ftl"));
 		});
 		Spark.get("/map", (request, response) -> {
+			String webId = request.session().attribute("webId");
+			if (webId == null || User.byWebId(webId) == null) {
+				response.redirect("/login?from=map");
+				return new LoginHandler("map").handle(request, response);
+			}
 			Map<String, Object> variables = ImmutableMap.of("title", "Request");
 			return freeMarker.render(new ModelAndView(variables, "maps.ftl"));
 		});
@@ -139,9 +165,21 @@ public class Gui {
 	 *
 	 */
 	private static class LoginHandler implements TemplateViewRoute {
+		private String from = "";
+
+		LoginHandler(String redirect) {
+			if (redirect == null) {
+				throw new IllegalArgumentException("redirect is null");
+			}
+			from = redirect;
+		}
+
 		@Override
 		public ModelAndView handle(Request req, Response res) {
-			Map<String, Object> variables = ImmutableMap.of("title", "Login");
+			Map<String, Object> variables = new HashMap<>();
+			variables.put("title", "Login");
+			variables.put("from", from);
+			System.out.println(from);
 			return new ModelAndView(variables, "login.ftl");
 		}
 	}
@@ -190,13 +228,9 @@ public class Gui {
 						.setDelivererRatings(new ArrayList<Double>()).setOrdererRatings(new ArrayList<Double>())
 						.build();
 				user.addToDatabase();
-				iPCache.put(arg0.ip(), user.getWebId());
+				arg0.session().attribute("webId", user.getWebId());
+				Manager.saveSession(arg0.session().id(), arg0.session());
 				toServer.put("success", true);
-				toServer.put("url", user.getWebId());
-
-				Session s = arg0.session();
-				Manager.saveSession(s.id(), s);
-				s.attribute("user", user.getWebId());
 			}
 			return GSON.toJson(toServer);
 		}
@@ -217,35 +251,13 @@ public class Gui {
 			Map<String, Object> toServer = new HashMap<>();
 			if (User.userValidator(id, password)) {
 				toServer.put("result", true);
-				toServer.put("url", User.byId(id).getWebId());
-				iPCache.put(arg0.ip(), User.byId(id).getWebId());
-
-				Session s = arg0.session();
-				Manager.saveSession(s.id(), s);
-				s.attribute("user", User.byId(id).getWebId());
+				User user = User.byId(id);
+				arg0.session().attribute("webId", user.getWebId());
+				Manager.saveSession(arg0.session().id(), arg0.session());
 			} else {
 				toServer.put("result", false);
 			}
 			return GSON.toJson(toServer);
-		}
-	}
-
-	/**
-	 * Checks the IP address to see if it is logged in.
-	 *
-	 * @author jacksonchaiken
-	 *
-	 */
-	private static class IpChecker implements Route {
-		@Override
-		public Object handle(Request arg0, Response arg1) {
-			Map<String, Object> response = new HashMap<>();
-			if (iPCache.getIfPresent(arg0.ip()) == null) {
-				response.put("valid", false);
-			} else {
-				response.put("valid", true);
-			}
-			return GSON.toJson(response);
 		}
 	}
 

@@ -341,7 +341,7 @@ final class UserBean extends DeliveryObjectBean<User> implements User {
     return id;
   }
 
-  private static final String ID_Q = "SELECT url FROM user";
+  private static final String ID_Q = "SELECT url FROM users";
   private static void checkId() {
     if (webIds.size() == 0) {
       try (PreparedStatement prep = Database.getConnection()
@@ -349,7 +349,7 @@ final class UserBean extends DeliveryObjectBean<User> implements User {
         try (ResultSet rs = prep.executeQuery()) {
           while (rs.next()) {
             String id = rs.getString(1);
-            if (id.length() == idLength) {
+            if (id != null && id.length() == idLength) {
               webIds.add(rs.getString(1));
             }
           }

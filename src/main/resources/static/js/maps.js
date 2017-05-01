@@ -15,7 +15,7 @@ function calcRoute(start, end) {
     var directionsService = new google.maps.DirectionsService();
     var directionsDisplay = new google.maps.DirectionsRenderer();
     directionsDisplay.setMap(map);
-
+    directionsDisplay.setOptions( { suppressMarkers: true } );
     directionsService.route(request, function(result, status) {
         if (status == 'OK') {
             directionsDisplay.setDirections(result);

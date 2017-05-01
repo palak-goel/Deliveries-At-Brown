@@ -1,3 +1,12 @@
+#top-banner {
+	top: 0;
+  	left: 0;
+	background-color: black;
+	width: 100%;
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+
 #map {
   height: 600px;
   width: 70%;
@@ -8,5 +17,4 @@
 	height: 600px;
   width: 28%;
   float: right;
-  border: 1px solid black;
 }

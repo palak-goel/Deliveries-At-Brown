@@ -1,3 +1,12 @@
+#top-banner {
+  top: 0;
+    left: 0;
+  background-color: black;
+  width: 100%;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
 #map {
   height: 600px;
   width: 70%;
@@ -5,13 +14,20 @@
 }
 
 #right {
-	float: right;
-  	margin: 0px 90px 80px 20px;
+	height: 600px;
+  width: 28%;
+  float: right;
+  	/*margin: 0px 90px 80px 20px;*/
 }
+
+#loading {
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+
 .loader {
-  	
     border: 16px solid #f3f3f3; /* Light grey */
-    border-top: 16px solid green; /* Blue */
+    border-top: 16px solid #C0B283; /* Blue */
     border-radius: 50%;
     width: 130px;
     height: 130px;

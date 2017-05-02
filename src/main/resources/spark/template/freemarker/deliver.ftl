@@ -35,12 +35,10 @@
     </div>
     <div id="queue">
         <br><br>
-        <table>
+        <table id="table">
           <tr>
-            <th>Pickup Location</th>
-            <th>Dropoff Location</th>
-            <th>Distance</th>
-            <th>Duration</th>
+            <th>Pick-Up Location</th>
+            <th>Drop-Off Location</th>
             <th>Time</th>
             <th>Price</th>
             <th>Item</th>
@@ -56,21 +54,24 @@
             <div class="form-group row">
               <label for="example-text-input" class="col-2 col-form-label">Price</label>
               <div class="col-10">
-                <input class="form-control" type="text" id="example-text-input">
+                <input class="form-control" type="text" id="price">
               </div>
             </div>
             <div class="form-group row">
               <label for="example-text-input" class="col-2 col-form-label">Distance</label>
               <div class="col-10">
-                <input class="form-control" type="text" id="example-text-input">
+                <input class="form-control" type="text" id="distance">
               </div>
             </div>
             <div class="form-group row">
               <label for="example-text-input" class="col-2 col-form-label">Time</label>
               <div class="col-10">
-                <input class="form-control" type="text" id="example-text-input">
+                <input class="form-control" type="text" id="time">
               </div>
             </div>
+            <center>
+               <button onclick = "sendPreferencesToServer();"> Submit Preferences </button>
+            </center>
         </div>
-     </body>
+         </body>
 </html>

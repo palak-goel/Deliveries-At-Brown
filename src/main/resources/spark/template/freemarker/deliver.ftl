@@ -36,6 +36,7 @@
     <div id="queue">
         <br><br>
         <table>
+          <tr>
             <th>Pickup Location</th>
             <th>Dropoff Location</th>
             <th>Distance</th>
@@ -44,8 +45,9 @@
             <th>Price</th>
             <th>Item</th>
             <th>Accept</th>
-            <tbody>
-            </tbody>
+          </tr>
+          <tbody>
+          </tbody>
         </table>
     </div>
 

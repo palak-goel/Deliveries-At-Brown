@@ -18,6 +18,7 @@
     <input type="password" class="form-control" id="account_password" placeholder="Password">
   </div>
   <br>
+  <a href = "/forgot-password">Forgot password?</a><br>
   <type="submit" button onclick = "login()" class="btn btn-default">Sign in</button>
 </form>
 </div>

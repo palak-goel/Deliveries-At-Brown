@@ -38,7 +38,7 @@
             <h4 id = "deliverer-num">Phone Number</h5>
             <textarea id = "text-message" placeholder = "Message Deliverer"></textarea>
             <br>
-            <button type = "Submit" onclick = "sendTextToDeliverer();">Send</button>
+            <button onclick = "sendTextToDeliverer();">Send</button>
         </center>
     </div>
 </body>

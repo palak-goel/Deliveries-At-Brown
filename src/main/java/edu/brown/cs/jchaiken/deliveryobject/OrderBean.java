@@ -14,7 +14,7 @@ import edu.brown.cs.jchaiken.database.Database;
  * @author jacksonchaiken
  *
  */
-final class OrderBean extends DeliveryObjectBean<Order> implements Order, Serializable {
+public final class OrderBean extends DeliveryObjectBean<Order> implements Order, Serializable {
 	private static final long serialVersionUID = -5373772066047212712L;
 	private static final int SEVEN = 7;
 	private static final int EIGHT = 8;
@@ -218,62 +218,65 @@ final class OrderBean extends DeliveryObjectBean<Order> implements Order, Serial
 		private OrderStatus status;
 		private double price;
 
-		OrderBuilder setId(String id) {
+		public OrderBuilder setId(String id) {
 			idB = id;
 			return this;
 		}
 
-		OrderBuilder setOrderStatus(OrderStatus newOrderStatus) {
+		public OrderBuilder setOrderStatus(OrderStatus newOrderStatus) {
 			status = newOrderStatus;
 			return this;
 		}
 
-		OrderBuilder setOrderer(User orderer) {
+		public OrderBuilder setOrderer(User orderer) {
 			ordererB = orderer;
 			return this;
 		}
 
-		OrderBuilder setDeliverer(User deliverer) {
+		public OrderBuilder setDeliverer(User deliverer) {
 			delivererB = deliverer;
 			return this;
 		}
 
-		OrderBuilder setPickup(Location pickup) {
+		public OrderBuilder setPickup(Location pickup) {
 			pickupB = pickup;
 			return this;
 		}
 
-		OrderBuilder setDropoff(Location dropoff) {
+		public OrderBuilder setDropoff(Location dropoff) {
 			dropoffB = dropoff;
 			return this;
 		}
 
-		OrderBuilder setItems(List<String> items) {
+		public OrderBuilder setItems(List<String> items) {
 			itemsB = items;
 			return this;
 		}
 
-		OrderBuilder setPickupTime(double pickup) {
+		public OrderBuilder setPickupTime(double pickup) {
 			pickupT = pickup;
 			return this;
 		}
 
-		OrderBuilder setDropoffTime(double dropoff) {
+		public OrderBuilder setDropoffTime(double dropoff) {
 			dropoffT = dropoff;
 			return this;
 		}
 
-		OrderBuilder setPrice(double newPrice) {
+		public OrderBuilder setPrice(double newPrice) {
 			price = newPrice;
 			return this;
 		}
 
-		Order build() {
+		public Order build() {
 			/*
 			 * if (idB == null || ordererB == null || pickupB == null ||
 			 * dropoffB == null || status == null) { throw new
 			 * IllegalArgumentException("Not all paramters set"); }
 			 */
+			if (idB == null) {
+				idB = Order.IdGenerator.getNextId();
+			}
 			OrderBean bean = new OrderBean(idB, ordererB, delivererB, pickupB, dropoffB, pickupT, dropoffT);
 			bean.addItems(itemsB);
 			bean.addOrderStatus(status);

@@ -1,6 +1,7 @@
 package edu.brown.cs.jchaiken.projectcontrol;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -13,7 +14,9 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 
+import edu.brown.cs.jchaiken.deliveryobject.Location;
 import edu.brown.cs.jchaiken.deliveryobject.Order;
+import edu.brown.cs.jchaiken.deliveryobject.OrderBean.OrderBuilder;
 import edu.brown.cs.jchaiken.deliveryobject.PendingOrder;
 import edu.brown.cs.jchaiken.deliveryobject.User;
 import spark.QueryParamsMap;
@@ -113,12 +116,18 @@ public class Manager {
 				double pLat = Double.parseDouble(qm.value("pickupLat"));
 				double pLon = Double.parseDouble(qm.value("pickupLon"));
 				double dLat = Double.parseDouble(qm.value("dropoffLat"));
-				System.out.println(dLat);
 				double dLon = Double.parseDouble(qm.value("dropoffLon"));
 				String item = qm.value("item");
-				String time = qm.value("time");
-				String price = qm.value("price");
-				System.out.println("THIS IS IT" + qm.value("pickup"));
+				double time = Double.parseDouble(qm.value("time"));
+				double price = Double.parseDouble(qm.value("price"));
+				// System.out.println("THIS IS IT" + qm.value("pickup"));
+				OrderBuilder builder = new OrderBuilder();
+				User curr = User.byWebId(req.session().attribute("webId"));
+				Location pickup = Location.newLocation(pLat, pLon);
+				Location dropoff = Location.newLocation(dLat, dLon);
+				builder.setDeliverer(curr).setPickup(pickup).setDropoff(dropoff).setPrice(price).setDropoffTime(time)
+						.setItems(Arrays.asList(item));
+
 				OrderWebSocket.sendMsg();
 				/*
 				 * Map<String, Object> variables = new

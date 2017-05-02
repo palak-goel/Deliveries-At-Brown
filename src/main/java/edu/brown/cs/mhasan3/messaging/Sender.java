@@ -1,5 +1,7 @@
 package edu.brown.cs.mhasan3.messaging;
 
+import java.util.UUID;
+
 import com.twilio.Twilio;
 import com.twilio.rest.api.v2010.account.Message;
 import com.twilio.type.PhoneNumber;
@@ -79,6 +81,41 @@ public class Sender {
    */
   public void customMessage(String str) {
     content = str;
+  }
+
+  /**
+   * Generates a code to be inputted by the user for a password change, and
+   * sends this code to the user's phone number.
+   * 
+   * @param rec
+   *          Receiver's phone number
+   * @return random code
+   */
+  public String resetPassword(String rec) {
+    this.updateReceiver(rec);
+    String uuid = UUID.randomUUID().toString();
+    uuid.replaceAll("[^A-Za-z0-9]", "");
+    String ret = uuid.substring(0, 6);
+    content = "Your verification code is " + ret;
+    this.sendMessage();
+    return ret;
+  }
+
+  /**
+   * Allows for directions to be sent.
+   * 
+   * @param str
+   *          directions
+   */
+  public void sendDirections(String[] str, String rece) {
+    this.updateReceiver(rece);
+    StringBuilder builder = new StringBuilder();
+    for (String s : str) {
+      builder.append(s);
+      builder.append("\n");
+    }
+    content = builder.toString();
+    this.sendMessage();
   }
 
   /**

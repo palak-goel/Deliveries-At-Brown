@@ -9,16 +9,16 @@
 
 #queue {
   height: 600px;
-  width: 85%;
+  width: 78%;
   float: right;
   padding-right: 20px;
 }
 
 #form {
   height: 600px;
-  width: 15%;
+  width: 18%;
   float: left;
-  padding-left: 30px;
+  padding-left: 35px;
 }
 
 ul {

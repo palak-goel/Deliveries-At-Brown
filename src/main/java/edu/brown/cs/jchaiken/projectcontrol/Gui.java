@@ -103,10 +103,21 @@ public class Gui {
 			sentCodes.put(cell, code);
 			return GSON.toJson(toServer);
 		});
-		/*
-		 * Spark.post("/profile", (request, response) -> { User u =
-		 * Manager.getSession(request.session().attribute(name)) });
-		 */
+
+		Spark.post("/profile", (req, response) -> {
+			User u = User.byWebId(req.session().attribute("webId"));
+			Map<String, Object> msg = new HashMap<>();
+			msg.put("name", u.getName());
+			msg.put("phoneNumber", u.getCell());
+			msg.put("email", "random@gmail.com");
+			msg.put("deliveryRating", u.getDelivererRating());
+			msg.put("requestRating", u.getOrdererRating());
+			return GSON.toJson(msg);
+		});
+		Spark.post("sendText", (req, response) -> {
+
+			return new Object();
+		});
 		Spark.post("/validate-code", (request, response) -> {
 			String cell = request.queryMap().value("cell");
 			String code = request.queryMap().value("code");

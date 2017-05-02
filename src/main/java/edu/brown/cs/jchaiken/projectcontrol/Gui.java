@@ -255,7 +255,6 @@ public class Gui {
 
   private static final int TEST_CHARGE = 50;
 
-<<<<<<< HEAD
 	/**
 	 * Handles login requests to the server.
 	 *
@@ -281,8 +280,8 @@ public class Gui {
 			return GSON.toJson(toServer);
 		}
 	}
-=======
-  /**
+
+	/**
    * Handles account creation and validation.
    *
    * @author jacksonchaiken
@@ -331,32 +330,6 @@ public class Gui {
         arg0.session().attribute("webId", user.getWebId());
         Manager.saveSession(arg0.session().id(), arg0.session());
         toServer.put("success", true);
-      }
-      return GSON.toJson(toServer);
-    }
-  }
->>>>>>> 74bcdcfb9f30ea3781f4e4bf5fb72538ea67b32b
-
-  /**
-   * Handles login requests to the server.
-   *
-   * @author jacksonchaiken
-   *
-   */
-  private static class LoginValidator implements Route {
-    @Override
-    public Object handle(Request arg0, Response arg1) {
-      QueryParamsMap qm = arg0.queryMap();
-      String id = qm.value("id");
-      String password = qm.value("password");
-      Map<String, Object> toServer = new HashMap<>();
-      if (User.userValidator(id, password)) {
-        toServer.put("result", true);
-        User user = User.byId(id);
-        arg0.session().attribute("webId", user.getWebId());
-        Manager.saveSession(arg0.session().id(), arg0.session());
-      } else {
-        toServer.put("result", false);
       }
       return GSON.toJson(toServer);
     }

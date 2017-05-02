@@ -163,11 +163,8 @@ public final class OrderBean extends DeliveryObjectBean<Order> implements Order,
 		try (PreparedStatement prep = Database.getConnection().prepareStatement(ORDER_ADD)) {
 			prep.setString(1, super.getId());
 			prep.setString(2, orderer.getId());
-			if (deliverer == null) {
-        prep.setString(3, "not accepted");
-
-			} else {
-		     prep.setString(3, deliverer.getId());
+			if (deliverer != null) {
+        prep.setString(3, deliverer.getId());
 			}
 			if (pickupTime == null) {
 		     prep.setDouble(4, -1);
@@ -211,7 +208,9 @@ public final class OrderBean extends DeliveryObjectBean<Order> implements Order,
 		}
 		inDb = true;
 		orderer.setPendingUpdate();
-		deliverer.setPendingUpdate();
+		if (deliverer != null) {
+	    deliverer.setPendingUpdate();
+		}
 	}
 
 	private static final String ORDER_REM = "DELETE FROM orders WHERE id = ?";

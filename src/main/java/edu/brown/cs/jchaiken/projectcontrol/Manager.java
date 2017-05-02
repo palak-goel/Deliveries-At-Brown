@@ -142,24 +142,11 @@ public class Manager {
 				User curr = User.byWebId(req.session().attribute("webId"));
 				Location pickup = Location.newLocation(pLat, pLon);
 				Location dropoff = Location.newLocation(dLat, dLon);
-<<<<<<< HEAD
-				Order o = builder.setOrderer(curr)
-				    .setOrderStatus(OrderStatus.UNASSIGNED)
-				    .setPickup(pickup)
-				    .setDropoff(dropoff)
-				    .setPrice(price)
-						.setDropoffTime(time)
-						.setItems(Arrays.asList(item))
-						.build();
-=======
 				Order o = builder.setOrderer(curr).setPickup(pickup).setDropoff(dropoff).setPrice(price)
-						.setDropoffTime(time).setItems(Arrays.asList(item)).build();
+						.setDropoffTime(time).setItems(Arrays.asList(item)).setOrderStatus(OrderStatus.UNASSIGNED).build();
 				// o.addToDatabase();
->>>>>>> 74bcdcfb9f30ea3781f4e4bf5fb72538ea67b32b
 				ordMap.put(o.getId(), o);
         o.addToDatabase();
-        System.out.println("in db");
-				System.out.println("in sockets");
 				System.out.println("ORDER WEB ID");
 				System.out.println(o.getOrderer().getWebId());
 				System.out.println(curr.getWebId());

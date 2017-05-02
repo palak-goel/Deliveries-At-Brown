@@ -25,15 +25,15 @@ public interface Order extends DeliveryObject {
 
     public static OrderStatus valueOf(int status) {
       switch (status) {
-        case 4:
+        case 0:
           return OrderStatus.UNASSIGNED;
-        case 3:
+        case 1:
           return OrderStatus.ASSIGNED;
         case 2:
           return OrderStatus.AT_LOCATION;
-        case 1:
+        case 3:
           return OrderStatus.HAVE_FOOD;
-        case 0:
+        case 4:
           return OrderStatus.COMPLETED;
         default:
           return null;

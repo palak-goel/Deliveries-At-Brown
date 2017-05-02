@@ -53,7 +53,7 @@ public class OrderBeanTest {
 		// now retrieve record
 		Order test = Order.byId("hey");
 		assert test.getDeliverer().getId().equals("jackson_chaiken@brown.edu");
-		assert test.status() == OrderStatus.COMPLETED;
+		assertEquals(test.status(), OrderStatus.COMPLETED);
 		assertEquals(test.getOrderItems().size(), 0);
 		test.removeFromDatabase();
 		DeliveryObjectProxy.clearCache();

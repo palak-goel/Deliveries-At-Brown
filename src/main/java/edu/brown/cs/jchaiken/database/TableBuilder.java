@@ -76,6 +76,7 @@ public class TableBuilder {
   public void buildOrderStatus() {
     try (PreparedStatement prep = Database.getConnection().prepareStatement(
         "CREATE TABLE IF NOT EXISTS order_status (order_id TEXT, status INT,"
+        + " time REAL, "
         + " FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE ON"
         + " UPDATE CASCADE);")) {
       prep.executeUpdate();
@@ -103,7 +104,7 @@ public class TableBuilder {
   public void buildAccountStatus() {
     try (PreparedStatement prep = Database.getConnection()
         .prepareStatement("CREATE TABLE IF NOT EXISTS account_status (user_id"
-            + " TEXT, status INT, FOREIGN KEY (user_id) REFERENCES users(id)"
+            + " TEXT UNIQUE, status INT, FOREIGN KEY (user_id) REFERENCES users(id)"
             + " ON DELETE CASCADE ON UPDATE CASCADE);")
         ) {
       prep.executeUpdate();

@@ -32,18 +32,18 @@ class OrderProxy extends DeliveryObjectProxy<Order> implements Order {
       = "SELECT item FROM items WHERE order_id = ?";
   @Override
   protected void cache() throws SQLException {
-    try (PreparedStatement prep = Database.getConnection()
+    try (PreparedStatement cachePrep = Database.getConnection()
         .prepareStatement(CACHE_QUERY)) {
-      prep.setString(1, super.getId());
-      try (ResultSet rs = prep.executeQuery()) {
-        if (rs.next()) {
-          User orderer = User.byId(rs.getString(2));
-          User deliverer = User.byId(rs.getString(3));
-          double pickupTime = rs.getDouble(4);
-          double dropoffTime = rs.getDouble(5);
-          Location pickupLoc = Location.byId(rs.getString(6));
-          Location dropoffLoc = Location.byId(rs.getString(SEVEN));
-          double price = rs.getDouble(EIGHT);
+      cachePrep.setString(1, super.getId());
+      try (ResultSet cacheSet = cachePrep.executeQuery()) {
+        if (cacheSet.next()) {
+          User orderer = User.byId(cacheSet.getString(2));
+          User deliverer = User.byId(cacheSet.getString(3));
+          double pickupTime = cacheSet.getDouble(4);
+          double dropoffTime = cacheSet.getDouble(5);
+          Location pickupLoc = Location.byId(cacheSet.getString(6));
+          Location dropoffLoc = Location.byId(cacheSet.getString(SEVEN));
+          double price = cacheSet.getDouble(EIGHT);
           OrderBuilder builder = new OrderBuilder();
           builder.setId(super.getId())
               .setOrderer(orderer)
@@ -53,27 +53,28 @@ class OrderProxy extends DeliveryObjectProxy<Order> implements Order {
               .setDropoff(dropoffLoc)
               .setPickup(pickupLoc)
               .setPrice(price);
-          try (PreparedStatement prep2 = Database.getConnection()
+          try (PreparedStatement statusPrep = Database.getConnection()
               .prepareStatement(STATUS_QUERY)) {
-            prep.setString(1, super.getId());
-            try (ResultSet rs2 = prep.executeQuery()) {
-              if (rs2.next()) {
-                OrderStatus status = OrderStatus.valueOf(rs2.getInt(1));
+            statusPrep.setString(1, super.getId());
+            try (ResultSet statusSet = statusPrep.executeQuery()) {
+              if (statusSet.next()) {
+                OrderStatus status = OrderStatus.valueOf(statusSet.getInt(1));
                 builder.setOrderStatus(status);
               }
             }
           }
           List<String> dbItems = new ArrayList<>();
-          try (PreparedStatement prep3 = Database.getConnection()
+          try (PreparedStatement itemPrep = Database.getConnection()
               .prepareStatement(ITEM_QUERY)) {
-            prep3.setString(1,  super.getId());
-            try (ResultSet rs3 = prep3.executeQuery()) {
-              while (rs3.next()) {
-                dbItems.add(rs3.getString(1));
+            itemPrep.setString(1,  super.getId());
+            try (ResultSet itemSet = itemPrep.executeQuery()) {
+              while (itemSet.next()) {
+                dbItems.add(itemSet.getString(1));
               }
             }
           }
           builder.setItems(dbItems);
+          builder.setDbStatus(true);
           Order newOrder = builder.build();
           assert newOrder != null;
           super.setData(newOrder);
@@ -285,7 +286,6 @@ class OrderProxy extends DeliveryObjectProxy<Order> implements Order {
         }
       }
     } catch (SQLException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
     return results;
@@ -302,7 +302,6 @@ class OrderProxy extends DeliveryObjectProxy<Order> implements Order {
 
   @Override
   public void setRanking(double rank) {
-    // TODO Auto-generated method stub
     check();
     if (super.getData() == null) {
       return;

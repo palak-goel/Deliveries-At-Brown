@@ -12,9 +12,9 @@ import edu.brown.cs.jchaiken.deliveryobject.Order.OrderStatus;
 public class OrderTest {
   @Test
   public void testStatus() {
-    assert OrderStatus.valueOf(0) == OrderStatus.COMPLETED;
+    assert OrderStatus.valueOf(4) == OrderStatus.COMPLETED;
     assert OrderStatus.valueOf(-1) == null;
-    assertEquals(OrderStatus.valueOf(1).ordinal(), 3);
+    assertEquals(OrderStatus.valueOf(3).ordinal(), 3);
   }
 
   @Test

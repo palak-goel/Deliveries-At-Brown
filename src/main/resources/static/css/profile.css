@@ -60,3 +60,9 @@ li a:hover {
     color: #C0B283;
     text-decoration: none;
 }
+
+.contact-info {
+    font-size: 17px;
+    display:inline-block;
+    vertical-align: 10px;
+}

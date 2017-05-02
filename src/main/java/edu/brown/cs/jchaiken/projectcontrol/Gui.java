@@ -16,6 +16,7 @@ import com.stripe.model.Charge;
 import edu.brown.cs.jchaiken.deliveryobject.User;
 import edu.brown.cs.jchaiken.deliveryobject.User.AccountStatus;
 import edu.brown.cs.jchaiken.deliveryobject.User.UserBuilder;
+import edu.brown.cs.mhasan3.messaging.Sender;
 import freemarker.template.Configuration;
 import spark.ExceptionHandler;
 import spark.ModelAndView;
@@ -37,6 +38,7 @@ import spark.template.freemarker.FreeMarkerEngine;
 public class Gui {
 	private static final Gson GSON = new Gson();
 	private static final Manager MANAGER = new Manager();
+	private static Sender sender = new Sender();
 
 	/**
 	 * Instantiates a Gui instance on the specified port number.
@@ -89,7 +91,7 @@ public class Gui {
 		Spark.post("/create-account", new AccountCreator());
 		Spark.post("validate-login", new LoginValidator());
 		Spark.post("/submit-request", new Manager.OrderMaker());
-
+		Spark.get("/forgot-password", new PasswordReset(), freeMarker);
 		// Palak's Stuff
 		Spark.get("/request", (request, response) -> {
 			String webId = request.session().attribute("webId");
@@ -267,6 +269,18 @@ public class Gui {
 			return GSON.toJson(toServer);
 		}
 	}
+
+	private static class PasswordReset implements TemplateViewRoute {
+    @Override
+    public ModelAndView handle(Request arg0, Response arg1) throws Exception {
+      String webId = arg0.session().attribute("webId");
+      User user;
+      Map<String, Object> toServer = new HashMap<>();
+      if (webId != null && (user = User.byWebId(webId)) != null) {
+        toServer.put("sent", true);
+      }
+    }
+  }
 
 	/**
 	 * Handler for exceptions.

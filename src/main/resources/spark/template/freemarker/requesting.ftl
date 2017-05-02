@@ -40,7 +40,7 @@
 				<fieldset disabled>
 				    <div class="form-group">
 				      <label for="disabledTextInput">Pick Up Location</label>
-				      <input type="text" id = "pickup-loc" class="form-control" placeholder="text">
+				      <input type="text" id = "pickup-loc" class="form-control" placeholder=${pickup}>
 				    </div>
 				    <div class="form-group">
 				      <label for="disabledTextInput">Drop Off Location</label>

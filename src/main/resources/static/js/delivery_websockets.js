@@ -1,26 +1,41 @@
 const MESSAGE_TYPE = {
   CONNECT: 0,
-  SCORE: 1,
-  UPDATE: 2
+  ADD_ORDER: 1,
+  REMOVE_ORDER: 2,
+  REQUESTED: 3
 };
+
+function getCookie(cname) {
+    var name = cname + "=";
+    var decodedCookie = decodeURIComponent(document.cookie);
+    var ca = decodedCookie.split(';');
+    for(var i = 0; i <ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+}
 
 let conn;
 let myId = -1;
-
-let score = 0;
 
 // Setup the WebSocket connection for live updating of scores.
 const setup_socket = () => {
   if (myId === -1) {
     conn = new WebSocket("ws://localhost:4567/deliverysocket")
+    jid = getCookie("JSESSIONID").split(".")[0]
+    console.log(jid)
   }
-  console.log(myId)
-
   conn.onerror = err => {
     console.log('Connection error:', err);
   };
 
-  conn.onmessage = msg => {
+  /*conn.onmessage = msg => {
     const data = JSON.parse(msg.data);
     console.log(data)
     /*

@@ -41,6 +41,7 @@
             <th>Distance</th>
             <th>Duration</th>
             <th>Time</th>
+            <th>Price</th>
             <th>Item</th>
             <th>Accept</th>
             <tbody>
@@ -50,23 +51,24 @@
 
     <div id="form">
             <h3>Filters</h3>
-            <div class="checkbox">
-              <label><input type="checkbox" value="">Price</label>
+            <div class="form-group row">
+              <label for="example-text-input" class="col-2 col-form-label">Price</label>
+              <div class="col-10">
+                <input class="form-control" type="text" id="example-text-input">
+              </div>
             </div>
-            <div class="checkbox">
-              <label><input type="checkbox" value="">Distance</label>
+            <div class="form-group row">
+              <label for="example-text-input" class="col-2 col-form-label">Distance</label>
+              <div class="col-10">
+                <input class="form-control" type="text" id="example-text-input">
+              </div>
             </div>
-            <div class="checkbox">
-              <label><input type="checkbox" value="">Duration</label>
+            <div class="form-group row">
+              <label for="example-text-input" class="col-2 col-form-label">Time</label>
+              <div class="col-10">
+                <input class="form-control" type="text" id="example-text-input">
+              </div>
             </div>
-            <div class="checkbox">
-              <label><input type="checkbox" value="">Rating</label>
-            </div>
-            <div class="checkbox">
-              <label><input type="checkbox" value="">Time</label>
-            </div>
-            
-            
         </div>
      </body>
 </html>

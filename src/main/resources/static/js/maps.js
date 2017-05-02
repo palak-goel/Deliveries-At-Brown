@@ -2,7 +2,7 @@ var map;
 var directionsDisplay;
 var directionsService;
 var userLatLonLocation;
-
+var currLocation;
 
 
 function calcRoute(start, end) {        
@@ -74,12 +74,14 @@ function userLocation(map, color) {
         //calcRoute({lat: 41.830556, lng: -71.402381}, pos);
         bindIconListenerToUser(map, userPos, "Current Location");
         map.setCenter(pos);
+        toReturn = pos;
       }, function() {
         handleLocationError(true, infoWindow, map.getCenter());
       });
     } else {
       handleLocationError(false, infoWindow, map.getCenter());
     }
+    return toReturn;
 }
 
 function displayDeliverer(map, pos) {

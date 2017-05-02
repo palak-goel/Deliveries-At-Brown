@@ -34,8 +34,17 @@ function initMap() {
 }
 
 function sendTextToDeliverer() {
+    function sendTextToDeliverer() {
     var message = document.getElementById("text-message").value;
-    console.log(message);
+    const postParameters = {
+        number = delivererNumber,
+        content = message
+    }
+    $.post("/sendText", postParameters, responseJSON => {
+        });
+
+    
+}
 }
 
 

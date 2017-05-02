@@ -1,6 +1,5 @@
 
 $(document).ready(() => {
-    console.log(localStorage.dropoff);
     $("#pickup-loc").attr("placeholder", localStorage.pickup)
     $("#dropoff-loc").attr("placeholder", localStorage.dropoff)
     $("#item").attr("placeholder", localStorage.item)

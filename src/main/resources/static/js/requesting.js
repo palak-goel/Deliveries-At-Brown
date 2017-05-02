@@ -1,4 +1,23 @@
 
+conn.onmessage = msg => {
+  console.log(msg.data)
+  const data = JSON.parse(msg.data)
+  switch(data.type) {
+    case MESSAGE_TYPE.CONNECT:
+        console.log("HI");
+        myId = data.id
+        conn.send(JSON.stringify({jid: getJid(), type: MESSAGE_TYPE.CONNECT}))
+        break;
+    case MESSAGE_TYPE.REQUESTED:
+      const jid = getJid()
+      console.log("REQUESTED");
+      localStorage.name = data.name;
+      localStorage.cell = data.cell;
+      window.location.href = 'http://localhost:4567/requested';
+      break;
+  }
+}
+
 $(document).ready(() => {
     $("#pickup-loc").attr("placeholder", localStorage.pickup)
     $("#dropoff-loc").attr("placeholder", localStorage.dropoff)

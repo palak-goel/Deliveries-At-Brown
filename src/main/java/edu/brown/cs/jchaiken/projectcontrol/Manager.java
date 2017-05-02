@@ -16,7 +16,6 @@ import com.google.gson.Gson;
 import edu.brown.cs.jchaiken.deliveryobject.Location;
 import edu.brown.cs.jchaiken.deliveryobject.Order;
 import edu.brown.cs.jchaiken.deliveryobject.OrderBean.OrderBuilder;
-import edu.brown.cs.jchaiken.deliveryobject.PendingOrder;
 import edu.brown.cs.jchaiken.deliveryobject.User;
 import spark.QueryParamsMap;
 import spark.Request;
@@ -36,13 +35,14 @@ public class Manager {
 
 	private static List<User> activeDeliverers = Collections.synchronizedList(new ArrayList<>());
 	private static List<Order> pendingOrders = Collections.synchronizedList(new ArrayList<>());
-	private static List<PendingOrder> pendingOs = Collections.synchronizedList(new ArrayList<>());
+	private static Map<String, Order> ordMap = Collections.synchronizedMap(new HashMap<>());
 	private static Map<User, Order> pendingMatches = Collections.synchronizedMap(new HashMap<>());
 	private static final Gson GSON = new Gson();
 	private static final int MAX_CACHE = 50000;
 	private static Cache<User, Order> completedOrder = CacheBuilder.newBuilder().maximumSize(MAX_CACHE)
 			.expireAfterAccess(125, TimeUnit.MINUTES).build();
 	private static Map<String, Session> sessionMap = Collections.synchronizedMap(new HashMap<>());
+	private static Map<String, String> widToJid = Collections.synchronizedMap(new HashMap<>());
 
 	/**
 	 * Constructor for Manager.
@@ -50,12 +50,29 @@ public class Manager {
 	public Manager() {
 	}
 
+	public static List<Session> allSessions() {
+		return new ArrayList<>(sessionMap.values());
+	}
+
+	public static String getUserJid(String wid) {
+		return widToJid.get(wid);
+	}
+
 	public static void saveSession(String id, Session session) {
+		System.out.println("SAVING SESH");
+		System.out.println(id);
+		System.out.println((String) session.attribute("webId"));
+		System.out.println("---");
 		sessionMap.put(id, session);
+		widToJid.put(session.attribute("webId"), id);
 	}
 
 	public static Session getSession(String id) {
 		return sessionMap.get(id);
+	}
+
+	public static Order getOrder(String id) {
+		return ordMap.get(id);
 	}
 
 	public List<Order> getPendingOrders() {
@@ -123,9 +140,13 @@ public class Manager {
 				User curr = User.byWebId(req.session().attribute("webId"));
 				Location pickup = Location.newLocation(pLat, pLon);
 				Location dropoff = Location.newLocation(dLat, dLon);
-				Order o = builder.setDeliverer(curr).setPickup(pickup).setDropoff(dropoff).setPrice(price)
+				Order o = builder.setOrderer(curr).setPickup(pickup).setDropoff(dropoff).setPrice(price)
 						.setDropoffTime(time).setItems(Arrays.asList(item)).build();
+				ordMap.put(o.getId(), o);
 				OrderWebSocket.sendAddOrder(o);
+				System.out.println("ORDER WEB ID");
+				System.out.println(o.getOrderer().getWebId());
+				System.out.println(curr.getWebId());
 				/*
 				 * Map<String, Object> variables = new
 				 * ImmutableMap.Builder<String, Object>() .put("pickupLoc",

@@ -5,9 +5,9 @@ var dropoff = {lat: 41.826997, lng: -71.400221}
 //deliverer location
 var delivererLocation = {lat: 41.826920, lng: -71.402731}
 //deliverer name
-var delivererName = "Sumit Sohani";
+var delivererName = localStorage.name;
 //deliverer number
-var delivererNumber = "(510) - 676 - 3683";
+var delivererNumber = localStorage.number;
 
 
 function initMap() {

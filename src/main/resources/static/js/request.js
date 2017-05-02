@@ -1,3 +1,22 @@
+
+conn.onmessage = msg => {
+  console.log(msg.data)
+  const data = JSON.parse(msg.data)
+  switch(data.type) {
+    case MESSAGE_TYPE.CONNECT:
+        console.log("HI");
+        myId = data.id
+        conn.send(JSON.stringify({jid: getJid(), type: MESSAGE_TYPE.CONNECT}))
+        break;
+    case MESSAGE_TYPE.REQUESTED:
+      const jid = getJid()
+      console.log("REQUESTED");
+      break;
+  }
+}
+
+
+
 function initMap() {
     
     //Initial Map Centered Around Brown University

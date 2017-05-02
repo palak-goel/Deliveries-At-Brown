@@ -2,7 +2,9 @@ const MESSAGE_TYPE = {
   CONNECT: 0,
   ADD_ORDER: 1,
   REMOVE_ORDER: 2,
-  REQUESTED: 3
+  REQUESTED: 3,
+  GET_ORDERS: 4,
+  DELIVERED: 5
 };
 
 function getCookie(cname) {
@@ -21,19 +23,37 @@ function getCookie(cname) {
     return "";
 }
 
+function getJid() {
+  return getCookie("JSESSIONID").split(".")[0]
+}
+
 let conn;
 let myId = -1;
+let jid = -1;
 
 // Setup the WebSocket connection for live updating of scores.
 const setup_socket = () => {
+  console.log("myId", myId)
   if (myId === -1) {
     conn = new WebSocket("ws://localhost:4567/deliverysocket")
     jid = getCookie("JSESSIONID").split(".")[0]
-    console.log(jid)
+    console.log("SETTING JID", jid)
   }
   conn.onerror = err => {
     console.log('Connection error:', err);
   };
+
+  conn.onmessage = msg => {
+    console.log(msg.data)
+    const data = JSON.parse(msg.data)
+    switch(data.type) {
+      case MESSAGE_TYPE.CONNECT:
+        console.log("HI");
+        myId = data.id
+        conn.send(JSON.stringify({jid: jid, type: MESSAGE_TYPE.CONNECT}))
+        break;
+    }
+  }
 
   /*conn.onmessage = msg => {
     const data = JSON.parse(msg.data);
@@ -49,7 +69,5 @@ const setup_socket = () => {
         break;
     }*/
   };
-
-}
 
 setup_socket()

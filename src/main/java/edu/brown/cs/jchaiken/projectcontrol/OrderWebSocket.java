@@ -14,10 +14,12 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 import edu.brown.cs.jchaiken.deliveryobject.Order;
+import edu.brown.cs.jchaiken.deliveryobject.User;
 
 /**
  * Web socket class to handle live interactions between orders,
@@ -32,10 +34,10 @@ public class OrderWebSocket {
 	private static final Queue<Session> SESSIONS = new ConcurrentLinkedQueue<>();
 	private static int nextId = 0;
 	private static final Manager MGR = new Manager();
-	private static Map<Integer, spark.Session> socketidUser = new ConcurrentHashMap<>();
+	private static Map<String, Session> socketidUser = new ConcurrentHashMap<>();
 
 	private enum MESSAGE_TYPE {
-		CONNECT, ADD_ORDER, REMOVE_ORDER, REQUESTED
+		CONNECT, ADD_ORDER, REMOVE_ORDER, REQUESTED, GET_ORDERS, DELIVERED;
 	}
 
 	@OnWebSocketConnect
@@ -72,13 +74,39 @@ public class OrderWebSocket {
 	public void message(Session session, String message) throws IOException {
 		System.out.println(message);
 		JsonObject received = GSON.fromJson(message, JsonObject.class);
-		JsonObject msg = new JsonObject();
-		assert (received.get("type").getAsInt() == MESSAGE_TYPE.CONNECT.ordinal());
-		int id = received.get("id").getAsInt();
-		spark.Session s = Manager.getSession(received.get("jsessionid").getAsString());
-		socketidUser.put(id, s);
-		JsonObject msg_p = new JsonObject();
-		return;
+		if (received.get("type").getAsInt() == MESSAGE_TYPE.GET_ORDERS.ordinal()) {
+			sendOrders(session);
+		} else if (received.get("type").getAsInt() == MESSAGE_TYPE.CONNECT.ordinal()) {
+			System.out.println("adding to map");
+			socketidUser.put(received.get("jid").getAsString(), session);
+		} else {
+			System.out.println("ticket picked up");
+			String id = received.get("id").getAsString();
+			Order o = Manager.getOrder(id);
+			String jid = received.get("jid").getAsString();
+			User u = User.byWebId(Manager.getSession(jid).attribute("webId"));
+			o.assignDeliverer(u);
+			session.getRemote().sendString(GSON.toJson(ImmutableMap.of("type", MESSAGE_TYPE.DELIVERED.ordinal())));
+
+			String reqId = o.getOrderer().getWebId();
+			System.out.println(o.getOrderer().getName());
+			System.out.println("---");
+			System.out.println(reqId);
+			for (spark.Session s : Manager.allSessions()) {
+				String z = s.attribute("webId");
+				System.out.println(z);
+				System.out.println(socketidUser.keySet());
+				if (reqId.equals(s.attribute("webId"))) {
+					String y = Manager.getUserJid(reqId);
+					System.out.println(y);
+					Map<String, Object> msg = ImmutableMap.of("type", MESSAGE_TYPE.REQUESTED.ordinal(), "name",
+							u.getName(), "phone", u.getCell());
+					socketidUser.get(y).getRemote().sendString(GSON.toJson(msg));
+					sendRemoveOrder(o);
+				}
+			}
+		}
+
 	}
 
 	public static void sendMsg() {
@@ -104,6 +132,35 @@ public class OrderWebSocket {
 			for (Session s : SESSIONS) {
 				s.getRemote().sendString(msg);
 			}
+		} catch (IOException e) {
+
+		}
+	}
+
+	public static void sendRemoveOrder(Order o) {
+		Manager.removeOrder(o);
+		List<Order> orders = MGR.getPendingOrders();
+		try {
+			Map<String, Object> toServer = new HashMap<>();
+			toServer.put("orders", orders);
+			toServer.put("type", MESSAGE_TYPE.ADD_ORDER.ordinal());
+			String msg = GSON.toJson(toServer);
+			for (Session s : SESSIONS) {
+				s.getRemote().sendString(msg);
+			}
+		} catch (IOException e) {
+
+		}
+	}
+
+	public static void sendOrders(Session s) {
+		List<Order> orders = MGR.getPendingOrders();
+		try {
+			Map<String, Object> toServer = new HashMap<>();
+			toServer.put("orders", orders);
+			toServer.put("type", MESSAGE_TYPE.ADD_ORDER.ordinal());
+			String msg = GSON.toJson(toServer);
+			s.getRemote().sendString(msg);
 		} catch (IOException e) {
 
 		}

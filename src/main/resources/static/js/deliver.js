@@ -1,52 +1,87 @@
-const MESSAGE_TYPE = {
-  UPDATE: 1
-};
-
-let conn;
-let myId = -1;
 
 
-const table_up = () => {
- 
-	conn = new WebSocket("ws://localhost:4567/deliver");
 
-  conn.onerror = err => {
-    console.log('Connection error:', err);
-  };
-
-  conn.onmessage = msg => {
+/*conn.onmessage = msg => {
     const data = JSON.parse(msg.data);
+
     switch (data.type) {
       default:
         console.log('Unknown message type!', data.type);
         break;
       case MESSAGE_TYPE.UPDATE:
-    	  console.log("updating");
-    	  const table = $('table');
-    	  let pay = data.payload;
-    	  for(let i = 0; i< pay.length; i++){
-    	  	let pt = pay[i];
-    	  }
-    	  let pickup = pt.pickup;
-    	  let dropoff = pt.dropoff;
-    	  let time = pt.endTime;
-    	  let price = pt.price;
-    	  let items = pt.items;
-    	  table.append('<tr><td>'+ pickup + '</td><td>' + dropoff + '</td><td>' +
-    	  	 time + '</td><td>' + price '</td><td>'+ items + '</td><td><button onclick = "takeOrder();"> Take Order</button></td></tr>');
+        console.log("updating");
+        const table = $('table');
+        let pay = data.payload;
+        for(let i = 0; i< pay.length; i++){
+          let pt = pay[i];
+        }
+        let pickup = pt.pickup;
+        let dropoff = pt.dropoff;
+        let time = pt.endTime;
+        let price = pt.price;
+        let items = pt.items;
+        table.append('<tr><td>'+ pickup + '</td><td>' + dropoff + '</td><td>' +
+           time + '</td><td>' + price '</td><td>'+ items + '</td><td><button onclick = "takeOrder();"> Take Order</button></td></tr>');
         break;
     }
   };
+}*/
+
+conn.onmessage = msg => {
+  console.log(msg.data)
+  const data = JSON.parse(msg.data)
+  switch(data.type) {
+          case MESSAGE_TYPE.CONNECT:
+        console.log("HI");
+        myId = data.id
+        conn.send(JSON.stringify({jid: jid, type: MESSAGE_TYPE.CONNECT}))
+          conn.send(JSON.stringify({type: MESSAGE_TYPE.GET_ORDERS}))
+          console.log("INNER")
+        break;
+    /*
+      case MESSAGE_TYPE.CONNECT:
+        console.log("HI");
+        myId = data.id
+        conn.send(JSON.stringify({jid: jid, type: MESSAGE_TYPE.CONNECT}))
+        break;*/
+    case MESSAGE_TYPE.ADD_ORDER:
+      console.log("Adding order");
+      //console.log(data);
+      const table = $('table');
+      table.find("tr:gt(0)").remove();
+        for(let i = 0; i< data.orders.length; i++){
+          let order = data.orders[i];
+          let pickup = order.pickupL.lat;
+          let dropoff = order.dropoffL.lat;
+          let time = order.dropoffTime;
+          let price = order.price;
+          let items = order.items[0];
+          table.append('<tr><td>'+ pickup + '</td><td>' + dropoff + '</td><td>' + time + 
+            '</td><td>' + price + '</td><td>'+ items+ 
+            '</td><td><button onclick = "takeOrder(\'' + order.id + 
+            '\');"> Take Order</button></td></tr>');
+        }
+      break;
+    case MESSAGE_TYPE.DELIVERED:
+      window.location.href = 'http://localhost:4567/delivered';
+      break;
+  }
 }
 
-function submitPrefencesToServer(){
+
+function submitPrefencesToServer() {
 	let pri = document.getElementbyID("price");
 	let dist = document.getElementbyID("distance");
 	let tim = document.getElementbyID("time");
-	const postParameters{
+	const postParameters = {
 		price: pri,
 		distance: dist,
-		time: time;
-	}
+		time: time
+	};
+  return
 }
 
+function takeOrder(arg) {
+  data = {type: MESSAGE_TYPE.REMOVE_ORDER, id: arg, jid: getJid()}
+  conn.send(JSON.stringify(data))
+}

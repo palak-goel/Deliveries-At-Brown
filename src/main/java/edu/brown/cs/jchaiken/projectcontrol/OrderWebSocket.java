@@ -1,7 +1,9 @@
 package edu.brown.cs.jchaiken.projectcontrol;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.Queue;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.eclipse.jetty.websocket.api.Session;
@@ -29,6 +31,7 @@ public class OrderWebSocket {
 	private static final Queue<Session> SESSIONS = new ConcurrentLinkedQueue<>();
 	private static int nextId = 0;
 	private static final Manager MGR = new Manager();
+	private static Map<Integer, User> socketidUser = new ConcurrentHashMap<>();
 
 	private enum MESSAGE_TYPE {
 		CONNECT, ORDER_TAKEN, ORDER_ADDED
@@ -40,9 +43,7 @@ public class OrderWebSocket {
 		SESSIONS.add(session);
 		// TODO Build the CONNECT message
 		JsonObject msg = new JsonObject();
-		JsonObject payload = new JsonObject();
-		payload.addProperty("id", nextId);
-		msg.add("payload", payload);
+		msg.addProperty("id", nextId);
 		msg.addProperty("type", MESSAGE_TYPE.CONNECT.ordinal());
 		// TODO Send the CONNECT message
 		session.getRemote().sendString(GSON.toJson(msg));
@@ -71,15 +72,15 @@ public class OrderWebSocket {
 		System.out.println(message);
 		JsonObject received = GSON.fromJson(message, JsonObject.class);
 		JsonObject msg = new JsonObject();
-		if (received.get("type").getAsInt() == MESSAGE_TYPE.ORDER_ADDED.ordinal()) {
-			JsonObject payload = received.get("payload").getAsJsonObject();
-			int id = payload.get("id").getAsInt();
-			String text = payload.get("order").getAsString();
-			Order o = null; // get from map
+		if (received.get("type").getAsInt() == MESSAGE_TYPE.CONNECT.ordinal()) {
+			int id = received.get("id").getAsInt();
+			String uId = Manager.getSession(received.get("jsessionid").getAsString()).attribute("webId");
+			User u = User.byWebId(uId);
+			socketidUser.put(id, u);
 			msg.addProperty("type", MESSAGE_TYPE.ORDER_ADDED.ordinal());
 			JsonObject msg_p = new JsonObject();
 			msg_p.addProperty("id", id);
-			msg_p.addProperty("order", o.toString());
+			// msg_p.addProperty("order", o.toString());
 			msg.add("payload", msg_p);
 		} else if (received.get("type").getAsInt() == MESSAGE_TYPE.ORDER_TAKEN.ordinal()) {
 			JsonObject payload = received.get("payload").getAsJsonObject();

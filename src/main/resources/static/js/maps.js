@@ -166,6 +166,7 @@ function geocode(latLng, address) {
             if (status == google.maps.GeocoderStatus.OK) {
                 latLng.lat = results[0].geometry.location.lat();
                 latLng.lng = results[0].geometry.location.lng();
+                console.log(latLng)
                 resolve();
             } else {
                 reject(status);

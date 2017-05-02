@@ -36,7 +36,7 @@
         <center>
         <h3>Make a Request</h3>
         </center>
-        <form action = "http://localhost:4567/requesting">
+        <!--<form>-->
             <div class="form-group">
                 <label for="formGroupExampleInput">Pick Up</label>
                 <input id = "pick-up-loc" type="text" class="form-control" id="formGroupExampleInput" placeholder="Enter a pickup location ...">
@@ -58,9 +58,9 @@
                 <input id = "price" type="text" class="form-control" id="formGroupExampleInput" placeholder="How much do you want to pay?">
             </div>
             <center>
-                <button onclick = "sendFormToServer();"> Submit Order </button>
+               <button onclick = "sendFormToServer();"> Submit Order </button>
             </center>
-            </form>
+            <!--</form>-->
         </div>
      </body>
 </html>

@@ -120,7 +120,7 @@ public class TableBuilder {
     try (PreparedStatement prep = Database.getConnection()
         .prepareStatement("CREATE TABLE IF NOT EXISTS user_ratings (user_id"
             + " TEXT, rating REAL, user_type TEXT, FOREIGN KEY (user_ID)"
-            + " REFERENCES users(id) ON UPDATE CASADE ON DELETE CASCADE);")) {
+            + " REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE);")) {
       prep.executeUpdate();
     } catch (SQLException e) {
       // TODO Auto-generated catch block

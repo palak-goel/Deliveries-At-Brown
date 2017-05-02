@@ -15,6 +15,7 @@ import com.google.gson.Gson;
 
 import edu.brown.cs.jchaiken.deliveryobject.Location;
 import edu.brown.cs.jchaiken.deliveryobject.Order;
+import edu.brown.cs.jchaiken.deliveryobject.Order.OrderStatus;
 import edu.brown.cs.jchaiken.deliveryobject.OrderBean.OrderBuilder;
 import edu.brown.cs.jchaiken.deliveryobject.User;
 import spark.QueryParamsMap;
@@ -129,6 +130,7 @@ public class Manager {
 		public Object handle(Request req, Response res) {
 			QueryParamsMap qm = req.queryMap();
 			try {
+			  System.out.println("at order maker");
 				double pLat = Double.parseDouble(qm.value("pickupLat"));
 				double pLon = Double.parseDouble(qm.value("pickupLon"));
 				double dLat = Double.parseDouble(qm.value("dropoffLat"));
@@ -140,11 +142,18 @@ public class Manager {
 				User curr = User.byWebId(req.session().attribute("webId"));
 				Location pickup = Location.newLocation(pLat, pLon);
 				Location dropoff = Location.newLocation(dLat, dLon);
-				Order o = builder.setOrderer(curr).setPickup(pickup).setDropoff(dropoff).setPrice(price)
-						.setDropoffTime(time).setItems(Arrays.asList(item)).build();
-				o.addToDatabase();
+				Order o = builder.setOrderer(curr)
+				    .setOrderStatus(OrderStatus.UNASSIGNED)
+				    .setPickup(pickup)
+				    .setDropoff(dropoff)
+				    .setPrice(price)
+						.setDropoffTime(time)
+						.setItems(Arrays.asList(item))
+						.build();
 				ordMap.put(o.getId(), o);
-				OrderWebSocket.sendAddOrder(o);
+        o.addToDatabase();
+        System.out.println("in db");
+				System.out.println("in sockets");
 				System.out.println("ORDER WEB ID");
 				System.out.println(o.getOrderer().getWebId());
 				System.out.println(curr.getWebId());
@@ -157,6 +166,7 @@ public class Manager {
 				 */
 				// Not used
 			} catch (Exception e) {
+			  e.printStackTrace();
 			}
 			return new Object();
 		}

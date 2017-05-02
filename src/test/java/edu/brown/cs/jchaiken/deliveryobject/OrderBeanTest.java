@@ -49,9 +49,11 @@ public class OrderBeanTest {
 				.setOrderer(User.byId("palak_goel@brown.edu")).setDropoff(Location.byId("/l/1"))
 				.setPickup(Location.byId("/l/2")).setItems(new ArrayList<String>()).setDropoffTime(100)
 				.setPickupTime(150).setOrderStatus(OrderStatus.COMPLETED).setPrice(100).build();
+		assert newOrder.getDeliverer().getId().equals("jackson_chaiken@brown.edu");
 		newOrder.addToDatabase();
 		// now retrieve record
 		Order test = Order.byId("hey");
+		
 		assert test.getDeliverer().getId().equals("jackson_chaiken@brown.edu");
 		assertEquals(test.status(), OrderStatus.COMPLETED);
 		assertEquals(test.getOrderItems().size(), 0);

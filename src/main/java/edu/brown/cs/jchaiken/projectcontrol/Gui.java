@@ -309,6 +309,7 @@ public class Gui {
 				User user = User.byId(id);
 				arg0.session().attribute("webId", user.getWebId());
 				Manager.saveSession(arg0.session().id(), arg0.session());
+				System.out.println("good login");
 			} else {
 				toServer.put("result", false);
 			}

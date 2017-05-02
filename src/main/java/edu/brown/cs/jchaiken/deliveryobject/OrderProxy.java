@@ -37,8 +37,14 @@ class OrderProxy extends DeliveryObjectProxy<Order> implements Order {
       cachePrep.setString(1, super.getId());
       try (ResultSet cacheSet = cachePrep.executeQuery()) {
         if (cacheSet.next()) {
-          User orderer = User.byId(cacheSet.getString(2));
-          User deliverer = User.byId(cacheSet.getString(3));
+          User orderer = null;;
+          User deliverer = null;
+          if (cacheSet.getString(2) != null) {
+            orderer = User.byId(cacheSet.getString(2));
+          }
+          if (cacheSet.getString(3) != null) {
+            deliverer = User.byId(cacheSet.getString(3));
+          }
           double pickupTime = cacheSet.getDouble(4);
           double dropoffTime = cacheSet.getDouble(5);
           Location pickupLoc = Location.byId(cacheSet.getString(6));

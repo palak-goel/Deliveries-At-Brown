@@ -20,7 +20,7 @@ function login() {
     			//go to home page
     			window.location.replace("/profile")
     		} else {
-    			window.location.replace("/" + from);
+    			window.location.replace("/profile");
     		}
 
 		} else {

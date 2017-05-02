@@ -22,6 +22,7 @@
   <type="submit" button onclick = "login()" class="btn btn-default">Sign in</button>
 </form>
 </div>
+<br>
 <div id = "create_div">
 <h1> Create Account </h1>
 <form class="form-horizontal">

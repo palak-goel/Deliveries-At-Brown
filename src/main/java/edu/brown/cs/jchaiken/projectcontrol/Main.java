@@ -62,6 +62,7 @@ public final class Main {
             builder.buildOrderStatus();
             builder.buildItems();
             builder.buildAccountStatus();
+            builder.buildRatingsTable();
           } else {
             System.out.println("ERROR: Cannot connect to database");
           }
@@ -101,6 +102,14 @@ public final class Main {
                   .getUrl())) {
                 Database.setUrl(inputs[1]);
                 if (Database.getConnection() != null) {
+                  TableBuilder builder = new TableBuilder();
+                  builder.buildLocations();
+                  builder.buildUsers();
+                  builder.buildOrders();
+                  builder.buildOrderStatus();
+                  builder.buildItems();
+                  builder.buildAccountStatus();
+                  builder.buildRatingsTable();
                   System.out.println("db set to " + inputs[1]);
                 } else {
                   System.out.println("ERROR: Cannot connect to database");

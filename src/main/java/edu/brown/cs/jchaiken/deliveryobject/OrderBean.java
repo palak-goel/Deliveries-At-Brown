@@ -23,10 +23,10 @@ public final class OrderBean extends DeliveryObjectBean<Order> implements Order,
 	private Location pickupL;
 	private Location dropoffL;
 	private List<String> items;
-	private double price;
+	private Double price;
 	private OrderStatus status;
-	private double pickupTime;
-	private double dropoffTime;
+	private Double pickupTime;
+	private Double dropoffTime;
 	private double ranking;
 	private boolean inDb = false;
 	private OrderBean(String newId, User newOrderer, User newDeliverer, Location newPickup, Location newDropoff,
@@ -36,7 +36,7 @@ public final class OrderBean extends DeliveryObjectBean<Order> implements Order,
 		deliverer = newDeliverer;
 		pickupL = newPickup;
 		dropoffL = newDropoff;
-		price = -1;
+		price = -1.0;
 		pickupTime = pickupT;
 		dropoffTime = dropoffT;
 		ranking = -1;
@@ -163,14 +163,30 @@ public final class OrderBean extends DeliveryObjectBean<Order> implements Order,
 		try (PreparedStatement prep = Database.getConnection().prepareStatement(ORDER_ADD)) {
 			prep.setString(1, super.getId());
 			prep.setString(2, orderer.getId());
-			prep.setString(3, deliverer.getId());
-			prep.setDouble(4, pickupTime);
-			prep.setDouble(5, dropoffTime);
+			if (deliverer == null) {
+        prep.setString(3, "not accepted");
+
+			} else {
+		     prep.setString(3, deliverer.getId());
+			}
+			if (pickupTime == null) {
+		     prep.setDouble(4, -1);
+			} else {
+	      prep.setDouble(4, pickupTime);
+			}
+			if (dropoffTime == null) {
+        prep.setDouble(5, -1);
+			} else {
+       prep.setDouble(5, dropoffTime);
+			}
 			prep.setString(6, pickupL.getId());
 			prep.setString(SEVEN, dropoffL.getId());
-			prep.setDouble(EIGHT, price);
-			prep.addBatch();
-			prep.executeBatch();
+			if (price == null) {
+        prep.setDouble(EIGHT, -1);
+			} else {
+       prep.setDouble(EIGHT, price);
+			}
+			prep.executeUpdate();
 		} catch (SQLException exc) {
 			exc.printStackTrace();
 		}
@@ -189,8 +205,7 @@ public final class OrderBean extends DeliveryObjectBean<Order> implements Order,
 			System.out.println("status: " + status + " ordinal: " + status.ordinal());
 			prep.setInt(2, status.ordinal());
 			prep.setLong(3, System.currentTimeMillis());
-			prep.addBatch();
-			prep.executeBatch();
+			prep.executeUpdate();
 		} catch (SQLException exc) {
 			exc.printStackTrace();
 		}

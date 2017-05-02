@@ -23,7 +23,9 @@ function initMap() {
 function sendFormToServer() {
     //iterate through form
     var pickUpLoc = document.getElementById("pick-up-loc").value;
+    console.log(pickUpLoc)
     var dropOffLoc = document.getElementById("drop-off-loc").value;
+    console.log(dropOffLoc)
     var item = document.getElementById("item").value;
     var time = document.getElementById("time").value;
     var price = document.getElementById("price").value;
@@ -56,21 +58,12 @@ function sendFormToServer() {
     //time/duration for every deliverer
 
     //user Location
-
-
-
-    function setCookie(cname, cval) {
-        console.log(document.cookie);
-        const add = document.cookie + ";" + cname + "=" + cval;
-        console.log(add)
-        document.cookie = add
-    }
-
+    console.log("Here")
     Promise.all(promises).then(function() {
         console.log("Pick Up:");
-        console.log(pickUpLocation);
+        console.log(pickUpLoc);
         console.log("Drop Off:");
-        console.log(dropOffLocation);
+        console.log(dropOffLoc);
         console.log("Item:");
         console.log(item);
         console.log("Time:");

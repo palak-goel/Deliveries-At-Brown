@@ -12,7 +12,7 @@ conn.onmessage = msg => {
       const jid = getJid()
       console.log("REQUESTED");
       localStorage.name = data.name;
-      localStorage.cell = data.cell;
+      localStorage.cell = data.phone;
       window.location.href = 'http://localhost:4567/requested';
       break;
   }

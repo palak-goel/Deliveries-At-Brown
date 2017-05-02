@@ -7,7 +7,7 @@ var delivererLocation = {lat: 41.826920, lng: -71.402731}
 //deliverer name
 var delivererName = localStorage.name;
 //deliverer number
-var delivererNumber = localStorage.number;
+var delivererNumber = localStorage.cell;
 
 
 function initMap() {

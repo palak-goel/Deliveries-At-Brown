@@ -16,7 +16,6 @@ import com.google.gson.Gson;
 import edu.brown.cs.jchaiken.deliveryobject.Order;
 import edu.brown.cs.jchaiken.deliveryobject.PendingOrder;
 import edu.brown.cs.jchaiken.deliveryobject.User;
-import spark.ModelAndView;
 import spark.QueryParamsMap;
 import spark.Request;
 import spark.Response;
@@ -129,7 +128,7 @@ public class Manager {
 				 * time).put("item", item).build();
 				 */
 				Map<String, Object> variables = new ImmutableMap.Builder<String, Object>().put("pickup", "1").build();
-				return new ModelAndView(variables, "requesting.ftl");
+				return new Object();
 			} catch (Exception e) {
 				e.printStackTrace();
 				return null;

@@ -1,23 +1,24 @@
 package edu.brown.cs.jchaiken.deliveryobject;
 
-import java.util.List;
-
 import edu.brown.cs.jchaiken.deliveryobject.OrderBean.OrderBuilder;
 
 public class PendingOrder {
 
 	private User orderer;
-	private Location pickup;
-	private Location dropoff;
-	private List<String> items;
+	private String pickup;
+	private String dropoff;
+	private String item;
 	private double price;
+	private double time;
 
-	public PendingOrder(User orderer, Location pickup, Location dropoff, List<String> items, double price) {
+	// Time
+	public PendingOrder(User orderer, String pickup, String dropoff, String item, double price, double time) {
 		this.orderer = orderer;
 		this.pickup = pickup;
 		this.dropoff = dropoff;
-		this.items = items;
+		this.item = item;
 		this.price = price;
+		this.time = time;
 	}
 
 	public Order makeOrder(User deliverer, double pickupT, double dropoffT) {

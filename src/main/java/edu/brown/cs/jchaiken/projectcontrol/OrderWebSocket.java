@@ -31,7 +31,7 @@ public class OrderWebSocket {
 	private static final Queue<Session> SESSIONS = new ConcurrentLinkedQueue<>();
 	private static int nextId = 0;
 	private static final Manager MGR = new Manager();
-	private static Map<Integer, User> socketidUser = new ConcurrentHashMap<>();
+	private static Map<Integer, spark.Session> socketidUser = new ConcurrentHashMap<>();
 
 	private enum MESSAGE_TYPE {
 		CONNECT, ORDER_TAKEN, ORDER_ADDED
@@ -74,14 +74,11 @@ public class OrderWebSocket {
 		JsonObject msg = new JsonObject();
 		if (received.get("type").getAsInt() == MESSAGE_TYPE.CONNECT.ordinal()) {
 			int id = received.get("id").getAsInt();
-			String uId = Manager.getSession(received.get("jsessionid").getAsString()).attribute("webId");
-			User u = User.byWebId(uId);
-			socketidUser.put(id, u);
+			spark.Session s = Manager.getSession(received.get("jsessionid").getAsString());
+			socketidUser.put(id, s);
 			msg.addProperty("type", MESSAGE_TYPE.ORDER_ADDED.ordinal());
 			JsonObject msg_p = new JsonObject();
-			msg_p.addProperty("id", id);
-			// msg_p.addProperty("order", o.toString());
-			msg.add("payload", msg_p);
+			return;
 		} else if (received.get("type").getAsInt() == MESSAGE_TYPE.ORDER_TAKEN.ordinal()) {
 			JsonObject payload = received.get("payload").getAsJsonObject();
 			int id = payload.get("id").getAsInt();

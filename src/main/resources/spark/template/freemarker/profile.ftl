@@ -31,21 +31,26 @@
     </div>
     <br>
     <div id = "user-profile" class = "col-md-5">
-        <h3> User Data </h3>
+        <h3> Information </h3>
         <i class="fa fa-mobile fa-3x" aria-hidden="true"></i>
+        <span id = "phone-number" class = "contact-info"></span>
         <br>
         <i class="fa fa-envelope fa-2x" aria-hidden="true"></i>
+        <span id = "email" class = "contact-info"></span>
         <br>
         <i class="fa fa-credit-card fa-2x" aria-hidden="true"></i>
-        <br>
-                <button onclick = "sendFormToServer();"> Edit Information </button>  
+        <span id = "card-number" class = "contact-info"></span>
+        <br><br>
+        <button onclick = "sendFormToServer();"> Edit Information </button>  
     </div>
     <div id = "user-info" class = "col-md-7">
-        <h3> Name </h3>
-        <h4> Delivery Rating: </h4>
-        <h4> Request Rating: </h4>
+        <h3 id = "name"> Name </h3>
+        <h4 id = "delivery-rating"> Delivery Rating: </h4>
+        <h4 id = "request-rating"> Request Rating: </h4>
         <br>
-                <button onclick = "sendFormToServer();"> Make Request </button>
+        <form action = "/request">
+            <button> Make Request </button>
+        </form>
     </div>
     <br>
     <div id = "new-order" class = "col-md-7">
@@ -53,8 +58,9 @@
         <h4> Location: </h4>
         <h4> Payment: </h4>
         <h4> Time: </h4>
-        
-                <button onclick = "sendFormToServer();"> Go to Orders </button>
+        <form action = "/deliver">
+            <button> See Orders </button>
+        </form>
         <br>        
     </div>    
 </body>

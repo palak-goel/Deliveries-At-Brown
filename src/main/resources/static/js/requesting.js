@@ -7,9 +7,9 @@ $(document).ready(() => {
     $("#price").attr("placeholder", localStorage.price)
 });
 //pick up location
-var pickup = {lat: 41.830556, lng: -71.402381}
+var pickup = {lat: parseFloat(localStorage.pickupLat), lng: parseFloat(localStorage.pickupLon)}
 //drop off location
-var dropoff = {lat: 41.826997, lng: -71.400221}
+var dropoff = {lat: parseFloat(localStorage.dropoffLat), lng: parseFloat(localStorage.dropoffLon)}
 //deliverer location
 var delivererLocation = {lat: 41.826920, lng: -71.402731}
 //delivery info

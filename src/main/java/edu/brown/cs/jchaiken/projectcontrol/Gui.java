@@ -7,6 +7,8 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
@@ -16,6 +18,7 @@ import com.stripe.model.Charge;
 import edu.brown.cs.jchaiken.deliveryobject.User;
 import edu.brown.cs.jchaiken.deliveryobject.User.AccountStatus;
 import edu.brown.cs.jchaiken.deliveryobject.User.UserBuilder;
+import edu.brown.cs.mhasan3.messaging.Sender;
 import freemarker.template.Configuration;
 import spark.ExceptionHandler;
 import spark.ModelAndView;
@@ -37,6 +40,7 @@ import spark.template.freemarker.FreeMarkerEngine;
 public class Gui {
 	private static final Gson GSON = new Gson();
 	private static final Manager MANAGER = new Manager();
+	private static Sender sender = new Sender("");
 
 	/**
 	 * Instantiates a Gui instance on the specified port number.
@@ -89,9 +93,29 @@ public class Gui {
 		Spark.post("/create-account", new AccountCreator());
 		Spark.post("validate-login", new LoginValidator());
 		Spark.post("/submit-request", new Manager.OrderMaker());
-
+		Spark.get("/forgot-password", new PasswordReset(), freeMarker);
+		Spark.post("/send-code", (request, response) -> {
+		  //TODO: phone number check stuff
+		  String cell = request.queryMap().value("cell");
+		  String code = sender.resetPassword(cell);
+		  Map<String, Object> toServer = ImmutableMap.of("sent", true);
+		  sentCodes.put(cell, code);
+		  return GSON.toJson(toServer);
+		});
+		Spark.post("/validate-code", (request, response) -> {
+		  String cell = request.queryMap().value("cell");
+		  String code = request.queryMap().value("code");
+		  Map<String, Object> toServer;
+		  if (sentCodes.containsKey(cell) && sentCodes.get(cell).equals(code)) {
+	      toServer = ImmutableMap.of("goodCode", true);
+		  } else {
+	      toServer = ImmutableMap.of("goodCode", false);
+	      return GSON.toJson(toServer);
+		  }
+      return GSON.toJson(toServer);
+		});
 		// Palak's Stuff
-		Spark.get("/request", (request, response) -> {
+    Spark.get("/request", (request, response) -> {
 			String webId = request.session().attribute("webId");
 			if (webId == null || User.byWebId(webId) == null) {
 				response.redirect("/login?from=request");
@@ -268,16 +292,33 @@ public class Gui {
 		}
 	}
 
+  private static ConcurrentMap<String, String> sentCodes
+	    = new ConcurrentHashMap<>();
+
+  /**
+   * Handler for resetting the password.
+   * @author jacksonchaiken
+   *
+   */
+  private static class PasswordReset implements TemplateViewRoute {
+    @Override
+    public ModelAndView handle(Request arg0, Response arg1) throws Exception {
+      Map<String, Object> toServer = new HashMap<>();
+      toServer.put("title", "Forgot Password");
+      return new ModelAndView(toServer, "reset.ftl");
+    }
+  }
+
 	/**
 	 * Handler for exceptions.
 	 *
 	 * @author jacksonchaiken
 	 *
 	 */
-	private static class ExceptionPrinter implements ExceptionHandler {
-		@Override
+  private static class ExceptionPrinter implements ExceptionHandler {
+    @Override
 		public void handle(Exception e, Request req, Response res) {
-			res.status(500);
+      res.status(500);
 			StringWriter stacktrace = new StringWriter();
 			// req.session().
 			try (PrintWriter pw = new PrintWriter(stacktrace)) {

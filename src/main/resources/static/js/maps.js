@@ -22,11 +22,22 @@ function calcRoute(start, end) {
             //distance of route             
             var directions = result.routes[0].legs[0].steps;
             for (var i = 0; i < directions.length; i++) {
-                console.log(directions[i].instructions)
+                //console.log(directions[i].instructions)
             }
-            console.log(result.routes[0].legs[0].distance.text);
+            //console.log(result.routes[0].legs[0].distance.text);
             //duration of route
-            console.log(result.routes[0].legs[0].duration.text);
+            //console.log(result.routes[0].legs[0].duration.text);
+            //toReturn["distance"] = result.routes[0].legs[0].distance.text;
+            //toReturn["duration"] = result.routes[0].legs[0].duration.text;
+            //toReturn["directions"] = directions;
+
+            toReturn = {
+                distance: result.routes[0].legs[0].distance.text,
+                duration: result.routes[0].legs[0].duration.text,
+                direction: directions
+            }
+            console.log(toReturn)
+            return toReturn;
         }
     });
 }

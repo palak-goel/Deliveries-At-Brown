@@ -365,4 +365,11 @@ public interface User extends DeliveryObject {
     }
     return UserProxy.byWebId(id);
   }
+
+  static boolean newPassword(String id, String newPassword) {
+    if (id == null || newPassword == null) {
+      throw new IllegalArgumentException("parameters null");
+    }
+    return UserProxy.newPassword(id, newPassword);
+  }
 }

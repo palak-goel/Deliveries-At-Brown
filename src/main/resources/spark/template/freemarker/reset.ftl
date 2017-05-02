@@ -21,12 +21,12 @@
 <p>A code has been sent to your phone. Enter it here.</p>
 <form class="form-inline">
   <div class="form-group">
-    <input type="text" class="form-control" id="1" placeholder="1">
-    <input type="text" class="form-control" id="2" placeholder="2">
-    <input type="text" class="form-control" id="3" placeholder="3">
-    <input type="text" class="form-control" id="4" placeholder="4">
-    <input type="text" class="form-control" id="5" placeholder="5">
-    <input type="text" class="form-control" id="6" placeholder="6">
+    <input type="text" class="form-control" id="b1" placeholder="1" maxlength="1" size="1">
+    <input type="text" class="form-control" id="b2" placeholder="2" maxlength="1" size="1">
+    <input type="text" class="form-control" id="b3" placeholder="3" maxlength="1" size="1">
+    <input type="text" class="form-control" id="b4" placeholder="4" maxlength="1" size="1">
+    <input type="text" class="form-control" id="b5" placeholder="5" maxlength="1" size="1">
+    <input type="text" class="form-control" id="b6" placeholder="6" maxlength="1" size="1">
   </div>
   <type="submit" button onclick = "validate()" class="btn btn-default">Validate Code</button>
 </form>
@@ -34,11 +34,19 @@
 <div id = "enter_password">
 <form class="form-horizontal">
   <div class="form-group">
+      <label class="sr-only" for="exampleInputEmail3">Enter account email</label>
+  	<input type ="email" class = "form-control" id = "account_email" placeholder = "Email">
     <label class="sr-only" for="exampleInputEmail3">Enter new password</label>
     <input type="password" class="form-control" id="password" placeholder="Password">
     <input type = "password" class = "form-control" id = "password_check" placeholder = "Re-enter passward">
   </div>
-  <type="submit" button onclick = "reset()" class="btn btn-default">Send Code</button>
+  <type="submit" button onclick = "update()" class="btn btn-default">Update password</button>
+</form>
+</div>
+<div id = "success">
+<p>Your password has been successfully reset</p>
+<form class = "form-inline" action = "/login">
+	<input type="button" onclick="location.href='/login';" class = "btn btn-default" value="Back to login"/>
 </form>
 </div>
 </#assign>

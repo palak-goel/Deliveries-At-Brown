@@ -142,6 +142,7 @@ public class Manager {
 				Location dropoff = Location.newLocation(dLat, dLon);
 				Order o = builder.setOrderer(curr).setPickup(pickup).setDropoff(dropoff).setPrice(price)
 						.setDropoffTime(time).setItems(Arrays.asList(item)).build();
+				o.addToDatabase();
 				ordMap.put(o.getId(), o);
 				OrderWebSocket.sendAddOrder(o);
 				System.out.println("ORDER WEB ID");

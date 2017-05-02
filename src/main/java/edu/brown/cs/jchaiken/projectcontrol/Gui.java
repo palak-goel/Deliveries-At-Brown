@@ -94,6 +94,7 @@ public class Gui {
 		Spark.post("validate-login", new LoginValidator());
 		Spark.post("/submit-request", new Manager.OrderMaker());
 		Spark.get("/forgot-password", new PasswordReset(), freeMarker);
+
 		Spark.post("/send-code", (request, response) -> {
 		  //TODO: phone number check stuff
 		  String cell = request.queryMap().value("cell");
@@ -102,6 +103,7 @@ public class Gui {
 		  sentCodes.put(cell, code);
 		  return GSON.toJson(toServer);
 		});
+
 		Spark.post("/validate-code", (request, response) -> {
 		  String cell = request.queryMap().value("cell");
 		  String code = request.queryMap().value("code");
@@ -114,6 +116,16 @@ public class Gui {
 		  }
       return GSON.toJson(toServer);
 		});
+
+		Spark.post("/reset-password", (request, response) -> {
+		  String email = request.queryMap().value("email");
+		  String newPass = request.queryMap().value("password");
+		  boolean status = User.newPassword(email, newPass);
+		  Map<String, Object> toServer = new HashMap<>();
+		  toServer.put("status", status);
+		  return GSON.toJson(toServer);
+		});
+
 		// Palak's Stuff
     Spark.get("/request", (request, response) -> {
 			String webId = request.session().attribute("webId");
@@ -124,6 +136,7 @@ public class Gui {
 			Map<String, Object> variables = ImmutableMap.of("title", "Request");
 			return freeMarker.render(new ModelAndView(variables, "request.ftl"));
 		});
+
 		Spark.get("/requesting", (request, response) -> {
 			String webId = request.session().attribute("webId");
 			if (webId == null || User.byWebId(webId) == null) {
@@ -133,6 +146,7 @@ public class Gui {
 			Map<String, Object> variables = ImmutableMap.of("title", "Request");
 			return freeMarker.render(new ModelAndView(variables, "requesting.ftl"));
 		});
+
 		Spark.get("/requested", (request, response) -> {
 			String webId = request.session().attribute("webId");
 			if (webId == null || User.byWebId(webId) == null) {
@@ -142,6 +156,7 @@ public class Gui {
 			Map<String, Object> variables = ImmutableMap.of("title", "Request");
 			return freeMarker.render(new ModelAndView(variables, "requested.ftl"));
 		});
+
 		Spark.get("/deliver", (request, response) -> {
 			String webId = request.session().attribute("webId");
 			if (webId == null || User.byWebId(webId) == null) {
@@ -151,6 +166,7 @@ public class Gui {
 			Map<String, Object> variables = ImmutableMap.of("title", "Request");
 			return freeMarker.render(new ModelAndView(variables, "deliver.ftl"));
 		});
+
 		Spark.get("/delivering", (request, response) -> {
 			String webId = request.session().attribute("webId");
 			if (webId == null || User.byWebId(webId) == null) {
@@ -160,6 +176,7 @@ public class Gui {
 			Map<String, Object> variables = ImmutableMap.of("title", "Request");
 			return freeMarker.render(new ModelAndView(variables, "delivering.ftl"));
 		});
+
 		Spark.get("/delivered", (request, response) -> {
 			String webId = request.session().attribute("webId");
 			if (webId == null || User.byWebId(webId) == null) {
@@ -169,6 +186,7 @@ public class Gui {
 			Map<String, Object> variables = ImmutableMap.of("title", "Request");
 			return freeMarker.render(new ModelAndView(variables, "delivered.ftl"));
 		});
+
 		Spark.get("/map", (request, response) -> {
 			String webId = request.session().attribute("webId");
 			if (webId == null || User.byWebId(webId) == null) {
@@ -178,6 +196,7 @@ public class Gui {
 			Map<String, Object> variables = ImmutableMap.of("title", "Request");
 			return freeMarker.render(new ModelAndView(variables, "maps.ftl"));
 		});
+
 		Spark.get("/profile", (request, response) -> {
 			String webId = request.session().attribute("webId");
 			if (webId == null || User.byWebId(webId) == null) {

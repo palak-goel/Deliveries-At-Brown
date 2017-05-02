@@ -1,6 +1,8 @@
 package edu.brown.cs.jchaiken.projectcontrol;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
@@ -16,7 +18,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 import edu.brown.cs.jchaiken.deliveryobject.Order;
-import edu.brown.cs.jchaiken.deliveryobject.User;
 
 /**
  * Web socket class to handle live interactions between orders,
@@ -34,7 +35,7 @@ public class OrderWebSocket {
 	private static Map<Integer, spark.Session> socketidUser = new ConcurrentHashMap<>();
 
 	private enum MESSAGE_TYPE {
-		CONNECT, ORDER_TAKEN, ORDER_ADDED
+		CONNECT, ADD_ORDER, REMOVE_ORDER, REQUESTED
 	}
 
 	@OnWebSocketConnect
@@ -72,33 +73,12 @@ public class OrderWebSocket {
 		System.out.println(message);
 		JsonObject received = GSON.fromJson(message, JsonObject.class);
 		JsonObject msg = new JsonObject();
-		if (received.get("type").getAsInt() == MESSAGE_TYPE.CONNECT.ordinal()) {
-			int id = received.get("id").getAsInt();
-			spark.Session s = Manager.getSession(received.get("jsessionid").getAsString());
-			socketidUser.put(id, s);
-			msg.addProperty("type", MESSAGE_TYPE.ORDER_ADDED.ordinal());
-			JsonObject msg_p = new JsonObject();
-			return;
-		} else if (received.get("type").getAsInt() == MESSAGE_TYPE.ORDER_TAKEN.ordinal()) {
-			JsonObject payload = received.get("payload").getAsJsonObject();
-			int id = payload.get("id").getAsInt();
-			String ord = payload.get("order").getAsString();
-			String usr = payload.get("user").getAsString();
-			Order o = null; // get from map
-			User u = null; // get from map
-			Manager.select(u, o);
-			msg.addProperty("type", MESSAGE_TYPE.ORDER_TAKEN.ordinal());
-			JsonObject msg_p = new JsonObject();
-			msg_p.addProperty("id", id);
-			msg_p.addProperty("order", o.toString());
-			msg_p.addProperty("user", u.toString());
-			msg.add("payload", msg_p);
-		} else {
-			// raise error
-		}
-		for (Session s : SESSIONS) {
-			s.getRemote().sendString(GSON.toJson(msg));
-		}
+		assert (received.get("type").getAsInt() == MESSAGE_TYPE.CONNECT.ordinal());
+		int id = received.get("id").getAsInt();
+		spark.Session s = Manager.getSession(received.get("jsessionid").getAsString());
+		socketidUser.put(id, s);
+		JsonObject msg_p = new JsonObject();
+		return;
 	}
 
 	public static void sendMsg() {
@@ -107,6 +87,22 @@ public class OrderWebSocket {
 			msg.addProperty("hi", "hello");
 			for (Session s : SESSIONS) {
 				s.getRemote().sendString(GSON.toJson(msg));
+			}
+		} catch (IOException e) {
+
+		}
+	}
+
+	public static void sendAddOrder(Order o) {
+		Manager.addOrder(o);
+		List<Order> orders = MGR.getPendingOrders();
+		try {
+			Map<String, Object> toServer = new HashMap<>();
+			toServer.put("orders", orders);
+			toServer.put("type", MESSAGE_TYPE.ADD_ORDER.ordinal());
+			String msg = GSON.toJson(toServer);
+			for (Session s : SESSIONS) {
+				s.getRemote().sendString(msg);
 			}
 		} catch (IOException e) {
 

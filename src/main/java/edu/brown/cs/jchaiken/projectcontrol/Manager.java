@@ -11,7 +11,6 @@ import java.util.concurrent.TimeUnit;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 
 import edu.brown.cs.jchaiken.deliveryobject.Location;
@@ -120,15 +119,13 @@ public class Manager {
 				String item = qm.value("item");
 				double time = Double.parseDouble(qm.value("time"));
 				double price = Double.parseDouble(qm.value("price"));
-				// System.out.println("THIS IS IT" + qm.value("pickup"));
 				OrderBuilder builder = new OrderBuilder();
 				User curr = User.byWebId(req.session().attribute("webId"));
 				Location pickup = Location.newLocation(pLat, pLon);
 				Location dropoff = Location.newLocation(dLat, dLon);
-				builder.setDeliverer(curr).setPickup(pickup).setDropoff(dropoff).setPrice(price).setDropoffTime(time)
-						.setItems(Arrays.asList(item));
-
-				OrderWebSocket.sendMsg();
+				Order o = builder.setDeliverer(curr).setPickup(pickup).setDropoff(dropoff).setPrice(price)
+						.setDropoffTime(time).setItems(Arrays.asList(item)).build();
+				OrderWebSocket.sendAddOrder(o);
 				/*
 				 * Map<String, Object> variables = new
 				 * ImmutableMap.Builder<String, Object>() .put("pickupLoc",
@@ -136,13 +133,10 @@ public class Manager {
 				 * qm.value("dropoff")).put("price", price) .put("time",
 				 * time).put("item", item).build();
 				 */
-				Map<String, Object> variables = new ImmutableMap.Builder<String, Object>().put("pickup", "1").build();
-				return new Object();
+				// Not used
 			} catch (Exception e) {
-				e.printStackTrace();
-				return null;
 			}
-
+			return new Object();
 		}
 	}
 }

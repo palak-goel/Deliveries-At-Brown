@@ -484,4 +484,23 @@ class UserProxy extends DeliveryObjectProxy<User> implements User {
     }
     return null;
   }
+
+  private static final String NEW_P = "UPDATE users"
+      + " SET password = ? WHERE id = ?";
+  protected static boolean newPassword(String email, String password) {
+    if (accountExists(email)) {
+      try (PreparedStatement prep = Database.getConnection()
+          .prepareStatement(NEW_P)) {
+        prep.setInt(1, password.hashCode());
+        prep.setString(2, email);
+        prep.executeUpdate();
+      } catch (SQLException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+        return false;
+      }
+      return true;
+    }
+    return false;
+  }
 }

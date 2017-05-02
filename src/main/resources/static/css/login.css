@@ -19,7 +19,7 @@
   width: 40%;
   position: relative;
   left: 1000px
-  top: 750px;
+  top: 500px;
 }
 
 
@@ -29,8 +29,9 @@
   width: 28%;
   position: relative;
   left: 1000px
-  top: 750px;
+  top: 1500px;
 }
+
 ul {
     list-style-type: none;
     margin: 0;

@@ -19,9 +19,10 @@ public class SenderTest {
   public void testSettersMessage() {
     Sender sender = new Sender("+14012257856");
     assertEquals(sender.getContent(), null);
-    sender.updateReceiver("+14012257856");
-    assertEquals(sender.getReceiver(), "+14012257856");
-    // sender.updateMessage("outside");
+    sender.updateReceiver("+16783829540");
+    assertEquals(sender.getReceiver(), "+16783829540");
+    sender.customMessage("outside");
+    // sender.sendMessage();
     // assertEquals(sender.getContent(),
     // "Your deliverer is outside your current location");
 

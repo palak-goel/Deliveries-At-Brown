@@ -281,7 +281,7 @@ final class OrderBean extends DeliveryObjectBean<Order> implements
     }
 
     Order build() {
-      if (idB == null || ordererB == null || delivererB == null || pickupB
+      if (idB == null || ordererB == null || pickupB
           == null || dropoffB == null || status == null) {
         throw new IllegalArgumentException("Not all paramters set");
       }

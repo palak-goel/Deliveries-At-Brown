@@ -39,23 +39,23 @@
         <form action = "http://localhost:4567/requesting">
             <div class="form-group">
                 <label for="formGroupExampleInput">Pick Up</label>
-                <input id = "pick-up-loc" type="text" class="form-control" id="formGroupExampleInput" placeholder="Example input">
+                <input id = "pick-up-loc" type="text" class="form-control" id="formGroupExampleInput" placeholder="Enter a pickup location ...">
             </div>
             <div class="form-group">
                 <label for="formGroupExampleInput">Drop Off</label>
-                <input id = "drop-off-loc" type="text" class="form-control" id="formGroupExampleInput" placeholder="Example input">
+                <input id = "drop-off-loc" type="text" class="form-control" id="formGroupExampleInput" placeholder="Enter a drop off location ...">
             </div>
             <div class="form-group">
                 <label for="formGroupExampleInput">Item</label>
-                <input id = "item" type="text" class="form-control" id="formGroupExampleInput" placeholder="Example input">
+                <input id = "item" type="text" class="form-control" id="formGroupExampleInput" placeholder="What do you want to get?">
             </div>
             <div class="form-group">
                 <label for="formGroupExampleInput">Time</label>
-                <input id = "time" type="text" class="form-control" id="formGroupExampleInput" placeholder="Example input">
+                <input id = "time" type="text" class="form-control" id="formGroupExampleInput" placeholder="When do you want it by?">
             </div>
             <div class="form-group">
                 <label for="formGroupExampleInput">Price</label>
-                <input id = "price" type="text" class="form-control" id="formGroupExampleInput" placeholder="Example input">
+                <input id = "price" type="text" class="form-control" id="formGroupExampleInput" placeholder="How much do you want to pay?">
             </div>
             <center>
                 <button onclick = "sendFormToServer();"> Submit Order </button>

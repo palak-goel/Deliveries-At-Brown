@@ -34,7 +34,6 @@ function initMap() {
 }
 
 function sendTextToDeliverer() {
-    function sendTextToDeliverer() {
     var message = document.getElementById("text-message").value;
     const postParameters = {
         number = delivererNumber,
@@ -44,7 +43,6 @@ function sendTextToDeliverer() {
         });
 
     
-}
 }
 
 

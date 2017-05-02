@@ -8,11 +8,20 @@ var requestRating = 4
 
 
 $(document).ready(() => {
-	document.getElementById("name").innerText = name;
+	$.post("/profile", {}, responseJson => {
+		data = JSON.parse(responseJson)
+		name = data.name
+		phoneNumber = data.phoneNumber
+		mail = data.email
+		deliveryRating = data.deliveryRating
+		requestRating = data.requestRating
+			document.getElementById("name").innerText = name;
 	document.getElementById("delivery-rating").innerText = "Delivery Rating: " + deliveryRating
 	document.getElementById("request-rating").innerText = "Request Rating: " + requestRating
 	document.getElementById("phone-number").innerText = phoneNumber
 	document.getElementById("email").innerText = mail
 	document.getElementById("card-number").innerText = creditCard
+	});
+
 
 });

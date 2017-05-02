@@ -7,17 +7,18 @@
   padding-bottom: 10px;
 }
 
-#map {
+#queue {
   height: 600px;
-  width: 70%;
-  float: left;
+  width: 85%;
+  float: right;
+  padding-right: 20px;
 }
 
 #form {
   height: 600px;
-  width: 28%;
-  float: right;
-  padding-right: 10px;
+  width: 15%;
+  float: left;
+  padding-left: 30px;
 }
 
 ul {
@@ -42,4 +43,20 @@ li a {
 li a:hover {
     color: #C0B283;
     text-decoration: none;
+}
+
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+}
+
+tr:nth-child(even) {
+    background-color: #dddddd;
 }

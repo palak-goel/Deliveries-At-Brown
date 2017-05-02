@@ -15,6 +15,7 @@
    
     h1 {
         color: white;
+        padding-left: 15px;
     }
 
     h3 {
@@ -32,28 +33,40 @@
           <li><a href="http://localhost:4567/deliver">Deliver</a></li>
         </ul>
     </div>
-    <div id="map"></div>
+    <div id="queue">
+        <br><br>
+        <table>
+            <th>Pickup Location</th>
+            <th>Dropoff Location</th>
+            <th>Distance</th>
+            <th>Duration</th>
+            <th>Time</th>
+            <th>Item</th>
+            <th>Accept</th>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+
     <div id="form">
-            <center>
-            <h3>Insert Preferences</h3>
-            </center>
-            <form action = "http://localhost:4567/requesting">
-                <div class="form-group">
-                    <label for="formGroupExampleInput">Distance</label>
-                    <input id = "distance" type="text" class="form-control" id="formGroupExampleInput" placeholder="Example input">
-                </div>
-                <div class="form-group">
-                    <label for="formGroupExampleInput">Time</label>
-                    <input id = "time" type="text" class="form-control" id="formGroupExampleInput" placeholder="Example input">
-                </div>
-                <div class="form-group">
-                    <label for="formGroupExampleInput">Payment</label>
-                    <input id = "payment" type="text" class="form-control" id="formGroupExampleInput" placeholder="Example input">
-                </div>
-                <center>
-                    <button onclick = "sendFormToServer();"> Submit Preferences </button>
-                </center>
-            </form>
+            <h3>Filters</h3>
+            <div class="checkbox">
+              <label><input type="checkbox" value="">Price</label>
+            </div>
+            <div class="checkbox">
+              <label><input type="checkbox" value="">Distance</label>
+            </div>
+            <div class="checkbox">
+              <label><input type="checkbox" value="">Duration</label>
+            </div>
+            <div class="checkbox">
+              <label><input type="checkbox" value="">Rating</label>
+            </div>
+            <div class="checkbox">
+              <label><input type="checkbox" value="">Time</label>
+            </div>
+            
+            
         </div>
      </body>
 </html>

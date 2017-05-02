@@ -24,17 +24,37 @@
         </ul>
     </div>
 	<h1>Profile</h1>
-    <div id = "user-profile" class = "col-md-5">
+    <div id = "user-image" class = "col-md-5">
         <h3> Image </h3>
+        <i class="fa fa-user-o fa-5x" aria-hidden="true"></i>
+        <br>
+    </div>
+    <br>
+    <div id = "user-profile" class = "col-md-5">
+        <h3> User Data </h3>
         <i class="fa fa-mobile fa-3x" aria-hidden="true"></i>
         <br>
         <i class="fa fa-envelope fa-2x" aria-hidden="true"></i>
         <br>
         <i class="fa fa-credit-card fa-2x" aria-hidden="true"></i>
+        <br>
+                <button onclick = "sendFormToServer();"> Edit Information </button>  
     </div>
     <div id = "user-info" class = "col-md-7">
         <h3> Name </h3>
         <h4> Delivery Rating: </h4>
         <h4> Request Rating: </h4>
+        <br>
+                <button onclick = "sendFormToServer();"> Make Request </button>
     </div>
+    <br>
+    <div id = "new-order" class = "col-md-7">
+        <h3> Make a Delivery </h3>
+        <h4> Location: </h4>
+        <h4> Payment: </h4>
+        <h4> Time: </h4>
+        
+                <button onclick = "sendFormToServer();"> Go to Orders </button>
+        <br>        
+    </div>    
 </body>

@@ -1,11 +1,10 @@
 <#assign content>
- <div id = "top-banner">
+<div id = "top-banner">
         <h1 id = "banner">Deliveries @ Brown</h1>
-        <ul>
-          <li><a href="/about">About D@B</a></li>
-          <li><a href="/faq">FAQs</a></li>
-        </ul>
-    </div>
+</div>
+
+<center>
+
 <div id = "login">
 <h1>Login</h1>
 <form class="form-inline">
@@ -22,7 +21,9 @@
   <type="submit" button onclick = "login()" class="btn btn-default">Sign in</button>
 </form>
 </div>
+
 <br>
+
 <div id = "create_div">
 <h1> Create Account </h1>
 <form class="form-horizontal">
@@ -65,6 +66,10 @@
   <type="submit" id = "create_account" class="btn btn-default">Create account</button>
 </form>
 </div>
+</center>
+
+
+
 </#assign>
 <#include "main.ftl">
 <script src = "/js/login.js"></script>

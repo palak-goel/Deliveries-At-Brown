@@ -51,7 +51,8 @@ class LocationProxy extends DeliveryObjectProxy<Location> implements
         if (rs.next()) {
           double lat = rs.getDouble(2);
           double lng = rs.getDouble(3);
-          Location loc = new LocationBean(super.getId(), lat, lng);
+          String name = rs.getString(4);
+          Location loc = new LocationBean(super.getId(), lat, lng, name);
           super.setData(loc);
         }
       }
@@ -140,12 +141,25 @@ class LocationProxy extends DeliveryObjectProxy<Location> implements
   @Override
   public void addToDatabase() {
     check();
-    super.getData().addToDatabase();
+    if (super.getData() != null) {
+      super.getData().addToDatabase();
+    }  
   }
 
   @Override
   public void deleteFromDatabase() {
     check();
-    super.getData().deleteFromDatabase();
+    if (super.getData() != null) {
+      super.getData().deleteFromDatabase();
+    }
+  }
+
+  @Override
+  public String getName() {
+    check();
+    if (super.getData() != null) {
+      return super.getData().getName();
+    }
+    return null;
   }
 }

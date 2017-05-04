@@ -141,6 +141,12 @@ public interface Order extends DeliveryObject {
   void setRanking(double rank);
 
   /**
+   * Returns the phone number of the pickup location.
+   * @return the phone number
+   */
+  String getPhone();
+
+  /**
    * Returns an order based on its id.
    * @param id the order's id.
    * @return the order.

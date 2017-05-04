@@ -29,6 +29,7 @@ public final class OrderBean extends DeliveryObjectBean<Order> implements Order,
 	private Double dropoffTime;
 	private double ranking;
 	private boolean inDb = false;
+	private String phone;
 	private OrderBean(String newId, User newOrderer, User newDeliverer, Location newPickup, Location newDropoff,
 			double pickupT, double dropoffT) {
 		super(newId);
@@ -53,6 +54,9 @@ public final class OrderBean extends DeliveryObjectBean<Order> implements Order,
 	private void addOrderStatus(OrderStatus newOrderStatus) {
 		status = newOrderStatus;
 	}
+	private void addPhone(String newPhone) {
+	  phone = newPhone;
+	}
 
 	private void addItems(List<String> newItems) {
 		items = newItems;
@@ -66,6 +70,11 @@ public final class OrderBean extends DeliveryObjectBean<Order> implements Order,
 	@Override
 	public User getDeliverer() {
 		return deliverer;
+	}
+
+	@Override
+	public String getPhone() {
+	  return phone;
 	}
 
 	@Override
@@ -154,7 +163,7 @@ public final class OrderBean extends DeliveryObjectBean<Order> implements Order,
 		return dropoffTime;
 	}
 
-	private static final String ORDER_ADD = "INSERT INTO orders VALUES (?,?,?,?,?,?,?,?)";
+	private static final String ORDER_ADD = "INSERT INTO orders VALUES (?,?,?,?,?,?,?,?,?)";
 	private static final String STATUS_ADD = "INSERT INTO order_status VALUES (?,?,?)";
 	private static final String ITEM_ADD = "INSERT INTO items VALUES (?,?)";
 
@@ -183,6 +192,11 @@ public final class OrderBean extends DeliveryObjectBean<Order> implements Order,
 			} else {
        prep.setDouble(EIGHT, price);
 			}
+			if (phone == null) {
+			  prep.setString(9, "");
+			} else {
+			  prep.setString(9, phone);
+			}
 			prep.executeUpdate();
 		} catch (SQLException exc) {
 			exc.printStackTrace();
@@ -199,7 +213,6 @@ public final class OrderBean extends DeliveryObjectBean<Order> implements Order,
 		}
 		try (PreparedStatement prep = Database.getConnection().prepareStatement(STATUS_ADD)) {
 			prep.setString(1, super.getId());
-			System.out.println("status: " + status + " ordinal: " + status.ordinal());
 			prep.setInt(2, status.ordinal());
 			prep.setLong(3, System.currentTimeMillis());
 			prep.executeUpdate();
@@ -256,6 +269,7 @@ public final class OrderBean extends DeliveryObjectBean<Order> implements Order,
 		private Location dropoffB;
 		private List<String> itemsB;
 		private String idB;
+		private String phone;
 		private double pickupT;
 		private double dropoffT;
 		private OrderStatus status;
@@ -315,6 +329,12 @@ public final class OrderBean extends DeliveryObjectBean<Order> implements Order,
 		  db = newStatus;
 		  return this;
 		}
+
+		public OrderBuilder setPhone(String newPhone) {
+		  phone = newPhone;
+		  return this;
+		}
+
 		public Order build() {
 			if (idB == null) {
 				idB = Order.IdGenerator.getNextId();
@@ -324,6 +344,7 @@ public final class OrderBean extends DeliveryObjectBean<Order> implements Order,
 			bean.addOrderStatus(status);
 			bean.addPrice(price);
 			bean.setDbStatus(db);
+			bean.addPhone(phone);
 			return bean;
 		}
 	}

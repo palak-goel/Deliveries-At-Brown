@@ -140,11 +140,13 @@ public class Manager {
 				double price = Double.parseDouble(qm.value("price"));
 				OrderBuilder builder = new OrderBuilder();
 				User curr = User.byWebId(req.session().attribute("webId"));
-				Location pickup = Location.newLocation(pLat, pLon);
-				Location dropoff = Location.newLocation(dLat, dLon);
+				
+				Location pickup = Location.newLocation(pLat, pLon, //TODO: add name);
+				Location dropoff = Location.newLocation(dLat, dLon, //TODO: add name);
 				Order o = builder.setOrderer(curr).setPickup(pickup).setDropoff(dropoff).setPrice(price)
-						.setDropoffTime(time).setItems(Arrays.asList(item)).setOrderStatus(OrderStatus.UNASSIGNED).build();
-				// o.addToDatabase();
+						.setDropoffTime(time).setItems(Arrays.asList(item)).setOrderStatus(OrderStatus.UNASSIGNED)
+						.setPhone(//TODO: restaurant phone number).build();
+				o.addToDatabase();
 				ordMap.put(o.getId(), o);
         o.addToDatabase();
 				System.out.println("ORDER WEB ID");

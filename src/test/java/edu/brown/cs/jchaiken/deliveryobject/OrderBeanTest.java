@@ -20,19 +20,14 @@ public class OrderBeanTest {
 		assert newOrder != null;
 	}
 
-	/*
-	 * @Test (expected = IllegalArgumentException.class) public void
-	 * testBuildException() { OrderBuilder builder = new OrderBuilder();
-	 * builder.build(); }
-	 */
-
 	@Test
 	public void testGetters() {
 		OrderBuilder builder = new OrderBuilder();
 		Order newOrder = builder.setId("hey").setDeliverer(User.byId("user")).setOrderer(User.byId("user2"))
 				.setDropoff(Location.byId("/l/1")).setPickup(Location.byId("/l/2")).setItems(new ArrayList<String>())
-				.setDropoffTime(100).setPickupTime(150).setOrderStatus(OrderStatus.COMPLETED).setPrice(100).build();
+				.setDropoffTime(100).setPickupTime(150).setOrderStatus(OrderStatus.COMPLETED).setPrice(100).setPhone("123").build();
 		assert newOrder != null;
+		assert newOrder.getPhone().equals("123");
 		assert newOrder.getDeliverer().getId().equals("user");
 		assert newOrder.getOrderer().getId().equals("user2");
 		assert newOrder.getDropoffLocation().getId().equals("/l/1");
@@ -41,13 +36,23 @@ public class OrderBeanTest {
 		assert newOrder.status() == OrderStatus.COMPLETED;
 	}
 
+  @Test
+  public void testIdGenerator() {
+    String lastId = OrderBean.getNextId();
+    for (int x = 0; x < 10000; x++) {
+      String newId = OrderBean.getNextId();
+      assert !newId.equals(lastId);
+      lastId = newId;
+    }
+  }
+
 	@Test
 	public void testAddAndRemoveDb() {
 		Database.setUrl("data/test.sqlite3");
 		OrderBuilder builder = new OrderBuilder();
 		Order newOrder = builder.setId("hey").setDeliverer(User.byId("jackson_chaiken@brown.edu"))
 				.setOrderer(User.byId("palak_goel@brown.edu")).setDropoff(Location.byId("/l/1"))
-				.setPickup(Location.byId("/l/2")).setItems(new ArrayList<String>()).setDropoffTime(100)
+				.setPickup(Location.byId("/l/2")).setPhone("123").setItems(new ArrayList<String>()).setDropoffTime(100)
 				.setPickupTime(150).setOrderStatus(OrderStatus.COMPLETED).setPrice(100).build();
 		assert newOrder.getDeliverer().getId().equals("jackson_chaiken@brown.edu");
 		newOrder.addToDatabase();

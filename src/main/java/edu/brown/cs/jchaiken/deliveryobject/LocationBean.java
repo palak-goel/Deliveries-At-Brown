@@ -15,17 +15,18 @@ class LocationBean extends DeliveryObjectBean<Location> implements
     Location {
   private double lat;
   private double lng;
-
+  private String name;
   /**
    * Creates a new Location Bean.
    * @param newId the location's id.
    * @param newLat the location's latitude.
    * @param newLng the location's longitude.
    */
-  LocationBean(String newId, double newLat, double newLng) {
+  LocationBean(String newId, double newLat, double newLng, String newName) {
     super(newId);
     lat = newLat;
     lng = newLng;
+    name = newName;
   }
 
   @Override
@@ -39,12 +40,18 @@ class LocationBean extends DeliveryObjectBean<Location> implements
   }
 
   @Override
+  public String getName() {
+    return name;
+  }
+
+  @Override
   public void addToDatabase() {
     try (PreparedStatement prep = Database.getConnection().prepareStatement(
-        "INSERT INTO locations VALUES (?,?,?);")) {
+        "INSERT INTO locations VALUES (?,?,?,?);")) {
       prep.setString(1, super.getId());
       prep.setDouble(2, lat);
       prep.setDouble(3, lng);
+      prep.setString(4, name);
       prep.addBatch();
       prep.executeBatch();
     } catch (SQLException exc) {

@@ -19,6 +19,12 @@ public interface Location extends DeliveryObject {
 	String getId();
 
 	/**
+	 * Returns the name.
+	 * @return the name.
+	 */
+	String getName();
+
+	/**
 	 * Returns the latitude.
 	 * 
 	 * @return the latitude.
@@ -64,8 +70,20 @@ public interface Location extends DeliveryObject {
 	 *            the longitude.
 	 * @return the location object.
 	 */
-	static Location newLocation(String id, double latitude, double longitude) {
-		return new LocationBean(id, latitude, longitude);
+	static Location newLocation(double latitude, double longitude,
+	    String name) {
+	  Location loc = Location.byLatLng(latitude, longitude);
+	  if (loc != null) {
+	    return loc;
+	  }
+		LocationBean bean = new LocationBean(
+		    IdGenerator.getNextId(), latitude, longitude, name);
+		bean.addToDatabase();
+		return bean;
+	}
+
+	static Location byName(String name) {
+	  return LocationProxy.byName(name);
 	}
 
 	/**
@@ -79,10 +97,6 @@ public interface Location extends DeliveryObject {
 	 */
 	static Location byLatLng(double lat, double lng) {
 		return LocationProxy.byLatLng(lat, lng);
-	}
-
-	static Location newLocation(double latitutde, double longitude) {
-		return newLocation(IdGenerator.getNextId(), latitutde, longitude);
 	}
 
 	/**
@@ -120,9 +134,6 @@ public interface Location extends DeliveryObject {
 	 */
 	class IdGenerator {
 		private static double counter = 0;
-
-		private IdGenerator() {
-		}
 
 		/**
 		 * Returns the next id.

@@ -50,6 +50,7 @@ class OrderProxy extends DeliveryObjectProxy<Order> implements Order {
           Location pickupLoc = Location.byId(cacheSet.getString(6));
           Location dropoffLoc = Location.byId(cacheSet.getString(SEVEN));
           double price = cacheSet.getDouble(EIGHT);
+          String phone = cacheSet.getString(9);
           OrderBuilder builder = new OrderBuilder();
           builder.setId(super.getId())
               .setOrderer(orderer)
@@ -58,7 +59,8 @@ class OrderProxy extends DeliveryObjectProxy<Order> implements Order {
               .setDropoffTime(dropoffTime)
               .setDropoff(dropoffLoc)
               .setPickup(pickupLoc)
-              .setPrice(price);
+              .setPrice(price)
+              .setPhone(phone);
           try (PreparedStatement statusPrep = Database.getConnection()
               .prepareStatement(STATUS_QUERY)) {
             statusPrep.setString(1, super.getId());
@@ -313,5 +315,14 @@ class OrderProxy extends DeliveryObjectProxy<Order> implements Order {
       return;
     }
     super.getData().setRanking(rank);
+  }
+
+  @Override
+  public String getPhone() {
+    check();
+    if (super.getData() == null) {
+      return null;
+    }
+    return super.getData().getPhone();
   }
 }

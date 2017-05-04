@@ -37,10 +37,10 @@ public class UserProxyTest {
   public void testGoodProxyHistory() {
     Database.setUrl("data/test.sqlite3");
     UserProxy test = new UserProxy("palak_goel@brown.edu");
-    assertEquals(test.pastDeliveries().size(), 1);
-    assertEquals(test.pastOrders().size(), 1);
-    assert test.currentOrders().size() == 0;
+    assertEquals(test.currentOrders().size(), 0);
     assertEquals(test.currentDeliveries().size(), 0);
+    assertEquals(test.pastOrders().size(), 1);
+    assertEquals(test.pastDeliveries().size(), 1);
   }
 
   @Test

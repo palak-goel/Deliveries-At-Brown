@@ -141,11 +141,11 @@ public class Manager {
 				OrderBuilder builder = new OrderBuilder();
 				User curr = User.byWebId(req.session().attribute("webId"));
 				
-				Location pickup = Location.newLocation(pLat, pLon, //TODO: add name);
-				Location dropoff = Location.newLocation(dLat, dLon, //TODO: add name);
+				Location pickup = Location.newLocation(pLat, pLon, /*TODO: add name*/);
+				Location dropoff = Location.newLocation(dLat, dLon, /*TODO: add name*/);
 				Order o = builder.setOrderer(curr).setPickup(pickup).setDropoff(dropoff).setPrice(price)
 						.setDropoffTime(time).setItems(Arrays.asList(item)).setOrderStatus(OrderStatus.UNASSIGNED)
-						.setPhone(//TODO: restaurant phone number).build();
+						.setPhone(/*TODO: restaurant phone number*/).build();
 				o.addToDatabase();
 				ordMap.put(o.getId(), o);
         o.addToDatabase();

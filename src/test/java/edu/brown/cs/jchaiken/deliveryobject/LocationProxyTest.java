@@ -32,10 +32,18 @@ public class LocationProxyTest {
   }
 
   @Test
+  public void testGetName() {
+    Database.setUrl("data/test.sqlite3");
+    Location l = LocationProxy.byLatLng(42.312, -70.231);
+    assert l.getName().equals("name");
+  }
+
+  @Test
   public void testByLatLng() {
     Database.setUrl("data/test.sqlite3");
     Location l = LocationProxy.byLatLng(42.312, -70.231);
     assert l.getId().equals("/l/3");
+    assert l.getName().equals("name");
     Location bad = LocationProxy.byLatLng(0, 0);
     assert bad == null;
   }

@@ -116,6 +116,28 @@ class LocationProxy extends DeliveryObjectProxy<Location> implements
     return results;
   }
 
+  private static final String BY_N = "SELECT id FROM locations WHERE name = ?";
+  /**
+   * Returns the location with a given name, if it exists.
+   * @param name the locations name.
+   * @return the location, or null if it does not exist.
+   */
+  public static Location byName(String name) {
+    try (PreparedStatement prep = Database.getConnection()
+        .prepareStatement(BY_N)) {
+      prep.setString(1, name);
+      try (ResultSet rs = prep.executeQuery()) {
+        if (rs.next()) {
+          return new LocationProxy(rs.getString(1));
+        }
+      }
+    } catch (SQLException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    return null;
+  }
+
   private static final String ALL_L = "SELECT * FROM locations";
 
   /**

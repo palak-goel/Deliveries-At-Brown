@@ -17,15 +17,6 @@ public class OrderTest {
     assertEquals(OrderStatus.valueOf(3).ordinal(), 3);
   }
 
-  @Test
-  public void testIdGenerator() {
-    String lastId = Order.IdGenerator.getNextId();
-    for (int x = 0; x < 10000; x++) {
-      String newId = Order.IdGenerator.getNextId();
-      assert !newId.equals(lastId);
-      lastId = newId;
-    }
-  }
 
   @Test
   public void testById() {

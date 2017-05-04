@@ -51,7 +51,7 @@ class LocationBean extends DeliveryObjectBean<Location> implements
       prep.setString(1, super.getId());
       prep.setDouble(2, lat);
       prep.setDouble(3, lng);
-      prep.setString(5, name);
+      prep.setString(4, name);
       prep.addBatch();
       prep.executeBatch();
     } catch (SQLException exc) {

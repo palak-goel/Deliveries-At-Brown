@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import com.twilio.rest.api.v2010.account.recording.AddOnResult.Status;
+
 
 /**
  * UserProxy models a User if it has not been read in from the database.
@@ -171,13 +173,12 @@ class UserProxy extends DeliveryObjectProxy<User> implements User {
   }
 
   private static final String CACHE_Q =  "SELECT * FROM users WHERE id = ?";
-  private static final String ORDER_Q = "SELECT * FROM orders, order_status"
-      + " WHERE orders.deliverer_id = ? OR orders.orderer_id = ?";
+  private static final String ORDER_Q = "SELECT id FROM orders"
+      + " WHERE deliverer_id = ? OR orderer_id = ?";
   private static final String STATUS_Q = "SELECT * FROM account_status WHERE"
       + " user_id = ?";
   private static final String RATINGS_Q
       =  "SELECT rating, user_type FROM user_ratings WHERE user_id = ?";
-  private static final int TEN = 10;
   @Override
   protected void cache() throws SQLException {
     try (PreparedStatement cachePrep = Database.getConnection()
@@ -230,26 +231,18 @@ class UserProxy extends DeliveryObjectProxy<User> implements User {
             orderPrep.setString(2, super.getId());
             try (ResultSet orders = orderPrep.executeQuery()) {
               while (orders.next()) {
-                if (OrderStatus.valueOf(orders.getInt(TEN))
-                    == OrderStatus.COMPLETED) {
-                  //is completed order
-                  if (orders.getString(2).equals(super.getId())) {
-                    newUser.addPastOrder(new OrderProxy(
-                        orders.getString(1)));
+                Order order = Order.byId(orders.getString(1));
+                if (order.getDeliverer().getId().equals(super.getId())) {
+                  if (order.status() == OrderStatus.COMPLETED) {
+                    newUser.addPastDelivery(order);
                   } else {
-                    //completed delivery
-                    newUser.addPastDelivery(new OrderProxy(
-                        orders.getString(1)));
+                    newUser.addCurrentDelivery(order);
                   }
                 } else {
-                  //in progress order
-                  if (orders.getString(2).equals(super.getId())) {
-                    newUser.addCurrentOrder(new OrderProxy(
-                        orders.getString(1)));
+                  if (order.status() == OrderStatus.COMPLETED) {
+                    newUser.addPastOrder(order);
                   } else {
-                    //in progress delivery
-                    newUser.addCurrentDelivery(new OrderProxy(
-                        orders.getString(1)));
+                    newUser.addCurrentOrder(order);
                   }
                 }
               }

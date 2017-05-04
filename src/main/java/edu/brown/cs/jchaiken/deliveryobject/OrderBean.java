@@ -337,7 +337,7 @@ public final class OrderBean extends DeliveryObjectBean<Order> implements Order,
 
 		public Order build() {
 			if (idB == null) {
-				idB = Order.IdGenerator.getNextId();
+				idB = getNextId();
 			}
 			OrderBean bean = new OrderBean(idB, ordererB, delivererB, pickupB, dropoffB, pickupT, dropoffT);
 			bean.addItems(itemsB);
@@ -358,4 +358,15 @@ public final class OrderBean extends DeliveryObjectBean<Order> implements Order,
 	public void setRanking(double rank) {
 		ranking = rank;
 	}
+
+  private static int counter = 0;
+  /**
+   * Returns the next id for an order.
+   * @return the id.
+   */
+  protected static String getNextId() {
+    counter++;
+    return "/o/" + counter;
+  }
+
 }

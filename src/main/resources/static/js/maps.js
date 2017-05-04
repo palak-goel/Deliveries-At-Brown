@@ -22,15 +22,8 @@ function calcRoute(start, end) {
             //distance of route             
             var directions = result.routes[0].legs[0].steps;
             for (var i = 0; i < directions.length; i++) {
-                //console.log(directions[i].instructions)
+                console.log(directions[i].instructions)
             }
-            toReturn = {
-                distance: result.routes[0].legs[0].distance.text,
-                duration: result.routes[0].legs[0].duration.text,
-                direction: directions
-            }
-            console.log(toReturn)
-            return toReturn;
         }
     });
 }
@@ -81,7 +74,6 @@ function userLocation(map, color) {
     } else {
       handleLocationError(false, infoWindow, map.getCenter());
     }
-    return toReturn;
 }
 
 function displayDeliverer(map, pos) {

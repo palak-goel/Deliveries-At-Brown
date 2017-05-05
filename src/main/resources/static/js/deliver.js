@@ -27,6 +27,19 @@
   };
 }*/
 
+var userPosition
+$(document).ready(() => {
+    navigator.geolocation.getCurrentPosition(function(position) {
+      var pos = {
+        lat: position.coords.latitude,
+        lng: position.coords.longitude
+      }
+      userPosition = pos;
+    });
+});
+
+
+
 conn.onmessage = msg => {
   console.log(msg.data)
   const data = JSON.parse(msg.data)
@@ -82,6 +95,7 @@ function submitPrefencesToServer() {
 }
 
 function takeOrder(arg) {
+  console.log(userPosition)
   data = {type: MESSAGE_TYPE.REMOVE_ORDER, id: arg, jid: getJid()}
   conn.send(JSON.stringify(data))
 }

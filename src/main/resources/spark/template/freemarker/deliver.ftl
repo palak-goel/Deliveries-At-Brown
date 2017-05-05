@@ -3,9 +3,6 @@
   <head>
     <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
     <script type="text/javascript" src = "/js/font-awesome.js"></script>
-    <script async defer
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyClZcJ2MUKJqouuGJRDIGqM1r9om9057sc&callback=initMap">
-    </script>
     <script type="text/javascript" src="js/maps.js"></script>
     <script type="text/javascript" src="js/delivery_websockets.js"></script>
     <script type="text/javascript" src="js/deliver.js"></script>

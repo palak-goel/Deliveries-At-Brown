@@ -5,7 +5,7 @@ var userLatLonLocation;
 var currLocation;
 
 
-function calcRoute(start, end, dirs, resolve) {        
+function calcRoute(start, end, dirs, resolve) {     
     var request = {
         origin: start,
         destination: end,

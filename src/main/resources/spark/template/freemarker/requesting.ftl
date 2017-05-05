@@ -34,7 +34,7 @@
 	<center>
 	<div id="right">
 		<div id = "loading">
-			<h3> Your order has been submitted </h3>
+			<h3 id = "status-text"> Order Confirmation </h3>
 		</div>
 		<div id = "choices">
 			<form action = "http://localhost:4567/requested">
@@ -60,6 +60,7 @@
 				      <input type="text" id = "price" class="form-control" placeholder="text">
 				    </div>
 			 	 </fieldset>
+			 	 <button type="button" class="btn btn-success">Confirm Order</button>
 			 	 <button type="button" class="btn btn-danger">Cancel Order</button>
 			</form>
 		</div>

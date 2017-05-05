@@ -12,6 +12,9 @@
         color: white;
         margin-left: 15px;
     }
+    h2 {
+        color: #C0B283;
+    }
     </style>
 </head>
 <body style="margin: 0px;">
@@ -23,44 +26,45 @@
           <li><a href="http://localhost:4567/deliver">Deliver</a></li>
         </ul>
     </div>
-	<h1>Profile</h1>
-    <div id = "user-image" class = "col-md-5">
-        <h3> Image </h3>
-        <i class="fa fa-user-o fa-5x" aria-hidden="true"></i>
+    <div id = "user-profile">
+        <h2>Profile</h2>
+        <h3 id = "name"> Name </h3>
+        <h4 id = "delivery-rating"> Delivery Rating: </h4>
+        <h4 id = "request-rating"> Request Rating: </h4>
         <br>
-    </div>
-    <br>
-    <div id = "user-profile" class = "col-md-5">
-        <h3> Information </h3>
+        <h3> Contact Information </h3>
         <i class="fa fa-mobile fa-3x" aria-hidden="true"></i>
         <span id = "phone-number" class = "contact-info"></span>
         <br>
         <i class="fa fa-envelope fa-2x" aria-hidden="true"></i>
         <span id = "email" class = "contact-info"></span>
-        <br>
-        <i class="fa fa-credit-card fa-2x" aria-hidden="true"></i>
-        <span id = "card-number" class = "contact-info"></span>
-        <br><br>
-        <button onclick = "sendFormToServer();"> Edit Information </button>  
     </div>
-    <div id = "user-info" class = "col-md-7">
-        <h3 id = "name"> Name </h3>
-        <h4 id = "delivery-rating"> Delivery Rating: </h4>
-        <h4 id = "request-rating"> Request Rating: </h4>
-        <br>
-        <form action = "/request">
-            <button> Make Request </button>
-        </form>
+
+    <div id = "history">
+        <h2>History</h2>
+        <h3>Order History</h3>
+        <table id="table">
+          <tr>
+            <th>Pick-Up</th>
+            <th>Drop-Off</th>
+            <th>Item</th>
+            <th>Price</th>
+            <th>Rating</th>
+          </tr>
+          <tbody>
+          </tbody>
+        </table>
+        <h3>Deliver History</h3>
+        <table id="table">
+          <tr>
+            <th>Pick-Up</th>
+            <th>Drop-Off</th>
+            <th>Item</th>
+            <th>Price</th>
+            <th>Rating</th>
+          </tr>
+          <tbody>
+          </tbody>
+        </table>
     </div>
-    <br>
-    <div id = "new-order" class = "col-md-7">
-        <h3> Make a Delivery </h3>
-        <h4> Location: </h4>
-        <h4> Payment: </h4>
-        <h4> Time: </h4>
-        <form action = "/deliver">
-            <button> See Orders </button>
-        </form>
-        <br>        
-    </div>    
 </body>

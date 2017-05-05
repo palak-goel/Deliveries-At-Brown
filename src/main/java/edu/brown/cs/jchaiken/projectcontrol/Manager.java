@@ -1,9 +1,11 @@
 package edu.brown.cs.jchaiken.projectcontrol;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,6 +46,7 @@ public class Manager {
 			.expireAfterAccess(125, TimeUnit.MINUTES).build();
 	private static Map<String, Session> sessionMap = Collections.synchronizedMap(new HashMap<>());
 	private static Map<String, String> widToJid = Collections.synchronizedMap(new HashMap<>());
+	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("hh:mm");
 
 	/**
 	 * Constructor for Manager.
@@ -137,7 +140,8 @@ public class Manager {
 				double dLat = Double.parseDouble(qm.value("dropoffLat"));
 				double dLon = Double.parseDouble(qm.value("dropoffLon"));
 				String item = qm.value("item");
-				double time = Double.parseDouble(qm.value("time"));
+				Date time = DATE_FORMAT.parse(qm.value("time"));
+				System.out.println(time);
 				double price = Double.parseDouble(qm.value("price"));
 				OrderBuilder builder = new OrderBuilder();
 				User curr = User.byWebId(req.session().attribute("webId"));
@@ -146,7 +150,7 @@ public class Manager {
 				Location dropoff = Location.newLocation(dLat, dLon,
 						"nameDropoff"/* TODO: add name */);
 				Order o = builder.setOrderer(curr).setPickup(pickup).setDropoff(dropoff).setPrice(price)
-						.setDropoffTime(time).setItems(Arrays.asList(item)).setOrderStatus(OrderStatus.UNASSIGNED)
+						.setDropoffTime(0).setItems(Arrays.asList(item)).setOrderStatus(OrderStatus.UNASSIGNED)
 						.setPhone(
 								"6667778888"/* TODO: restaurant phone number */)
 						.build();

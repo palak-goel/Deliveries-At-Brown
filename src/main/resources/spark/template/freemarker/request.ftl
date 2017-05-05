@@ -54,7 +54,7 @@
             </div>
             <div class="form-group">
                 <label for="formGroupExampleInput">Time</label>
-                <input type="time" name="usr_time" class="form-control" id="formGroupExampleInput">
+                <input type="time" id="time" name="usr_time" class="form-control" id="formGroupExampleInput">
             </div>
             <div class="form-group">
                 <label for="formGroupExampleInput">Tip</label>

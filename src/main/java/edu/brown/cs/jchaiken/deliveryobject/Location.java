@@ -1,6 +1,10 @@
 package edu.brown.cs.jchaiken.deliveryobject;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.Collection;
+
+import edu.brown.cs.jchaiken.database.Database;
 
 /**
  * Top-level interface that represents a pickup or delivery location that is
@@ -128,19 +132,21 @@ public interface Location extends DeliveryObject {
 	/**
 	 * Class that provides unique ids for locations for proper database
 	 * insertion and hashing.
-	 * 
+	 *
 	 * @author jacksonchaiken
 	 *
 	 */
 	class IdGenerator {
 		private static double counter = 0;
-
 		/**
 		 * Returns the next id.
 		 * 
 		 * @return the unique id.
 		 */
 		static String getNextId() {
+		  if (counter == 0) {
+		    counter = LocationProxy.checkCounter();
+		  }
 			counter++;
 			return "/l/" + counter;
 		}

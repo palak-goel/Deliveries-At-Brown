@@ -65,10 +65,13 @@ class OrderProxy extends DeliveryObjectProxy<Order> implements Order {
               .prepareStatement(STATUS_QUERY)) {
             statusPrep.setString(1, super.getId());
             try (ResultSet statusSet = statusPrep.executeQuery()) {
-              if (statusSet.next()) {
-                OrderStatus status = OrderStatus.valueOf(statusSet.getInt(1));
-                builder.setOrderStatus(status);
+              int maxStatus = -1;
+              while (statusSet.next()) {
+                maxStatus  = (maxStatus < statusSet.getInt(1))
+                    ? statusSet.getInt(1) : maxStatus;
               }
+              OrderStatus status = OrderStatus.valueOf(maxStatus);
+              builder.setOrderStatus(status);
             }
           }
           List<String> dbItems = new ArrayList<>();
@@ -324,5 +327,20 @@ class OrderProxy extends DeliveryObjectProxy<Order> implements Order {
       return null;
     }
     return super.getData().getPhone();
+  }
+
+  private static final String COUNTER_Q = "SELECT COUNT(id) FROM orders";
+  protected static int checkCounter() {
+    if (Database.getConnection() != null) {
+      try (PreparedStatement prep = Database.getConnection().prepareStatement(COUNTER_Q)) {
+        try (ResultSet rs = prep.executeQuery()) {
+          return rs.getInt(1);
+        }
+      } catch (SQLException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+    }
+    return 0;
   }
 }

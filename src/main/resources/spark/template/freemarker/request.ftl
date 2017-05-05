@@ -57,8 +57,9 @@
                 <input type="time" id="time" name="usr_time" class="form-control" id="formGroupExampleInput">
             </div>
             <div class="form-group">
-                <label for="formGroupExampleInput">Tip</label>
-                <input id = "price" type="number" min = "0" step = "0.01" class="form-control" id="formGroupExampleInput" placeholder="Willing to pay extra?">
+                <label for="formGroupExampleInput">Tip</label> 
+                <span><i>(How much extra would you be willing to pay?)</i></span>
+                <input id = "price" type="number" min = "0" max = "20" step = "1" class="form-control" id="formGroupExampleInput" placeholder="Willing to pay extra?">
             </div>
             <center>
                <button onclick = "sendFormToServer();"> Submit Order </button>

@@ -1,9 +1,11 @@
 package edu.brown.cs.jchaiken.projectcontrol;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,6 +46,7 @@ public class Manager {
 			.expireAfterAccess(125, TimeUnit.MINUTES).build();
 	private static Map<String, Session> sessionMap = Collections.synchronizedMap(new HashMap<>());
 	private static Map<String, String> widToJid = Collections.synchronizedMap(new HashMap<>());
+	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("hh:mm");
 
 	/**
 	 * Constructor for Manager.
@@ -129,26 +132,31 @@ public class Manager {
 		@Override
 		public Object handle(Request req, Response res) {
 			QueryParamsMap qm = req.queryMap();
+			System.out.println("HERE");
 			try {
-			  System.out.println("at order maker");
+				System.out.println("at order maker");
 				double pLat = Double.parseDouble(qm.value("pickupLat"));
 				double pLon = Double.parseDouble(qm.value("pickupLon"));
 				double dLat = Double.parseDouble(qm.value("dropoffLat"));
 				double dLon = Double.parseDouble(qm.value("dropoffLon"));
 				String item = qm.value("item");
-				double time = Double.parseDouble(qm.value("time"));
+				Date time = DATE_FORMAT.parse(qm.value("time"));
+				System.out.println(time);
 				double price = Double.parseDouble(qm.value("price"));
 				OrderBuilder builder = new OrderBuilder();
 				User curr = User.byWebId(req.session().attribute("webId"));
-				
-				Location pickup = Location.newLocation(pLat, pLon, /*TODO: add name*/);
-				Location dropoff = Location.newLocation(dLat, dLon, /*TODO: add name*/);
+				Location pickup = Location.newLocation(pLat, pLon,
+						"namePickup"/* TODO: add name */);
+				Location dropoff = Location.newLocation(dLat, dLon,
+						"nameDropoff"/* TODO: add name */);
 				Order o = builder.setOrderer(curr).setPickup(pickup).setDropoff(dropoff).setPrice(price)
-						.setDropoffTime(time).setItems(Arrays.asList(item)).setOrderStatus(OrderStatus.UNASSIGNED)
-						.setPhone(/*TODO: restaurant phone number*/).build();
+						.setDropoffTime(0).setItems(Arrays.asList(item)).setOrderStatus(OrderStatus.UNASSIGNED)
+						.setPhone(
+								"6667778888"/* TODO: restaurant phone number */)
+						.build();
 				o.addToDatabase();
 				ordMap.put(o.getId(), o);
-        o.addToDatabase();
+				o.addToDatabase();
 				System.out.println("ORDER WEB ID");
 				System.out.println(o.getOrderer().getWebId());
 				System.out.println(curr.getWebId());
@@ -161,7 +169,7 @@ public class Manager {
 				 */
 				// Not used
 			} catch (Exception e) {
-			  e.printStackTrace();
+				e.printStackTrace();
 			}
 			return new Object();
 		}

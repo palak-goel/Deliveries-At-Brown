@@ -1,38 +1,24 @@
 #top-banner {
 	top: 0;
-  left: 0;
+    left: 0;
 	background-color: black;
 	width: 100%;
 	padding-top: 10px;
 	padding-bottom: 1px;
 }
 
-#user-image {
-    position: absolute;
-    top: 150px;
-    left: 50px;
-}
-
-#user-info {
-    position: absolute;
-    top: 150px;
-    left: 500px;
-}
-
 #user-profile {
-    position: absolute;
-    top: 300px; 
-    left: 50px;  
+    height: 600px;
+    width: 20%;
+    float: left; 
+    margin-left: 20px; 
 }
 
-#new-order {
-    position: absolute;
-    top: 325px; 
-    left: 500px;
-    width: 300px;
-    border-size:2px;
-    border-style:solid;
-    border-color:black;  
+#history {
+    height: 600px;
+    width: 65%;
+    float: right; 
+    margin-right: 20px;
 }
 
 ul {
@@ -65,4 +51,20 @@ li a:hover {
     font-size: 17px;
     display:inline-block;
     vertical-align: 10px;
+}
+
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+}
+
+tr:nth-child(even) {
+    background-color: #dddddd;
 }

@@ -11,6 +11,9 @@ import edu.brown.cs.jchaiken.deliveryobject.Order.OrderStatus;
 import edu.brown.cs.jchaiken.deliveryobject.OrderBean.OrderBuilder;
 
 public class OrderBeanTest {
+
+
+
 	@Test
 	public void testNotNull() {
 		OrderBuilder builder = new OrderBuilder();

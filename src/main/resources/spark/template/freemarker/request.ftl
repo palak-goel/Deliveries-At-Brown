@@ -29,9 +29,9 @@
     <div id = "top-banner">
         <h1>Deliveries @ Brown</h1>
         <ul>
-          <li><a href="http://localhost:4567/profile">Profile</a></li>
-          <li><a href="http://localhost:4567/request">Request</a></li>
-          <li><a href="http://localhost:4567/deliver">Deliver</a></li>
+          <li><a href="/profile">Profile</a></li>
+          <li><a href="/request">Request</a></li>
+          <li><a href="/deliver">Deliver</a></li>
         </ul>
     </div>
     <div id="map"></div>
@@ -62,7 +62,7 @@
                 <input id = "price" type="number" min = "0" max = "20" step = "1" class="form-control" id="formGroupExampleInput" placeholder="Willing to pay extra?">
             </div>
             <center>
-               <button onclick = "sendFormToServer();"> Submit Order </button>
+               <input type = "submit" id = "submit_order" value = "Submit Order">
             </center>
             <!--</form>-->
         </div>

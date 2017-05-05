@@ -365,6 +365,9 @@ public final class OrderBean extends DeliveryObjectBean<Order> implements Order,
    * @return the id.
    */
   protected static String getNextId() {
+    if (counter == 0) {
+      counter = OrderProxy.checkCounter();
+    }
     counter++;
     return "/o/" + counter;
   }

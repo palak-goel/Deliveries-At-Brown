@@ -184,4 +184,19 @@ class LocationProxy extends DeliveryObjectProxy<Location> implements
     }
     return null;
   }
+  private static final String COUNTER_Q = "SELECT COUNT(id) FROM locations";
+
+  protected static int checkCounter() {
+    if (Database.getConnection() != null) {
+      try (PreparedStatement prep = Database.getConnection().prepareStatement(COUNTER_Q)) {
+        try (ResultSet rs = prep.executeQuery()) {
+          return rs.getInt(1);
+        }
+      } catch (SQLException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+    }
+    return 0;
+  }
 }

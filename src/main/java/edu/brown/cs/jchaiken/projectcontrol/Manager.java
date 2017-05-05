@@ -141,7 +141,11 @@ public class Manager {
 				double dLon = Double.parseDouble(qm.value("dropoffLon"));
 				String item = qm.value("item");
 				Date time = DATE_FORMAT.parse(qm.value("time"));
+				Date cur = new Date();
 				System.out.println(time);
+				System.out.println(cur);
+				System.out.println(time.getTime());
+				System.out.println(cur.getTime());
 				double price = Double.parseDouble(qm.value("price"));
 				OrderBuilder builder = new OrderBuilder();
 				User curr = User.byWebId(req.session().attribute("webId"));
@@ -156,7 +160,6 @@ public class Manager {
 						.build();
 				o.addToDatabase();
 				ordMap.put(o.getId(), o);
-				o.addToDatabase();
 				System.out.println("ORDER WEB ID");
 				System.out.println(o.getOrderer().getWebId());
 				System.out.println(curr.getWebId());

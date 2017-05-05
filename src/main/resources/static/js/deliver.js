@@ -96,6 +96,6 @@ function submitPrefencesToServer() {
 
 function takeOrder(arg) {
   console.log(userPosition)
-  data = {type: MESSAGE_TYPE.REMOVE_ORDER, id: arg, jid: getJid()}
+  data = {type: MESSAGE_TYPE.REMOVE_ORDER, id: arg, jid: getJid(), dLat: userPosition.lat, dLng: userPosition.lng}
   conn.send(JSON.stringify(data))
 }

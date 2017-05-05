@@ -30,7 +30,7 @@ var pickup = {lat: parseFloat(localStorage.pickupLat), lng: parseFloat(localStor
 //drop off location
 var dropoff = {lat: parseFloat(localStorage.dropoffLat), lng: parseFloat(localStorage.dropoffLon)}
 //deliverer location
-var delivererLocation = {lat: 41.826920, lng: -71.402731}
+//var delivererLocation = {lat: 41.826920, lng: -71.402731}
 //delivery info
 
 function initMap() {
@@ -41,7 +41,7 @@ function initMap() {
       center: brown
     });
     userLocation(map, 'Blue');
-    displayDeliverer(map, delivererLocation)
+    //displayDeliverer(map, delivererLocation)
     addPickup(pickup);
     addDropoff(dropoff);
     

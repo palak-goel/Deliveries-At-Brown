@@ -5,7 +5,7 @@ var userLatLonLocation;
 var currLocation;
 
 
-function calcRoute(start, end) {        
+function calcRoute(start, end, dirs, resolve) {        
     var request = {
         origin: start,
         destination: end,
@@ -19,12 +19,21 @@ function calcRoute(start, end) {
     directionsService.route(request, function(result, status) {
         if (status == 'OK') {
             directionsDisplay.setDirections(result);
-            //distance of route             
+            //distance of route
+            distance = result.routes[0].legs[0].distance.text;
+            duration = result.routes[0].legs[0].duration.text;
+            console.log(distance)
+            console.log(duration)             
             var directions = result.routes[0].legs[0].steps;
             for (var i = 0; i < directions.length; i++) {
                 console.log(directions[i].instructions)
             }
+
+            dirs["distance"] = distance
+            dirs["duration"] = duration
+            dirs["directions"] = directions
         }
+        resolve()
     });
 }
 

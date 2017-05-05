@@ -1,4 +1,3 @@
-
 conn.onmessage = msg => {
   console.log(msg.data)
   const data = JSON.parse(msg.data)

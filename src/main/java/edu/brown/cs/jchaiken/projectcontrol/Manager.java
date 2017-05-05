@@ -160,7 +160,6 @@ public class Manager {
 						.build();
 				o.addToDatabase();
 				ordMap.put(o.getId(), o);
-				o.addToDatabase();
 				System.out.println("ORDER WEB ID");
 				System.out.println(o.getOrderer().getWebId());
 				System.out.println(curr.getWebId());

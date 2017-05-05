@@ -15,10 +15,13 @@ conn.onmessage = msg => {
   }
 }
 
-
+$(document).ready(() => {
+    document.getElementById("submit_order").addEventListener('click', function() {
+        sendFormToServer();
+    });
+});
 
 function initMap() {
-    
     //Initial Map Centered Around Brown University
     var brown = {lat: 41.826820, lng: -71.402931};
     map = new google.maps.Map(document.getElementById('map'), {
@@ -112,7 +115,7 @@ function sendFormToServer() {
                 dropoff: dropOffLoc,
                 item: item, time: time, price: price}, responseJSON => {
                 console.log(responseJSON);
-                window.location.href = 'http://localhost:4567/requesting';
+                window.location.href = '/requesting';
         });
     });
     

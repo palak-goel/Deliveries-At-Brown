@@ -238,7 +238,7 @@ final class UserBean extends DeliveryObjectBean<User> implements User {
 	public double getDelivererRating() {
 		double sum = 0;
 		if (delivererRatings.size() == 0) {
-			return 5;
+			return -1;
 		}
 		for (double rating : delivererRatings) {
 			sum += rating;
@@ -251,7 +251,7 @@ final class UserBean extends DeliveryObjectBean<User> implements User {
 	public double getOrdererRating() {
 		double sum = 0;
 		if (ordererRatings.size() == 0) {
-			return 5;
+			return -1;
 		}
 		for (double rating : ordererRatings) {
 			sum += rating;

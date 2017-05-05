@@ -198,7 +198,7 @@ class UserProxy extends DeliveryObjectProxy<User> implements User {
 						try (ResultSet ratings = ratePrep.executeQuery()) {
 							while (ratings.next()) {
 								if (ratings.getString(2).equals("orderer")) {
-									oRatings.add(ratings.getDouble(1));
+								  oRatings.add(ratings.getDouble(1));
 								} else {
 									dRatings.add(ratings.getDouble(1));
 								}
@@ -348,7 +348,7 @@ class UserProxy extends DeliveryObjectProxy<User> implements User {
 	public double getDelivererRating() {
 		check();
 		if (super.getData() == null) {
-			return 5;
+			return -1;
 		}
 		return super.getData().getDelivererRating();
 	}
@@ -357,7 +357,7 @@ class UserProxy extends DeliveryObjectProxy<User> implements User {
 	public double getOrdererRating() {
 		check();
 		if (super.getData() == null) {
-			return 5;
+			return -1;
 		}
 		return super.getData().getOrdererRating();
 	}

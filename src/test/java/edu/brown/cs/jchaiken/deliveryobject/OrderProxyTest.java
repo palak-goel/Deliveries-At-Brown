@@ -26,7 +26,7 @@ public class OrderProxyTest {
     assert test.getPickupTime() == 123;
     assert test.getData() != null;
     assert test.getOrderItems().size() == 1;
-    assert test.status() == OrderStatus.COMPLETED;
+    assertEquals(test.status(), OrderStatus.COMPLETED);
     assertEquals(test.getOrderItems().get(0), "muffin");
   }
 

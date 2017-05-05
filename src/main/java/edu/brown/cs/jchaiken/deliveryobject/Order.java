@@ -141,6 +141,12 @@ public interface Order extends DeliveryObject {
   void setRanking(double rank);
 
   /**
+   * Returns the phone number of the pickup location.
+   * @return the phone number
+   */
+  String getPhone();
+
+  /**
    * Returns an order based on its id.
    * @param id the order's id.
    * @return the order.
@@ -176,24 +182,5 @@ public interface Order extends DeliveryObject {
     return OrderProxy.byStatus(status);
   }
 
-  /**
-   * IdGenerator for unique hashing and database ids.
-   * @author jacksonchaiken
-   *
-   */
-  class IdGenerator {
-    private static int counter = 0;
 
-    private IdGenerator() {
-    }
-
-    /**
-     * Returns the next id for an order.
-     * @return the id.
-     */
-    static String getNextId() {
-      counter++;
-      return "/o/" + counter;
-    }
-  }
 }

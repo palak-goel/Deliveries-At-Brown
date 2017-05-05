@@ -10,7 +10,9 @@
      <script type="text/javascript" src="js/delivery_websockets.js"></script>
     <script type="text/javascript" src="js/request.js"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
     <link rel="stylesheet" type="text/css" href="css/request.css">
+
 
     <style>
     h1 {
@@ -52,11 +54,11 @@
             </div>
             <div class="form-group">
                 <label for="formGroupExampleInput">Time</label>
-                <input id = "time" type="text" class="form-control" id="formGroupExampleInput" placeholder="When do you want it by?">
+                <input type="time" name="usr_time" class="form-control" id="formGroupExampleInput">
             </div>
             <div class="form-group">
-                <label for="formGroupExampleInput">Price</label>
-                <input id = "price" type="text" class="form-control" id="formGroupExampleInput" placeholder="How much do you want to pay?">
+                <label for="formGroupExampleInput">Tip</label>
+                <input id = "price" type="number" min = "0" step = "0.01" class="form-control" id="formGroupExampleInput" placeholder="Willing to pay extra?">
             </div>
             <center>
                <button onclick = "sendFormToServer();"> Submit Order </button>

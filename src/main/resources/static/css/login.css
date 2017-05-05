@@ -1,7 +1,7 @@
 
 #top-banner {
 	top: 0;
-  	left: 0;
+  left: 0;
 	background-color: black;
 	width: 100%;
 	padding-top: 10px;
@@ -14,22 +14,22 @@
 	font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
 }
 #login {
-  margin-left: 500px;
+  /*margin-left: 500px;*/
   height: 100px;
   width: 40%;
-  position: relative;
+  /*position: relative;
   left: 1000px
-  top: 500px;
+  top: 500px;*/
 }
 
 
 #create_div {
-  margin-left: 500px;
+  /*margin-left: 500px;*/
   height: 100px;
   width: 28%;
   position: relative;
-  left: 1000px
-  top: 1500px;
+  /*left: 1000px
+  top: 1500px;*/
 }
 
 ul {

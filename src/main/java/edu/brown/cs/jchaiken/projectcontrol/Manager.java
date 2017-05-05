@@ -15,6 +15,7 @@ import com.google.gson.Gson;
 
 import edu.brown.cs.jchaiken.deliveryobject.Location;
 import edu.brown.cs.jchaiken.deliveryobject.Order;
+import edu.brown.cs.jchaiken.deliveryobject.Order.OrderStatus;
 import edu.brown.cs.jchaiken.deliveryobject.OrderBean.OrderBuilder;
 import edu.brown.cs.jchaiken.deliveryobject.User;
 import spark.QueryParamsMap;
@@ -128,7 +129,9 @@ public class Manager {
 		@Override
 		public Object handle(Request req, Response res) {
 			QueryParamsMap qm = req.queryMap();
+			System.out.println("HERE");
 			try {
+				System.out.println("at order maker");
 				double pLat = Double.parseDouble(qm.value("pickupLat"));
 				double pLon = Double.parseDouble(qm.value("pickupLon"));
 				double dLat = Double.parseDouble(qm.value("dropoffLat"));
@@ -138,13 +141,18 @@ public class Manager {
 				double price = Double.parseDouble(qm.value("price"));
 				OrderBuilder builder = new OrderBuilder();
 				User curr = User.byWebId(req.session().attribute("webId"));
-				Location pickup = Location.newLocation(pLat, pLon);
-				Location dropoff = Location.newLocation(dLat, dLon);
+				Location pickup = Location.newLocation(pLat, pLon,
+						"namePickup"/* TODO: add name */);
+				Location dropoff = Location.newLocation(dLat, dLon,
+						"nameDropoff"/* TODO: add name */);
 				Order o = builder.setOrderer(curr).setPickup(pickup).setDropoff(dropoff).setPrice(price)
-						.setDropoffTime(time).setItems(Arrays.asList(item)).build();
-				// o.addToDatabase();
+						.setDropoffTime(time).setItems(Arrays.asList(item)).setOrderStatus(OrderStatus.UNASSIGNED)
+						.setPhone(
+								"6667778888"/* TODO: restaurant phone number */)
+						.build();
+				o.addToDatabase();
 				ordMap.put(o.getId(), o);
-				OrderWebSocket.sendAddOrder(o);
+				o.addToDatabase();
 				System.out.println("ORDER WEB ID");
 				System.out.println(o.getOrderer().getWebId());
 				System.out.println(curr.getWebId());
@@ -157,6 +165,7 @@ public class Manager {
 				 */
 				// Not used
 			} catch (Exception e) {
+				e.printStackTrace();
 			}
 			return new Object();
 		}

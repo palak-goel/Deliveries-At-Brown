@@ -33,10 +33,13 @@ public class TableBuilder {
         "CREATE TABLE IF NOT"
         + " EXISTS orders (id TEXT, orderer_id TEXT, deliverer_id TEXT,"
         + " pickup_time REAL, dropoff_time REAL, pickup_location TEXT,"
-        + " dropoff_location TEXT, price REAL, PRIMARY KEY (id),"
+        + " dropoff_location TEXT, price REAL, pickup_phone TEXT,"
+        + " PRIMARY KEY (id),"
         + " FOREIGN KEY (orderer_id)"
         + " REFERENCES users(id), FOREIGN KEY (deliverer_id) REFERENCES"
-        + " users(id) ON DELETE CASCADE ON UPDATE CASCADE);")) {
+        + " users(id), FOREIGN KEY (pickup_location) REFERENCES locations(id),"
+        + " FOREIGN KEY (dropoff_location) REFERENCES locations(id)"
+        + " ON DELETE CASCADE ON UPDATE CASCADE);")) {
       prep.executeUpdate();
     } catch (SQLException exc) {
       exc.printStackTrace();
@@ -63,7 +66,7 @@ public class TableBuilder {
   public void buildLocations() {
     try (PreparedStatement prep = Database.getConnection().prepareStatement(
         "CREATE TABLE IF NOT EXISTS locations (id TEXT, latitude"
-            + " REAL, longitude REAL, PRIMARY KEY (id));")) {
+            + " REAL, longitude REAL, name TEXT, PRIMARY KEY (id));")) {
       prep.executeUpdate();
     } catch (SQLException exc) {
       exc.printStackTrace();
@@ -120,7 +123,7 @@ public class TableBuilder {
     try (PreparedStatement prep = Database.getConnection()
         .prepareStatement("CREATE TABLE IF NOT EXISTS user_ratings (user_id"
             + " TEXT, rating REAL, user_type TEXT, FOREIGN KEY (user_ID)"
-            + " REFERENCES users(id) ON UPDATE CASADE ON DELETE CASCADE);")) {
+            + " REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE);")) {
       prep.executeUpdate();
     } catch (SQLException e) {
       // TODO Auto-generated catch block

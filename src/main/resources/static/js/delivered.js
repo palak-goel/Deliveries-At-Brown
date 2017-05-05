@@ -5,6 +5,7 @@ var pickup = {lat: 41.830556, lng: -71.402381}
 //drop off location
 var dropoff = {lat: 41.826997, lng: -71.400221}
 
+
 function initMap() {
     var brown = {lat: 41.826820, lng: -71.402931};
     map = new google.maps.Map(document.getElementById('map'), {
@@ -13,7 +14,49 @@ function initMap() {
     });
     //deliverer location:
     pos = userLocation(map, 'red');
-    console.log(userLatLonLocation)
-    //calcRoute(currLocation, pickup);
-    //calcRoute(pickup, currLocation);
+
+    addPickup(pickup);
+    addDropoff(dropoff);
+
+    userPositionArgs = {}
+    new Promise(function(resolve, reject) {
+        getUserLocation(userPositionArgs, resolve);
+    }).then(function() {
+        var pickUpDirs = {}
+        new Promise(function(resolve, reject) {
+            calcRoute(userPositionArgs, pickup, pickUpDirs, resolve)
+        }).then(function() {
+            document.getElementById("distance").innerText = pickUpDirs["distance"]
+            document.getElementById("duration").innerText = pickUpDirs["duration"]
+            var pickUpDirections = ""
+            for (var i = 0; i < pickUpDirs["directions"].length; i++) {
+                pickUpDirections += pickUpDirs["directions"][i].instructions;
+            }
+            document.getElementById("pickup-dirs").innerText = pickUpDirections;
+        })
+        var dropoffDirs = {}
+        new Promise(function(resolve, reject) {
+            calcRoute(pickup, dropoff, dropoffDirs, resolve)
+        }).then(function() {
+            document.getElementById("distance2").innerText = dropoffDirs["distance"]
+            document.getElementById("duration2").innerText = dropoffDirs["duration"]
+            var dropoffDirections = ""
+            for (var i = 0; i < dropoffDirs["directions"].length; i++) {
+                dropoffDirections += dropoffDirs["directions"][i].instructions;
+            }
+            document.getElementById("pickup-dirs2").innerText = dropoffDirections;
+        })
+    });
+
+    //calcRoute(userPosition, pickup);
+    //calcRoute(pickup, dropoff);
+}
+
+function getUserLocation(userPositionArgs, resolve) {
+    navigator.geolocation.getCurrentPosition(function(position) {
+        userPositionArgs["lat"] = position.coords.latitude;
+        userPositionArgs["lng"] = position.coords.longitude;
+        resolve()
+    })
+    
 }

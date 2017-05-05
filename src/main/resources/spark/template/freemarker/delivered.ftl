@@ -33,6 +33,21 @@
     </div>
 	<div id="map"></div>
 	<div id="right">
+        <h3> Directions </h3>
+        <p id = "distance"></p>
+        <p id = "duration"></p>
+        <p id = "pickup-dirs"></p>
+        <p id = "dropoff-dirs"></p>
+        <p id = "distance2"></p>
+        <p id = "duration2"></p>
+        <p id = "pickup-dirs2"></p>
+        <p id = "dropoff-dirs2"></p>
+
+        <h3> Contact </h3>
+        <h4 id = "deliverer-num">Phone Number</h5>
+        <textarea id = "text-message" placeholder = "Message Deliverer"></textarea>
+        <br>
+        <button onclick = "sendTextToDeliverer();">Send</button>
     </div>
 </body>
 </html>

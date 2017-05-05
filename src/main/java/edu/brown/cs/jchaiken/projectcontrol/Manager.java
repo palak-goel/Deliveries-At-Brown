@@ -171,6 +171,7 @@ public class Manager {
 				 * time).put("item", item).build();
 				 */
 				// Not used
+				OrderWebSocket.sendAddOrder(o);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

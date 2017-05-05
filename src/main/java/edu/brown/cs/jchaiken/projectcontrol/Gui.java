@@ -336,19 +336,24 @@ public class Gui {
 	private static class LoginValidator implements Route {
 		@Override
 		public Object handle(Request arg0, Response arg1) {
-			QueryParamsMap qm = arg0.queryMap();
-			String id = qm.value("id");
-			String password = qm.value("password");
-			Map<String, Object> toServer = new HashMap<>();
-			if (User.userValidator(id, password)) {
-				toServer.put("result", true);
-				User user = User.byId(id);
-				arg0.session().attribute("webId", user.getWebId());
-				Manager.saveSession(arg0.session().id(), arg0.session());
-			} else {
-				toServer.put("result", false);
+			try {
+				QueryParamsMap qm = arg0.queryMap();
+				String id = qm.value("id");
+				String password = qm.value("password");
+				Map<String, Object> toServer = new HashMap<>();
+				if (User.userValidator(id, password)) {
+					toServer.put("result", true);
+					User user = User.byId(id);
+					arg0.session().attribute("webId", user.getWebId());
+					Manager.saveSession(arg0.session().id(), arg0.session());
+				} else {
+					toServer.put("result", false);
+				}
+				return GSON.toJson(toServer);
+			} catch (Exception e) {
+				e.printStackTrace();
+				return null;
 			}
-			return GSON.toJson(toServer);
 		}
 	}
 

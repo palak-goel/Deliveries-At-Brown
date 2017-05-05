@@ -26,8 +26,17 @@ function initMap() {
     displayDeliverer(map, delivererLocation)
     addPickup(pickup);
     addDropoff(dropoff);
-    console.log(calcRoute(delivererLocation, pickup));
-    console.log(calcRoute(pickup, dropoff));
+
+    pickupDirs = {}
+    new Promise(function(resolve, reject) {
+        calcRoute(delivererLocation, pickup, pickupDirs, resolve);
+    }).then(console.log(pickupDirs))
+
+    dropoffDirs = {}
+    new Promise(function(resolve, reject) {
+        calcRoute(pickup, dropoff, dropoffDirs, resolve);
+    }).then(console.log(dropoffDirs))
+
     //console.log(coord.length);
     //calcRoute("Kabob And Curry", {lat: 41.830556, lng: -71.402381});
 

@@ -57,7 +57,7 @@ function initMap() {
 
 function sendFormToServer() {
     //iterate through form
-    var pickUpLoc = document.getElementById("pick-up-loc").value + " Providence, RI";
+    var pickUpLoc = document.getElementById("pick-up-loc").value;
     console.log(pickUpLoc)
     var dropOffLoc = document.getElementById("drop-off-loc").value;
     console.log(dropOffLoc)
@@ -75,7 +75,7 @@ function sendFormToServer() {
     if (Object.keys(campusFood).indexOf(pickUpLoc) >= 0) {
         pickUpLocation = campusFood[pickUpLoc]["location"];
     } else {
-        promises.push(geocode(pickUpLocation, pickUpLoc));
+        promises.push(geocode(pickUpLocation, pickUpLoc + " Providence, RI"));
     }
 
     var dropOffLocation = {

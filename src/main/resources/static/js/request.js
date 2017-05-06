@@ -59,7 +59,7 @@ function sendFormToServer() {
     //iterate through form
     var pickUpLoc = document.getElementById("pick-up-loc").value + " Providence, RI";
     console.log(pickUpLoc)
-    var dropOffLoc = document.getElementById("drop-off-loc").value + " Providence, RI";
+    var dropOffLoc = document.getElementById("drop-off-loc").value;
     console.log(dropOffLoc)
     var item = document.getElementById("item").value;
     var time = document.getElementById("time").value;
@@ -85,7 +85,7 @@ function sendFormToServer() {
     if (dropOffLoc == "Current Location") {
         dropOffLocation = userLatLonLocation;
     } else {
-        promises.push(geocode(dropOffLocation, dropOffLoc));
+        promises.push(geocode(dropOffLocation, dropOffLoc + " Providence, RI"));
     }
     //item name, price, time
 

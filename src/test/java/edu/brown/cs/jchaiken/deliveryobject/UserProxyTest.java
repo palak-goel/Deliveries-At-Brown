@@ -65,14 +65,14 @@ public class UserProxyTest {
     Database.setUrl("data/test.sqlite3");
     assertEquals(User.byId("jackson_chaiken@brown.edu").getDelivererRating(), 5.0,.1);
     assert User.byId("jackson_chaiken@brown.edu").getOrdererRating() == 4.25;
-    assertEquals(User.byId("malik_shehyrar_hasan@brown.edu").getOrdererRating(), -1.0, .1);
+    assertEquals(User.byId("malik_shehyrar_hasan@brown.edu").getOrdererRating(), 5, .1);
     assertEquals(User.byId("palak_goel@brown.edu").getOrdererRating(), 4.75, .1);
   }
 
   @Test
   public void testRatingsNotInDb() {
     DeliveryObjectProxy.clearCache();
-    assertEquals(User.byId("").getDelivererRating(), -1.0, .1);
-    assertEquals(User.byId("").getOrdererRating(), -1.0, .1);
+    assertEquals(User.byId("").getDelivererRating(), 5, .1);
+    assertEquals(User.byId("").getOrdererRating(), 5, .1);
   }
 }

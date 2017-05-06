@@ -19,6 +19,8 @@ import edu.brown.cs.jchaiken.deliveryobject.User;
 import edu.brown.cs.jchaiken.deliveryobject.User.AccountStatus;
 import edu.brown.cs.jchaiken.deliveryobject.User.UserBuilder;
 import edu.brown.cs.mhasan3.messaging.Sender;
+import edu.brown.cs.mhasan3.rankers.Ranker;
+import edu.brown.cs.mhasan3.rankers.Suggestor;
 import freemarker.template.Configuration;
 import spark.ExceptionHandler;
 import spark.ModelAndView;
@@ -238,9 +240,42 @@ public class Gui {
 		});
 
 		Spark.post("/suggest", (request, response) -> {
-			return GSON.toJson("");
+			QueryParamsMap qm = request.queryMap();
+			String jid = qm.value("jid");
+			User u = User.byWebId(Manager.getSession(jid).attribute("webId"));
+			Suggestor s = new Suggestor(u);
+			Map<String, Object> m = new HashMap<>();
+			m.put("pickup", s.suggestPickup());
+			m.put("dropoff", s.suggestDropoff());
+			m.put("items", s.suggestItem());
+			return GSON.toJson(m);
 		});
-
+		Spark.post("/submit-Ordering", (request, response) -> {
+			QueryParamsMap qm = request.queryMap();
+			String jid = qm.value("jid");
+			User u = User.byWebId(Manager.getSession(jid).attribute("webId"));
+			String opt = qm.value("option");
+			Ranker r = new Ranker(MANAGER, u);
+			if (opt.equals("tip")) {
+				return GSON.toJson(ImmutableMap.of("orders", r.orderByPrice()));
+			} else if (opt.equals("distance")) {
+				return GSON.toJson(ImmutableMap.of("orders", r.orderByDistance()));
+			} else {
+				return GSON.toJson(ImmutableMap.of("orders", r.orderByTime()));
+			}
+		});
+		Spark.post("/submit-Preferences", (request, response) -> {
+			QueryParamsMap qm = request.queryMap();
+			String jid = qm.value("jid");
+			User u = User.byWebId(Manager.getSession(jid).attribute("webId"));
+			double price = Double.parseDouble(qm.value("price"));
+			double distance = Double.parseDouble(qm.value("distance"));
+			double time = Double.parseDouble(qm.value("time"));
+			u.addDeliveryPreferences(distance, price, time);
+			;
+			Ranker r = new Ranker(MANAGER, u);
+			return GSON.toJson(ImmutableMap.of("orders", r.rank()));
+		});
 		Spark.get("/map", (request, response) -> {
 			String webId = request.session().attribute("webId");
 			if (webId == null || User.byWebId(webId) == null) {

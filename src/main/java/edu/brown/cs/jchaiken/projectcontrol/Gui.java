@@ -165,6 +165,15 @@ public class Gui {
 			Map<String, Object> variables = ImmutableMap.of("title", "Request");
 			return freeMarker.render(new ModelAndView(variables, "requesting.ftl"));
 		});
+		Spark.get("/delivering", (request, response) -> {
+			String webId = request.session().attribute("webId");
+			if (webId == null || User.byWebId(webId) == null) {
+				response.redirect("/login?from=delivering");
+				return new LoginHandler("delivering").handle(request, response);
+			}
+			Map<String, Object> variables = ImmutableMap.of("title", "Delivering");
+			return freeMarker.render(new ModelAndView(variables, "delivering.ftl"));
+		});
 
 		Spark.get("/requested", (request, response) -> {
 			String webId = request.session().attribute("webId");

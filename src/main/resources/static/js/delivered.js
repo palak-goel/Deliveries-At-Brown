@@ -1,10 +1,11 @@
 var pickupLocation = {lat: 41.826815, lng: -71.403174}
 var requsterLocation = {lat: 41.826920, lng: -71.402731}
 //pick up location
-var pickup = {lat: 41.830556, lng: -71.402381}
+//var pickup = {lat: 41.830556, lng: -71.402381}
 //drop off location
-var dropoff = {lat: 41.826997, lng: -71.400221}
-
+//var dropoff = {lat: 41.826997, lng: -71.400221}
+var pickup = {lat: localStorage.pLat, lng: localStorage.pLng}
+var dropoff = {lat: localStorage.dLat, lng: localStorage.dLng}
 
 function initMap() {
     var brown = {lat: 41.826820, lng: -71.402931};

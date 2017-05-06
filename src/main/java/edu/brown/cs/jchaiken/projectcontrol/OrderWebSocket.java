@@ -87,8 +87,10 @@ public class OrderWebSocket {
 			String jid = received.get("jid").getAsString();
 			User u = User.byWebId(Manager.getSession(jid).attribute("webId"));
 			o.assignDeliverer(u);
-			session.getRemote().sendString(GSON.toJson(ImmutableMap.of("type", MESSAGE_TYPE.DELIVERED.ordinal())));
-
+			session.getRemote()
+					.sendString(GSON.toJson(ImmutableMap.of("type", MESSAGE_TYPE.DELIVERED.ordinal(), "pLat",
+							o.getPickupLocation().getLatitude(), "pLng", o.getPickupLocation().getLongitude(), "dLat",
+							o.getDropoffLocation().getLatitude(), "dLng", o.getDropoffLocation().getLongitude())));
 			String reqId = o.getOrderer().getWebId();
 			System.out.println(o.getOrderer().getName());
 			System.out.println("---");

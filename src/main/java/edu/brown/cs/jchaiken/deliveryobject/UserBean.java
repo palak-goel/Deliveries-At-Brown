@@ -134,12 +134,15 @@ final class UserBean extends DeliveryObjectBean<User> implements User {
 	}
 
 	@Override
-	public void charge(double amount) {
+	public void charge(double amount, String items, String pickup, String destination) {
 		// TODO : Stripe stuff
 		Map<String, Object> chargeParams = new HashMap<String, Object>();
 		chargeParams.put("amount", amount);
 		chargeParams.put("currency", "usd");
 		chargeParams.put("customer", paymentId);
+		chargeParams.put("description", "You ordered: "
+		    + items + " from " + pickup + " to be delivered to " + destination);
+		chargeParams.put("receipt_email", super.getId());
 		try {
 			Charge charge = Charge.create(chargeParams);
 			assert charge.getPaid();

@@ -206,7 +206,7 @@ public interface User extends DeliveryObject {
 	 * @param amount
 	 *            the charge.
 	 */
-	void charge(double amount);
+	void charge(double amount, String items, String pickup, String destination);
 
 	/**
 	 * Adds a past delivery to the user. Does not alter database.

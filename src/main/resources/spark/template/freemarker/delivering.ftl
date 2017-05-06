@@ -1,4 +1,4 @@
-<#assign>
+<#assign content>
     <div id = "top-banner">
         <h1> Deliveries @ Brown </h1>
         <ul>

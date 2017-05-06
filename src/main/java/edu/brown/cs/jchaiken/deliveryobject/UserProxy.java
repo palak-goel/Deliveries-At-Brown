@@ -357,7 +357,7 @@ class UserProxy extends DeliveryObjectProxy<User> implements User {
 	public double getOrdererRating() {
 		check();
 		if (super.getData() == null) {
-			return -1;
+			return 5;
 		}
 		return super.getData().getOrdererRating();
 	}

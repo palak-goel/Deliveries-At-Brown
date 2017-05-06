@@ -232,6 +232,11 @@ public class Gui {
 			return freeMarker.render(new ModelAndView(variables, "delivered.ftl"));
 		});
 
+		Spark.post("/logout", (request, response) -> {
+		  request.session().attribute("webId", null);
+		  return GSON.toJson("");
+		});
+
 		Spark.get("/map", (request, response) -> {
 			String webId = request.session().attribute("webId");
 			if (webId == null || User.byWebId(webId) == null) {
@@ -282,79 +287,6 @@ public class Gui {
 	private static final int TEST_CHARGE = 50;
 
 	/**
-	 * <<<<<<< HEAD Handles account creation and validation. ======= Handles
-	 * login requests to the server. >>>>>>>
-	 * d9ae7d282c5c55273d5847c752d1bc1a928ce541
-	 *
-	 * @author jacksonchaiken
-	 *
-	 */
-	// private static class AccountCreator implements Route {
-	// @Override
-	// public Object handle(Request arg0, Response arg1) throws Exception {
-	// QueryParamsMap qm = arg0.queryMap();
-	// String name = qm.value("name");
-	// String email = qm.value("email");
-	// System.out.println(email);
-	// String stripeToken = qm.value("stripe");
-	// String cell = qm.value("cell");
-	// System.out.println(cell);
-	// int password = qm.value("password").hashCode();
-	// Map<String, Object> toServer = new HashMap<>();
-	// if (User.accountExists(email)) {
-	// toServer.put("success", false);
-	// toServer.put("error", "Account already exists");
-	// } else {
-	// Map<String, Object> params = new HashMap<String, Object>();
-	// params.put("amount", TEST_CHARGE);
-	// params.put("currency", "usd");
-	// params.put("description", "Test charge");
-	// params.put("source", stripeToken);
-	// try {
-	// Charge charge = Charge.create(params);
-	// if (!charge.getPaid()) {
-	// toServer.put("error", "stripe error");
-	// } else {
-	// charge.refund();
-	// }
-	// } catch (Exception e) {
-	// e.printStackTrace();
-	// }
-	// UserBuilder builder = new UserBuilder();
-	// User user =
-	// builder.setId(email).setName(name).setPassword(password).setCell(cell)
-	// .setPayment(stripeToken).setOrdererRatings(new ArrayList<Double>())
-	// .setDelivererRatings(new
-	// ArrayList<Double>()).setStatus(AccountStatus.ACTIVE)
-	// .setDelivererRatings(new ArrayList<Double>()).setOrdererRatings(new
-	// ArrayList<Double>())
-	// .build();
-	// user.addToDatabase();
-	// arg0.session().attribute("webId", user.getWebId());
-	// Manager.saveSession(arg0.session().id(), arg0.session());
-	// toServer.put("success", true);
-
-	// private static class LoginValidator implements Route {
-	// @Override
-	// public Object handle(Request arg0, Response arg1) {
-	// QueryParamsMap qm = arg0.queryMap();
-	// String id = qm.value("id");
-	// String password = qm.value("password");
-	// Map<String, Object> toServer = new HashMap<>();
-	// if (User.userValidator(id, password)) {
-	// toServer.put("result", true);
-	// User user = User.byId(id);
-	// arg0.session().attribute("webId", user.getWebId());
-	// Manager.saveSession(arg0.session().id(), arg0.session());
-	// System.out.println("good login");
-	// } else {
-	// toServer.put("result", false);
-	// }
-	// return GSON.toJson(toServer);
-	// }
-	// }
-
-	/**
 	 * Handles login requests to the server.
 	 *
 	 * @author jacksonchaiken
@@ -363,12 +295,14 @@ public class Gui {
 	private static class LoginValidator implements Route {
 		@Override
 		public Object handle(Request arg0, Response arg1) {
+      Map<String, Object> toServer = new HashMap<>();
 			try {
 				QueryParamsMap qm = arg0.queryMap();
+				System.out.println("validating");
 				String id = qm.value("id");
 				String password = qm.value("password");
-				Map<String, Object> toServer = new HashMap<>();
 				if (User.userValidator(id, password)) {
+				  System.out.println("good user");
 					toServer.put("result", true);
 					User user = User.byId(id);
 					arg0.session().attribute("webId", user.getWebId());
@@ -376,11 +310,11 @@ public class Gui {
 				} else {
 					toServer.put("result", false);
 				}
-				return GSON.toJson(toServer);
 			} catch (Exception e) {
 				e.printStackTrace();
-				return null;
+        toServer.put("result", false);
 			}
+      return GSON.toJson(toServer);
 		}
 	}
 

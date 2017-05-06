@@ -46,3 +46,9 @@ li a:hover {
     color: #C0B283;
     text-decoration: none;
 }
+
+#logout-div {
+    position: absolute;
+    right: 50px;
+    top  : 45px;
+}

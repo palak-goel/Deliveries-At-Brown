@@ -74,7 +74,7 @@ conn.onmessage = msg => {
       localStorage.pLng = data.pLng;
       localStorage.dLat = data.dLat;
       localStorage.dLng = data.dLng;
-      window.location.href = 'http://localhost:4567/delivered';
+      window.location.href = '/delivered';
       break;
   }
 }

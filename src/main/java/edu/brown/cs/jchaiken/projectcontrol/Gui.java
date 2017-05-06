@@ -381,33 +381,42 @@ public class Gui {
 				toServer.put("success", false);
 				toServer.put("error", "Account already exists");
 			} else {
-				Map<String, Object> params = new HashMap<String, Object>();
-				params.put("amount", TEST_CHARGE);
-				params.put("currency", "usd");
-				params.put("description", "Test charge");
-				params.put("source", stripeToken);
-				try {
-					Charge charge = Charge.create(params);
-					if (!charge.getPaid()) {
-						toServer.put("error", "stripe error");
-					} else {
-						charge.refund();
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
+				if (testCharge(stripeToken).equals("error")){
+				  toServer.put("error", "stripe error");
+	        toServer.put("success", false);
+				} else {
+				  toServer.put("error", "");
+				  UserBuilder builder = new UserBuilder();
+	        User user = builder.setId(email).setName(name).setPassword(password).setCell(cell)
+	            .setPayment(stripeToken).setOrdererRatings(new ArrayList<Double>())
+	            .setDelivererRatings(new ArrayList<Double>()).setStatus(AccountStatus.ACTIVE)
+	            .setDelivererRatings(new ArrayList<Double>()).setOrdererRatings(new ArrayList<Double>())
+	            .build();
+	        user.addToDatabase();
+	        arg0.session().attribute("webId", user.getWebId());
+	        Manager.saveSession(arg0.session().id(), arg0.session());
+	        toServer.put("success", true);
 				}
-				UserBuilder builder = new UserBuilder();
-				User user = builder.setId(email).setName(name).setPassword(password).setCell(cell)
-						.setPayment(stripeToken).setOrdererRatings(new ArrayList<Double>())
-						.setDelivererRatings(new ArrayList<Double>()).setStatus(AccountStatus.ACTIVE)
-						.setDelivererRatings(new ArrayList<Double>()).setOrdererRatings(new ArrayList<Double>())
-						.build();
-				user.addToDatabase();
-				arg0.session().attribute("webId", user.getWebId());
-				Manager.saveSession(arg0.session().id(), arg0.session());
-				toServer.put("success", true);
 			}
 			return GSON.toJson(toServer);
+		}
+		private String testCharge(String token) {
+		  Map<String, Object> params = new HashMap<String, Object>();
+      params.put("amount", TEST_CHARGE);
+      params.put("currency", "usd");
+      params.put("description", "Test charge");
+      params.put("source", token);
+      try {
+        Charge charge = Charge.create(params);
+        if (!charge.getPaid()) {
+          return "error";
+        } else {
+          charge.refund();
+        }
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+      return "";
 		}
 	}
 

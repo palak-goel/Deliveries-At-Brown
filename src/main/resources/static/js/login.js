@@ -24,8 +24,7 @@ function login() {
     		}
 
 		} else {
-			console.log("bad login")
-			//display error
+			alert("Your login credentials could not be recognized. Please try again or create account.");
 		}
 	});
 }
@@ -54,8 +53,11 @@ function createAccount(token) {
     			window.location.replace("/" + from);
     		}		
     	} else {
-			console.log("bad")
-			//display error
+			if ($responseObject.error == "exists") {
+				alert("There is already an account linked to this email. If you have forgot your password you can reset it above");
+			} else {
+				alert("There was an error creating your account, please try again and ensure credit card information is correct");
+			}
 		}
 	});
 }

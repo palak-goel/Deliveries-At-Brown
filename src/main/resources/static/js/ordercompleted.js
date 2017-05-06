@@ -7,4 +7,5 @@ function submitRating() {
 		rating = 0;
 	}
 	console.log(rating)
+	window.location.href = '/profile';
 }

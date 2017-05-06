@@ -249,12 +249,12 @@ class UserProxy extends DeliveryObjectProxy<User> implements User {
 	}
 
 	@Override
-	public void charge(double amount) {
+	public void charge(double amount, String items, String pickup, String destination) {
 		check();
 		if (super.getData() == null) {
 			return;
 		}
-		super.getData().charge(amount);
+		super.getData().charge(amount, items, pickup, destination);
 	}
 
 	@Override

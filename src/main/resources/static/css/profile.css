@@ -68,3 +68,9 @@ td, th {
 tr:nth-child(even) {
     background-color: #dddddd;
 }
+
+#logout-div {
+    position: absolute;
+    right: 50px;
+    top  : 45px;
+}

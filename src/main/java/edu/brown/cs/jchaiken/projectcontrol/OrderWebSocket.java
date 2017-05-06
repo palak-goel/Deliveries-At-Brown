@@ -140,6 +140,14 @@ public class OrderWebSocket {
 		try {
 			Map<String, Object> toServer = new HashMap<>();
 			toServer.put("orders", orders);
+			List<String> start = new ArrayList<>();
+			List<String> end = new ArrayList<>();
+			for (Order o : orders) {
+				start.add(o.getPickupLocation().getName());
+				end.add(o.getDropoffLocation().getName());
+			}
+			toServer.put("pickup", start);
+			toServer.put("dropoff", end);
 			toServer.put("type", MESSAGE_TYPE.ADD_ORDER.ordinal());
 			String msg = GSON.toJson(toServer);
 			for (Session s : SESSIONS) {
@@ -156,6 +164,14 @@ public class OrderWebSocket {
 		try {
 			Map<String, Object> toServer = new HashMap<>();
 			toServer.put("orders", orders);
+			List<String> start = new ArrayList<>();
+			List<String> end = new ArrayList<>();
+			for (Order o : orders) {
+				start.add(o.getPickupLocation().getName());
+				end.add(o.getDropoffLocation().getName());
+			}
+			toServer.put("pickup", start);
+			toServer.put("dropoff", end);
 			toServer.put("type", MESSAGE_TYPE.ADD_ORDER.ordinal());
 			String msg = GSON.toJson(toServer);
 			for (Session s : SESSIONS) {

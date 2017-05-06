@@ -62,12 +62,14 @@ conn.onmessage = msg => {
       //console.log(data);
       const table = $('table');
       table.find("tr:gt(0)").remove();
+      var days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
         for(let i = 0; i< data.orders.length; i++){
           let order = data.orders[i];
           console.log(order)
           let pickup = data.pickup[i];
           let dropoff = data.dropoff[i];
-          let time = order.dropoffTime;
+          let day = new Date(order.dropoffTime * 1000);
+          var time = days[day.getDay()] + " " + day.getHours() + ":" + day.getMinutes()
           let price = order.price;
           let items = order.items[0];
           table.append('<tr><td>'+ pickup + '</td><td>' + dropoff + '</td><td>' + time + 

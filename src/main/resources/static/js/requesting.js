@@ -60,6 +60,7 @@ function initMap() {
 }
 
 function submitOrder() {
+  document.getElementById("status-text").innerText = "Waiting For Deliverer"
   $.post("/submit-request", dta, responseJSON => {
                 console.log(responseJSON);
                 $('#so').attr("disabled", true);

@@ -56,8 +56,8 @@ function initMap() {
     //calcRoute(pickup, dropoff);
 }
 
-function cleanText(directions) {
-
+function completeDelivery() {
+    
     return directions;
 }
 

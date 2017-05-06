@@ -131,7 +131,7 @@ public final class OrderBean extends DeliveryObjectBean<Order> implements Order,
 
 	@Override
 	public void chargeCustomer() {
-		orderer.charge(price);
+		orderer.charge(price, items.get(0), pickupL.getName(), dropoffL.getName());
 	}
 
 	@Override

@@ -66,6 +66,14 @@ function sendFormToServer() {
     var price = document.getElementById("price").value;
     //if set location, get lat lng, otherwise use geocodeAddress()
 
+
+    if (pickUpLoc == null || dropOffLoc == null || item == null || time == null || price == null) {
+        return;
+    }
+    if (pickUpLoc.length == 0 || dropOffLoc.length == 0 || item.length == 0 || time.length == 0 || price.length == 0) {
+        return;
+    }
+
     const promises = [];
 
     var pickUpLocation = {
@@ -87,81 +95,29 @@ function sendFormToServer() {
     } else {
         promises.push(geocode(dropOffLocation, dropOffLoc + " Providence, RI"));
     }
-    //item name, price, time
+    
 
-    //iterate through deliverer array, get their lat/lon position
-    //time/duration for every deliverer
 
-    //user Location
-    console.log("Here")
     Promise.all(promises).then(function() {
-        console.log("Pick Up:");
-        console.log(pickUpLoc);
-        console.log("Drop Off:");
-        console.log(dropOffLoc);
-        console.log("Item:");
-        console.log(item);
-        console.log("Time:");
-        console.log(time);
-        console.log("Price:");
-        console.log(price);
-        console.log("About to submit!!!!")
-        console.log(pickUpLoc)
 
-/*
-        var brown = {lat: 41.826820, lng: -71.402931};
-        var verifyPickup = {}
-        new Promise(function(resolve, reject) {
-            calcRoute(brown, pickUpLoc, verifyPickup, resolve)
-        }).then(function() {
-            var distance = verifyPickup["distance"].replace(",","")
-            console.log(distance)
-            console.log(parseFloat(distance))
-            if (parseFloat(distance) > 10) {
-                console.log("HERE")
-            }
+        //set cookie
+        localStorage.pickupLat = pickUpLocation.lat
+        localStorage.pickupLon = pickUpLocation.lng 
+        localStorage.dropoffLat = dropOffLocation.lat
+        localStorage.dropoffLon = dropOffLocation.lng
 
-            var verifyDropoff = {}
-            new Promise(function(resolve, reject) {
-                calcRoute(brown, dropOffLoc, verifyDropoff, resolve)
-            }).then(function() {
-                console.log(verifyDropoff)
-                var distance = verifyDropoff["distance"].replace(",","")
-                console.log(distance)
-                console.log(parseFloat(distance))
-                if (parseFloat(distance) > 10) {
-                    console.log("HERE")
-                }*/
-            
-
-
-                //set cookie
-                localStorage.pickupLat = pickUpLocation.lat
-                localStorage.pickupLon = pickUpLocation.lng 
-                localStorage.dropoffLat = dropOffLocation.lat
-                localStorage.dropoffLon = dropOffLocation.lng
-                /*
-                localStorage.pickup = pickUpLoc
-                localStorage.dropoff = dropOffLoc
-                localStorage.item = item
-                localStorage.time = time
-                localStorage.price = price
-                console.log(document.cookie)
-                */
-                console.log(pickUpLoc)
-                $.post("/submit-request", 
-                    {pickupLat: pickUpLocation.lat, 
-                        pickupLon: pickUpLocation.lng, 
-                        dropoffLat: dropOffLocation.lat, 
-                        dropoffLon: dropOffLocation.lng, 
-                        pickup: pickUpLoc,
-                        dropoff: dropOffLoc,
-                        item: item, time: time, price: price, phone: "1112223333", submit: false}, responseJSON => {
-                        console.log(responseJSON);
-                        window.location.href = '/requesting';
+        $.post("/submit-request", 
+            {pickupLat: pickUpLocation.lat, 
+            pickupLon: pickUpLocation.lng, 
+            dropoffLat: dropOffLocation.lat, 
+            dropoffLon: dropOffLocation.lng, 
+            pickup: pickUpLoc,
+            dropoff: dropOffLoc,
+            item: item, time: time, price: price, phone: "1112223333", submit: false}, responseJSON => {
+            console.log(responseJSON);
+            window.location.href = '/requesting';
                        
-                });
-           // })
-       // })   
+        });
+   
     }); 
 }

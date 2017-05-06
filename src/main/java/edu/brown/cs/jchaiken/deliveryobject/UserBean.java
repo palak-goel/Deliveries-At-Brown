@@ -25,10 +25,10 @@ import edu.brown.cs.jchaiken.database.Database;
  */
 final class UserBean extends DeliveryObjectBean<User> implements User {
 	private String name;
-	private Collection<Order> pastDeliveries;
-	private Collection<Order> pastOrders;
-	private Collection<Order> currDeliveries;
-	private Collection<Order> currOrders;
+	transient private Collection<Order> pastDeliveries;
+	transient private Collection<Order> pastOrders;
+	transient private Collection<Order> currDeliveries;
+	transient private Collection<Order> currOrders;
 	private String paymentId;
 	private String cell;
 	private final int password;

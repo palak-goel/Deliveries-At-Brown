@@ -2,6 +2,7 @@ package edu.brown.cs.mhasan3.rankers;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.PriorityQueue;
 
@@ -34,6 +35,61 @@ public class Ranker {
     manage = m;
     orders = manage.getPendingOrders();
     user = curr;
+  }
+
+  /**
+   * Orders by the time the order was inputted.
+   * 
+   * @return list
+   */
+  public List<Order> orderByTime() {
+    PriorityQueue<Order> queue = new PriorityQueue<Order>(new RankerQueue());
+    for (Order o : orders) {
+      double tim = o.getDropoffTime();
+      o.setRanking(tim);
+      queue.add(o);
+    }
+    return this.returnAnswer(queue);
+  }
+
+  /**
+   * Orders by the tip inputted only
+   * 
+   * @return ordered list
+   */
+  public List<Order> orderByPrice() {
+    PriorityQueue<Order> queue = new PriorityQueue<Order>(new RankerQueue());
+    for (Order o : orders) {
+      double tip = o.getPrice();
+      o.setRanking(tip);
+      queue.add(o);
+    }
+    List<Order> q = this.returnAnswer(queue);
+    Collections.reverse(q);
+    return q;
+  }
+
+  /**
+   * Orders by the distance only
+   * 
+   * @return ordered list
+   */
+  public List<Order> orderByDistance() {
+    PriorityQueue<Order> queue = new PriorityQueue<Order>(new RankerQueue());
+    for (Order o : orders) {
+      Location pickLoc = o.getPickupLocation();
+      double la1 = pickLoc.getLatitude();
+      double lg1 = pickLoc.getLongitude();
+      Location dropLoc = o.getDropoffLocation();
+      double la2 = dropLoc.getLatitude();
+      double lg2 = dropLoc.getLongitude();
+      double res = this.haversineFormula(la1, lg1, la2, lg2);
+      o.setRanking(res);
+      queue.add(o);
+    }
+    List<Order> q = this.returnAnswer(queue);
+    Collections.reverse(q);
+    return q;
   }
 
   /**
@@ -107,20 +163,19 @@ public class Ranker {
    *          Order
    * @return double for average
    */
-  // THIS HAS TO BE FIXED - THE PROBLEM IS HOW getDropoffTime() works.
+
   public double considerTime(Order curr) {
-    // double userTime = user.getDeliveryTimePreference();
+    double userTime = user.getDeliveryTimePreference();
     // System.out.println("user" + userTime);
-    // double currTime = Instant.now().getEpochSecond();
-    // double endTime = curr.getDropoffTime();
+    double currTime = (System.currentTimeMillis() / 1000);
+    double endTime = curr.getDropoffTime();
     // System.out.println("curr" + currTime);
     // System.out.println("end" + endTime);
-    // // currTime =
-    // double timeDiffSecs = endTime - currTime;
-    // double timeDiffMins = timeDiffSecs / 60;
-    // double res = Math.abs(userTime - timeDiffMins);
-    // return res;
-    return 0.0;
+    // currTime =
+    double timeDiffSecs = endTime - currTime;
+    double timeDiffMins = timeDiffSecs / 60;
+    double res = Math.abs(userTime - timeDiffMins);
+    return res;
   }
 
   /**
@@ -165,7 +220,6 @@ public class Ranker {
     double dLon = Math.toRadians(lng2 - lng1);
     lat1 = Math.toRadians(lat1);
     lat2 = Math.toRadians(lat2);
-
     double a = Math.pow(Math.sin(dLat / 2), 2)
         + Math.pow(Math.sin(dLon / 2), 2) * Math.cos(lat1) * Math.cos(lat2);
     double c = 2 * Math.asin(Math.sqrt(a));
@@ -180,9 +234,9 @@ public class Ranker {
    *          Order
    * @return double for average
    */
-  // THIS ALSO NEEDS TO BE CHANGED - getPrice() is not payment.
+
   public double considerPayment(Order curr) {
-    double currentPay = curr.getPrice(); // change to something else
+    double currentPay = curr.getPrice();
     double desiredPay = user.getDeliveryFeePreference();
     double res = desiredPay - currentPay;
     return res;

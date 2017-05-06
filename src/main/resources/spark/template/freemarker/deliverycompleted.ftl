@@ -6,7 +6,9 @@
           <li><a href="/request">Request</a></li>
           <li><a href="/deliver">Deliver</a></li>
         </ul>
-        <button type="button" id = "logout" class="btn btn-default">Logout</button>
+        <div id = "logout-div">
+            <button type="button" id = "logout" class="btn btn-default">Logout</button>
+        </div>
 	</div>
     <center>
     <h3> You have completed your delivery! </h3>

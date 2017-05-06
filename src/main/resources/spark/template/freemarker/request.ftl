@@ -42,15 +42,21 @@
         <!--<form>-->
             <div class="form-group">
                 <label for="formGroupExampleInput">Pick Up</label>
-                <input id = "pick-up-loc" type="text" class="form-control" id="formGroupExampleInput" placeholder="Enter a pickup location ...">
+                <input id = "pick-up-loc" type="text" list="pickups" class="form-control" id="formGroupExampleInput" placeholder="Enter a pickup location ...">
+                <datalist id="pickups">
+                </datalist>
             </div>
             <div class="form-group">
                 <label for="formGroupExampleInput">Drop Off</label>
-                <input id = "drop-off-loc" type="text" class="form-control" id="formGroupExampleInput" placeholder="Enter a drop off location ...">
+                <input id = "drop-off-loc" type="text" list="dropoffs" class="form-control" id="formGroupExampleInput" placeholder="Enter a drop off location ...">
+                <datalist id="dropoffs">
+                </datalist>
             </div>
             <div class="form-group">
                 <label for="formGroupExampleInput">Item</label>
-                <input id = "item" type="text" class="form-control" id="formGroupExampleInput" placeholder="What do you want to get?">
+                <input id = "item" type="text" list="items" class="form-control" id="formGroupExampleInput" placeholder="What do you want to get?">
+                <datalist id="items">
+                </datalist>
             </div>
             <div class="form-group">
                 <label for="formGroupExampleInput">Time</label>

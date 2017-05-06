@@ -89,6 +89,16 @@ conn.onmessage = msg => {
   }
 }
 
+function sendOrdering(){
+  let orderBy = $('input[name=order]:checked', '#radio').val();
+  console.log(orderBy);
+  const postParameters = {
+    option: orderBy
+  }
+  $.post("/submit-Ordering", postParameters, responseJSON => {
+  });
+  return;
+}
 
 function submitPrefencesToServer() {
 	let pri = document.getElementbyID("price");
@@ -99,7 +109,9 @@ function submitPrefencesToServer() {
 		distance: dist,
 		time: time
 	};
-  return
+  $.post("/submit-Preferences", postParameters, responseJSON => {
+  });
+  return;
 }
 
 function takeOrder(arg) {

@@ -61,11 +61,3 @@ function completeDelivery() {
     return directions;
 }
 
-function getUserLocation(userPositionArgs, resolve) {
-    navigator.geolocation.getCurrentPosition(function(position) {
-        userPositionArgs["lat"] = position.coords.latitude;
-        userPositionArgs["lng"] = position.coords.longitude;
-        resolve()
-    })
-    
-}

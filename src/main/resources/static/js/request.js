@@ -57,7 +57,7 @@ function initMap() {
 
 function sendFormToServer() {
     //iterate through form
-    var pickUpLoc = document.getElementById("pick-up-loc").value;
+    var pickUpLoc = document.getElementById("pick-up-loc").value + " Providence, RI";
     console.log(pickUpLoc)
     var dropOffLoc = document.getElementById("drop-off-loc").value;
     console.log(dropOffLoc)
@@ -85,6 +85,7 @@ function sendFormToServer() {
     if (dropOffLoc == "Current Location") {
         dropOffLocation = userLatLonLocation;
     } else {
+        dropOffLocation += " Providence, RI";
         promises.push(geocode(dropOffLocation, dropOffLoc));
     }
     //item name, price, time
@@ -108,33 +109,60 @@ function sendFormToServer() {
         console.log("About to submit!!!!")
         console.log(pickUpLoc)
 
-        //set cookie
-        localStorage.pickupLat = pickUpLocation.lat
-        localStorage.pickupLon = pickUpLocation.lng 
-        localStorage.dropoffLat = dropOffLocation.lat
-        localStorage.dropoffLon = dropOffLocation.lng
-        /*
-        localStorage.pickup = pickUpLoc
-        localStorage.dropoff = dropOffLoc
-        localStorage.item = item
-        localStorage.time = time
-        localStorage.price = price
-        console.log(document.cookie)
-        */
-        console.log(pickUpLoc)
-        $.post("/submit-request", 
-            {pickupLat: pickUpLocation.lat, 
-                pickupLon: pickUpLocation.lng, 
-                dropoffLat: dropOffLocation.lat, 
-                dropoffLon: dropOffLocation.lng, 
-                pickup: pickUpLoc,
-                dropoff: dropOffLoc,
-                item: item, time: time, price: price, phone: "1112223333", submit: false}, responseJSON => {
-                console.log(responseJSON);
-                window.location.href = '/requesting';
-               
-        });
-         
-    });
-    
+/*
+        var brown = {lat: 41.826820, lng: -71.402931};
+        var verifyPickup = {}
+        new Promise(function(resolve, reject) {
+            calcRoute(brown, pickUpLoc, verifyPickup, resolve)
+        }).then(function() {
+            var distance = verifyPickup["distance"].replace(",","")
+            console.log(distance)
+            console.log(parseFloat(distance))
+            if (parseFloat(distance) > 10) {
+                console.log("HERE")
+            }
+
+            var verifyDropoff = {}
+            new Promise(function(resolve, reject) {
+                calcRoute(brown, dropOffLoc, verifyDropoff, resolve)
+            }).then(function() {
+                console.log(verifyDropoff)
+                var distance = verifyDropoff["distance"].replace(",","")
+                console.log(distance)
+                console.log(parseFloat(distance))
+                if (parseFloat(distance) > 10) {
+                    console.log("HERE")
+                }*/
+            
+
+
+                //set cookie
+                localStorage.pickupLat = pickUpLocation.lat
+                localStorage.pickupLon = pickUpLocation.lng 
+                localStorage.dropoffLat = dropOffLocation.lat
+                localStorage.dropoffLon = dropOffLocation.lng
+                /*
+                localStorage.pickup = pickUpLoc
+                localStorage.dropoff = dropOffLoc
+                localStorage.item = item
+                localStorage.time = time
+                localStorage.price = price
+                console.log(document.cookie)
+                */
+                console.log(pickUpLoc)
+                $.post("/submit-request", 
+                    {pickupLat: pickUpLocation.lat, 
+                        pickupLon: pickUpLocation.lng, 
+                        dropoffLat: dropOffLocation.lat, 
+                        dropoffLon: dropOffLocation.lng, 
+                        pickup: pickUpLoc,
+                        dropoff: dropOffLoc,
+                        item: item, time: time, price: price, phone: "1112223333", submit: false}, responseJSON => {
+                        console.log(responseJSON);
+                        window.location.href = '/requesting';
+                       
+                });
+           // })
+       // })   
+    }); 
 }

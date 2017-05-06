@@ -35,7 +35,7 @@
     <h4> Please give the requestor a rating below: </h4>
     <br>
     <div id = "rating">
-        <input id = "rating" type="number" min = "0" max = "5" step = "1" class="form-control" id="formGroupExampleInput">
+        <input id = "ratingField" type="number" min = "0" max = "5" step = "1" class="form-control" id="formGroupExampleInput">
     </div>
     <br>
     <button type="button" class="btn btn-success" id="so" onclick="submitRating();">Confirm</button>

@@ -1,7 +1,10 @@
 function submitRating() {
-	console.log("submitted")
-	//rating = document.getElementById("rating")
-	let rating = $("#rating").val();
-	console.log($("#rating").val())
-	console.log(rating.value)
+	var rating = parseFloat(document.getElementById("ratingField").value);
+	if (rating > 5) {
+		rating = 5;
+	} 
+	if (rating < 0) {
+		rating = 0;
+	}
+	console.log(rating)
 }

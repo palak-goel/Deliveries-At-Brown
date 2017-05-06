@@ -27,16 +27,6 @@
   };
 }*/
 
-var userPosition
-$(document).ready(() => {
-    navigator.geolocation.getCurrentPosition(function(position) {
-      var pos = {
-        lat: position.coords.latitude,
-        lng: position.coords.longitude
-      }
-      userPosition = pos;
-    });
-});
 
 var all_orders = {}
 
@@ -103,19 +93,25 @@ function submitPrefencesToServer() {
 }
 
 function takeOrder(arg) {
-  console.log(userPosition)
-  data = {type: MESSAGE_TYPE.REMOVE_ORDER, id: arg, jid: getJid(), dLat: userPosition.lat, dLng: userPosition.lng}
-  order = all_orders[arg]
-  localStorage.pickupLat = order.pickupL.data.lat
-  localStorage.pickupLon = order.pickupL.data.lon
-  localStorage.dropoffLat = order.dropoffL.data.lat
-  localStorage.dropoffLon = order.dropoffL.data.lon
-  localStorage.pickup = order.pickupL.data.name
-  localStorage.dropoff = order.dropoffL.data.name
-  localStorage.id = arg
-  localStorage.item = order.items[0]
-  localStorage.ulat = userPosition.lat 
-  localStorage.ulng = userPosition.lng
-  window.location.href = 'http://localhost:4567/delivering';
-  //conn.send(JSON.stringify(data))
+  var userPosition = {}
+  new Promise(function(resolve, reject) {
+    getUserLocation(userPosition, resolve)
+  }).then(function() {
+    data = {type: MESSAGE_TYPE.REMOVE_ORDER, id: arg, jid: getJid(), dLat: userPosition.lat, dLng: userPosition.lng}
+    order = all_orders[arg]
+    localStorage.pickupLat = order.pickupL.data.lat
+    localStorage.pickupLon = order.pickupL.data.lon
+    localStorage.dropoffLat = order.dropoffL.data.lat
+    localStorage.dropoffLon = order.dropoffL.data.lon
+    localStorage.pickup = order.pickupL.data.name
+    localStorage.dropoff = order.dropoffL.data.name
+    localStorage.id = arg
+    localStorage.item = order.items[0]
+    localStorage.ulat = userPosition.lat 
+    localStorage.ulng = userPosition.lng
+    window.location.href = 'http://localhost:4567/delivering';    
+  })
+
+
+  
 }

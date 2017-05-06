@@ -2,14 +2,35 @@
 var pickup = {lat: parseFloat(localStorage.pickupLat), lng: parseFloat(localStorage.pickupLon)}
 //drop off location
 var dropoff = {lat: parseFloat(localStorage.dropoffLat), lng: parseFloat(localStorage.dropoffLon)}
+//user location
+var userLocation = {lat: parseFloat(localStorage.ulat), lng: parseFloat(localStorage.ulng)}
+
 console.log(pickup)
 console.log(dropoff)
 $(document).ready(() => {
+  var distance = 0;
+  var duration = 0;
+  var directionObject1 = {}
+  new Promise(function(resolve, reject) {
+      calcRoute(userLocation, pickup, directionObject1, resolve)
+  }).then(function() {
+    var dist1 = directionObject1["distance"]
+    var dur1 = distanceObject1["duration"]
+    var directionObject2 = {}
+    new Promise(function(resolve, reject) {
+      calcRoute(pickup, dropoff, directionObject2, resolve)
+    }).then(function() {
+      distance = dist1 + directionObject2["distance"];
+      duration = dur1 + directionObject2["duration"];
+    })
+  })
+
+
 	$("#pickup-loc").attr("placeholder", localStorage.pickup)
       $("#dropoff-loc").attr("placeholder", localStorage.dropoff)
     $("#item").attr("placeholder", localStorage.item)
-    $("#time").attr("placeholder", "TODO")
-    $("#price").attr("placeholder", "TODO")
+    $("#time").attr("placeholder", distance)
+    $("#price").attr("placeholder", duration)
 })
 
 function initMap() {

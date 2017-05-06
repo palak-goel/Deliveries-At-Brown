@@ -49,24 +49,28 @@
     </div>
 
     <div id="form">
-            <h3>Filters</h3>
-            <div class="form-group row">
-              <label for="example-text-input" class="col-2 col-form-label">Price</label>
-              <div class="col-10">
-                <input class="form-control" type="text" id="price">
-              </div>
+            <h3>Order by:</h3>
+            <form id="radio">
+            <input type="radio" name="order" value="tip"> Tip<br>
+            <input type="radio" name="order" value="distance"> Distance<br>
+            <input type="radio" name="order" value="time"> Time
+            </form>
+            <center>
+               <button onclick = "sendOrdering();"> Sort </button>
+            </center>
+            <h3>Custom</h3>
+            <div class="form-group">
+                <label for="formGroupExampleInput">Tip</label> 
+                <span><i>(How much would you like for the delivery?)</i></span>
+                <input id = "price" type="number" min = "0" max = "20" step = "1" class="form-control" id="formGroupExampleInput" placeholder="Desired tip">
             </div>
-            <div class="form-group row">
-              <label for="example-text-input" class="col-2 col-form-label">Distance</label>
-              <div class="col-10">
-                <input class="form-control" type="text" id="distance">
-              </div>
+            <div class="form-group">
+              <label for="formGroupExampleInput">Distance</label>
+                <input id = "distance" type="number" min = "0" max = "10" step = "0.1" class="form-control" id="formGroupExampleInput" placeholder="How far?">
             </div>
-            <div class="form-group row">
-              <label for="example-text-input" class="col-2 col-form-label">Time</label>
-              <div class="col-10">
-                <input class="form-control" type="text" id="time">
-              </div>
+            <div class="form-group">
+              <label for="formGroupExampleInput">Duration</label>
+                <input id = "duration" type="number" min = "0" max = "60" step = "0.1" class="form-control" id="formGroupExampleInput" placeholder="How long?">
             </div>
             <center>
                <button onclick = "sendPreferencesToServer();"> Submit Preferences </button>

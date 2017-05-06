@@ -59,7 +59,7 @@
             <div class="form-group">
                 <label for="formGroupExampleInput">Tip</label> 
                 <span><i>(How much extra would you be willing to pay?)</i></span>
-                <input id = "price" type="number" min = "0" max = "20" step = "1" class="form-control" id="formGroupExampleInput" placeholder="Willing to pay extra?">
+                <input id = "price" type="number" min = "0" max = "20" step = "1" class="form-control" id="formGroupExampleInput" placeholder="Insert amount">
             </div>
             <center>
                <input type = "submit" id = "submit_order" value = "Submit Order">

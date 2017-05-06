@@ -8,6 +8,7 @@ var pickup = {lat: parseFloat(localStorage.pLat), lng: parseFloat(localStorage.p
 var dropoff = {lat: parseFloat(localStorage.dLat), lng: parseFloat(localStorage.dLng)}
 
 function initMap() {
+    document.getElementById("contact-name").innerText = localStorage.name;
     var brown = {lat: 41.826820, lng: -71.402931};
     map = new google.maps.Map(document.getElementById('map'), {
       zoom: 16,

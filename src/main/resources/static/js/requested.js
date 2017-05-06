@@ -1,19 +1,16 @@
 //pick up location
-var pickup = {lat: 41.830556, lng: -71.402381}
+var pickup = {lat: parseFloat(localStorage.pickupLat), lng: parseFloat(localStorage.pickupLon)}
 //drop off location
-var dropoff = {lat: 41.826997, lng: -71.400221}
+var dropoff = {lat: parseFloat(localStorage.dropoffLat), lng: parseFloat(localStorage.dropoffLon)}
 //deliverer location
-var delivererLocation = {lat: 41.826920, lng: -71.402731}
+var delivererLocation = {lat: parseFloat(localStorage.dLat), lng: parseFloat(localStorage.dLng)}
 //deliverer name
 var delivererName = localStorage.name;
 //deliverer number
 var delivererNumber = localStorage.cell;
 
-
 function initMap() {
     document.getElementById("deliverer-name").innerText = delivererName;
-    document.getElementById("deliverer-num").innerText= delivererNumber;
-
 
     //Initial Map Centered Around Brown University
     var brown = {lat: 41.826820, lng: -71.402931};

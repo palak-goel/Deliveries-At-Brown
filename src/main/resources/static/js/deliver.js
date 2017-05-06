@@ -74,11 +74,21 @@ conn.onmessage = msg => {
       localStorage.pLng = data.pLng;
       localStorage.dLat = data.dLat;
       localStorage.dLng = data.dLng;
-      window.location.href = 'http://localhost:4567/delivered';
+      window.location.href = '/delivered';
       break;
   }
 }
 
+function sendOrdering(){
+  let orderBy = $('input[name=order]:checked', '#radio').val();
+  console.log(orderBy);
+  const postParameters = {
+    option: orderBy
+  }
+  $.post("/submit-Ordering", postParameters, responseJSON => {
+  });
+  return;
+}
 
 function submitPrefencesToServer() {
 	let pri = document.getElementbyID("price");
@@ -89,7 +99,9 @@ function submitPrefencesToServer() {
 		distance: dist,
 		time: time
 	};
-  return
+  $.post("/submit-Preferences", postParameters, responseJSON => {
+  });
+  return;
 }
 
 function takeOrder(arg) {
@@ -109,6 +121,7 @@ function takeOrder(arg) {
     localStorage.item = order.items[0]
     localStorage.ulat = userPosition.lat 
     localStorage.ulng = userPosition.lng
+    localStorage.name = order.orderer.data.name;
     window.location.href = 'http://localhost:4567/delivering';    
   })
 

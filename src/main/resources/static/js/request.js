@@ -14,7 +14,22 @@ conn.onmessage = msg => {
   }
 }
 
+function setItemSuggests(){
+    $('#items').append("<option value='Cookie'>");
+    $('#items').append("<option value='Brownie'>");
+}
+function setPickupSuggests(){
+
+}
+function setDropOffSuggests(){
+
+}
+
 $(document).ready(() => {
+    setItemSuggests();
+    setPickupSuggests();
+    setDropOffSuggests();
+    
     document.getElementById("submit_order").addEventListener('click', function() {
         sendFormToServer();
     });

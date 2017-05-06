@@ -13,6 +13,8 @@ conn.onmessage = msg => {
       console.log("REQUESTED");
       localStorage.name = data.name;
       localStorage.cell = data.phone;
+      localStorage.dLat = data.delivLat;
+      localStorage.dLng = data.delivLng;
       window.location.href = 'http://localhost:4567/requested';
       break;
   }

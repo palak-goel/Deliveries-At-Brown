@@ -6,39 +6,46 @@
       <li><a href="/request">Request</a></li>
       <li><a href="/deliver">Deliver</a></li>
     </ul>
-    <button type="button" id = "logout" class="btn btn-default">Logout</button>
+    <div id = "logout-div">
+            <button type="button" id = "logout" class="btn btn-default">Logout</button>
+        </div>
 </div>
 <div id="map"></div>
 <div id="form">
     <center>
     <h3>Make a Request</h3>
     </center>
-    <!--<form>-->
-        <div class="form-group">
-            <label for="formGroupExampleInput">Pick Up</label>
-            <input id = "pick-up-loc" type="text" class="form-control" id="formGroupExampleInput" placeholder="Enter a pickup location ...">
-        </div>
-        <div class="form-group">
-            <label for="formGroupExampleInput">Drop Off</label>
-            <input id = "drop-off-loc" type="text" class="form-control" id="formGroupExampleInput" placeholder="Enter a drop off location ...">
-        </div>
-        <div class="form-group">
-            <label for="formGroupExampleInput">Item</label>
-            <input id = "item" type="text" class="form-control" id="formGroupExampleInput" placeholder="What do you want to get?">
-        </div>
-        <div class="form-group">
-            <label for="formGroupExampleInput">Time</label>
-            <input type="time" id="time" name="usr_time" class="form-control" id="formGroupExampleInput">
-        </div>
-        <div class="form-group">
-            <label for="formGroupExampleInput">Tip</label> 
-            <span><i>(How much extra would you be willing to pay?)</i></span>
-            <input id = "price" type="number" min = "0" max = "20" step = "1" class="form-control" id="formGroupExampleInput" placeholder="Willing to pay extra?">
-        </div>
+            <div class="form-group">
+                <label for="formGroupExampleInput">Pick Up</label>
+                <input id = "pick-up-loc" type="text" list="pickups" class="form-control" id="formGroupExampleInput" placeholder="Enter a pickup location ...">
+                <datalist id="pickups">
+                </datalist>
+            </div>
+            <div class="form-group">
+                <label for="formGroupExampleInput">Drop Off</label>
+                <input id = "drop-off-loc" type="text" list="dropoffs" class="form-control" id="formGroupExampleInput" placeholder="Enter a drop off location ...">
+                <datalist id="dropoffs">
+                </datalist>
+            </div>
+            <div class="form-group">
+                <label for="formGroupExampleInput">Item</label>
+                <input id = "item" type="text" list="items" class="form-control" id="formGroupExampleInput" placeholder="What do you want to get?">
+                <datalist id="items">
+                </datalist>
+            </div>
+            <div class="form-group">
+                <label for="formGroupExampleInput">Time</label>
+                <input type="time" id="time" name="usr_time" class="form-control" id="formGroupExampleInput">
+            </div>
+            <div class="form-group">
+                <label for="formGroupExampleInput">Tip</label> 
+                <span><i>(How much extra would you be willing to pay?)</i></span>
+                <input id = "price" type="number" min = "0" max = "20" step = "1" class="form-control" id="formGroupExampleInput" placeholder="Insert amount">
+            </div>
         <center>
            <input type = "submit" id = "submit_order" value = "Submit Order">
         </center>
-        <!--</form>-->
+        
 </div>
 </#assign>
 <#include "main.ftl">

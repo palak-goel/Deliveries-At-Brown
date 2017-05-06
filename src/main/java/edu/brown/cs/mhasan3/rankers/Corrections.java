@@ -69,8 +69,8 @@ public class Corrections {
     List<Order> p = new ArrayList<Order>(past);
     List<String> old = new ArrayList<String>();
     for (Order o : p) {
-      old.add(o.getDropoffLocation().getId()); // change
-      old.add(o.getPickupLocation().getId());
+      old.add(o.getDropoffLocation().getName()); // change
+      old.add(o.getPickupLocation().getName());
     }
     corr.addList(old);
     List<String> res = corr.combineResults(str);
@@ -94,7 +94,7 @@ public class Corrections {
    *           e
    */
 
-  // TO CHANGE - GET ACCESS TO ALL ITEMS IN DATABASE
+  // TO CHANGE - GET ACCESS TO ALL ITEMS IN DATABASE(WOULD HELP)ß
   public List<String> correctItems(String[] str, User u) throws SQLException {
     CommandCorrect corr = new CommandCorrect();
     Collection<Order> past = u.pastDeliveries();

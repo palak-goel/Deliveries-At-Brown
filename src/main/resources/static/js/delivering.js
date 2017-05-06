@@ -3,7 +3,7 @@ var pickup = {lat: parseFloat(localStorage.pickupLat), lng: parseFloat(localStor
 //drop off location
 var dropoff = {lat: parseFloat(localStorage.dropoffLat), lng: parseFloat(localStorage.dropoffLon)}
 //user location
-var userLocation = {lat: parseFloat(localStorage.ulat), lng: parseFloat(localStorage.ulng)}
+var uLocation = {lat: parseFloat(localStorage.ulat), lng: parseFloat(localStorage.ulng)}
 
 console.log(pickup)
 console.log(dropoff)
@@ -24,21 +24,21 @@ function initMap() {
     var duration = 0;
     var directionObject1 = {}
     new Promise(function(resolve, reject) {
-      calcRoute(userLocation, pickup, directionObject1, resolve)
+      calcRoute(uLocation, pickup, directionObject1, resolve)
     }).then(function() {
       var dist1 = directionObject1["distance"]
-      var dur1 = distanceObject1["duration"]
+      var dur1 = directionObject1["duration"]
       var directionObject2 = {}
       new Promise(function(resolve, reject) {
         calcRoute(pickup, dropoff, directionObject2, resolve)
       }).then(function() {
-        distance = dist1 + directionObject2["distance"];
-        duration = dur1 + directionObject2["duration"];
+        distance = parseFloat(dist1) + parseFloat(directionObject2["distance"]);
+        duration = parseFloat(dur1) + parseFloat(directionObject2["duration"]);
         $("#pickup-loc").attr("placeholder", localStorage.pickup)
         $("#dropoff-loc").attr("placeholder", localStorage.dropoff)
         $("#item").attr("placeholder", localStorage.item)
         $("#time").attr("placeholder", distance)
-        $("#price").attr("placeholder", durationd)
+        $("#price").attr("placeholder", "" + duration + " minutes")
       })
     })
 }
@@ -65,7 +65,7 @@ conn.onmessage = msg => {
       localStorage.pLng = data.pLng;
       localStorage.dLat = data.dLat;
       localStorage.dLng = data.dLng;
-      window.location.href = 'http://localhost:4567/delivered';
+      window.location.href = '/delivered';
       break;
   }
 }

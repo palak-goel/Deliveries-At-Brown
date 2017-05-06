@@ -2,11 +2,10 @@
     <div id = "top-banner">
         <h1>Deliveries @ Brown</h1>
         <ul>
-          <li><a href="http://localhost:4567/profile">Profile</a></li>
-          <li><a href="http://localhost:4567/request">Request</a></li>
-          <li><a href="http://localhost:4567/deliver">Deliver</a></li>
+          <li><a href="/profile">Profile</a></li>
+          <li><a href="/request">Request</a></li>
+          <li><a href="/deliver">Deliver</a></li>
         </ul>
-        <button type="button" id = "logout" class="btn btn-default">Logout</button>
     </div>
 	<div id="map"></div>
 	<div id="right">
@@ -20,9 +19,8 @@
         <p id = "pickup-dirs2"></p>
         <p id = "dropoff-dirs2"></p>
 
-        <h3> Contact </h3>
-        <h4 id = "deliverer-num">Phone Number</h5>
-        <textarea id = "text-message" placeholder = "Message Deliverer"></textarea>
+        <h3 id="contact-name"> Contact </h3>
+        <textarea id = "text-message" placeholder = "Message Requester"></textarea>
         <br>
         <button onclick = "sendTextToDeliverer();">Send</button>
         <br>

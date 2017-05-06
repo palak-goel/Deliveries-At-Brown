@@ -1,4 +1,4 @@
-<#assign>
+<#assign content>
     <div id = "top-banner">
         <h1> Deliveries @ Brown </h1>
         <ul>
@@ -6,7 +6,6 @@
           <li><a href="/request">Request</a></li>
           <li><a href="/deliver">Deliver</a></li>
         </ul>
-        <button type="button" id = "logout" class="btn btn-default">Logout</button>
     </div>
     <div id="map"></div>
     <center>

@@ -2,13 +2,12 @@
 var pickup = {lat: parseFloat(localStorage.pickupLat), lng: parseFloat(localStorage.pickupLon)}
 //drop off location
 var dropoff = {lat: parseFloat(localStorage.dropoffLat), lng: parseFloat(localStorage.dropoffLon)}
-$(document).ready(() => {
-	$("#pickup-loc").attr("placeholder", localStorage.pickup)
-      $("#dropoff-loc").attr("placeholder", localStorage.dropoff)
-    $("#item").attr("placeholder", localStorage.item)
-    $("#time").attr("placeholder", "TODO")
-    $("#price").attr("placeholder", "TODO")
-})
+//user location
+var uLocation = {lat: parseFloat(localStorage.ulat), lng: parseFloat(localStorage.ulng)}
+
+console.log(pickup)
+console.log(dropoff)
+
 
 function initMap() {
     //Initial Map Centered Around Brown University
@@ -20,6 +19,28 @@ function initMap() {
     userLocation(map, 'Red');
     addPickup(pickup);
     addDropoff(dropoff);
+
+    var distance = 0;
+    var duration = 0;
+    var directionObject1 = {}
+    new Promise(function(resolve, reject) {
+      calcRoute(uLocation, pickup, directionObject1, resolve)
+    }).then(function() {
+      var dist1 = directionObject1["distance"]
+      var dur1 = directionObject1["duration"]
+      var directionObject2 = {}
+      new Promise(function(resolve, reject) {
+        calcRoute(pickup, dropoff, directionObject2, resolve)
+      }).then(function() {
+        distance = parseFloat(dist1) + parseFloat(directionObject2["distance"]);
+        duration = parseFloat(dur1) + parseFloat(directionObject2["duration"]);
+        $("#pickup-loc").attr("placeholder", localStorage.pickup)
+        $("#dropoff-loc").attr("placeholder", localStorage.dropoff)
+        $("#item").attr("placeholder", localStorage.item)
+        $("#time").attr("placeholder", distance)
+        $("#price").attr("placeholder", "" + duration + " minutes")
+      })
+    })
 }
 
 conn.onmessage = msg => {

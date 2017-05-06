@@ -48,6 +48,11 @@
         <textarea id = "text-message" placeholder = "Message Deliverer"></textarea>
         <br>
         <button onclick = "sendTextToDeliverer();">Send</button>
+        <br>
+        <br>
+        <form action = "/deliverycompleted">
+            <button onclick = "completeDelivery();">Complete Delivery</button>
+        </form>
     </div>
 </body>
 </html>

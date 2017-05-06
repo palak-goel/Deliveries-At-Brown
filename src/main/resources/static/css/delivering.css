@@ -1,4 +1,3 @@
-
 #top-banner {
   top: 0;
   left: 0;
@@ -15,11 +14,11 @@
 }
 
 #right {
-	height: 600px;
+  height: 600px;
   width: 28%;
   float: right;
   padding-right: 10px;
-  	/*margin: 0px 90px 80px 20px;*/
+    /*margin: 0px 90px 80px 20px;*/
 }
 
 ul {

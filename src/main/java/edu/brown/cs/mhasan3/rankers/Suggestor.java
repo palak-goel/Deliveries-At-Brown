@@ -94,7 +94,7 @@ public class Suggestor {
     List<Order> p = new ArrayList<Order>(past);
     Map<String, SuggestionItem> map = new HashMap<String, SuggestionItem>();
     for (Order o : p) {
-      String temp = o.getPickupLocation().getId();
+      String temp = o.getPickupLocation().getName();
       if (!map.containsKey(temp)) {
         map.put(temp, new SuggestionItem(temp));
       } else {
@@ -129,7 +129,7 @@ public class Suggestor {
    * 
    * @return List<String> locations
    */
-  // CHANGE FROM LOCATION ID TO LOCATION NAME
+
   public List<String> suggestDropoff() {
     List<String> res = new ArrayList<String>();
     Collection<Order> past = user.pastOrders();
@@ -139,7 +139,7 @@ public class Suggestor {
     List<Order> p = new ArrayList<Order>(past);
     Map<String, SuggestionItem> map = new HashMap<String, SuggestionItem>();
     for (Order o : p) {
-      String temp = o.getDropoffLocation().getId();
+      String temp = o.getDropoffLocation().getName();
       if (!map.containsKey(temp)) {
         map.put(temp, new SuggestionItem(temp));
       } else {
@@ -158,7 +158,6 @@ public class Suggestor {
    * @return List<String> of times
    */
 
-  // CHANGE AND IMPROVE TIME DIFFENCE
   public List<String> suggestUserTime() {
     List<String> res = new ArrayList<String>();
     Collection<Order> past = user.pastOrders();
@@ -190,7 +189,6 @@ public class Suggestor {
    * @return List<String> Payments
    */
 
-  // Change - should be changed from getPrice
   public List<String> suggestPayment() {
     List<String> res = new ArrayList<String>();
     Collection<Order> past = user.pastOrders();
@@ -218,7 +216,7 @@ public class Suggestor {
    * 
    * @return List<String> of times
    */
-  // CHANGE AND MAKE TIME DIFFERENCES BETTER
+
   public List<String> suggestDeliverTime() {
     List<String> res = new ArrayList<String>();
     Collection<Order> past = user.pastDeliveries();
@@ -249,7 +247,7 @@ public class Suggestor {
    * 
    * @return List<String> of payments
    */
-  // CHANGE FROM GET PRICE
+
   public List<String> suggestUserPayment() {
     List<String> res = new ArrayList<String>();
     Collection<Order> past = user.pastDeliveries();

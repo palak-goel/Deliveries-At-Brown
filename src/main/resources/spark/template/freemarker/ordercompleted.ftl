@@ -3,9 +3,9 @@
 	<div id = "top-banner">
 		<h1> Deliveries @ Brown </h1>
 		<ul>
-          <li><a href="http://localhost:4567/profile">Profile</a></li>
-          <li><a href="http://localhost:4567/request">Request</a></li>
-          <li><a href="http://localhost:4567/deliver">Deliver</a></li>
+          <li><a href="/profile">Profile</a></li>
+          <li><a href="/request">Request</a></li>
+          <li><a href="/deliver">Deliver</a></li>
         </ul>
         <button type="button" id = "logout" class="btn btn-default">Logout</button>
 	</div>

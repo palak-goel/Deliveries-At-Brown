@@ -38,7 +38,7 @@ public class OrderWebSocket {
 	private static Map<String, Session> socketidUser = new ConcurrentHashMap<>();
 
 	private enum MESSAGE_TYPE {
-		CONNECT, ADD_ORDER, REMOVE_ORDER, REQUESTED, GET_ORDERS, DELIVERED;
+		CONNECT, ADD_ORDER, REMOVE_ORDER, REQUESTED, GET_ORDERS, DELIVERED, COMPLETED;
 	}
 
 	@OnWebSocketConnect
@@ -80,6 +80,8 @@ public class OrderWebSocket {
 		} else if (received.get("type").getAsInt() == MESSAGE_TYPE.CONNECT.ordinal()) {
 			System.out.println("adding to map");
 			socketidUser.put(received.get("jid").getAsString(), session);
+		} else if (received.get("type").getAsInt() == MESSAGE_TYPE.COMPLETED.ordinal()) {
+
 		} else {
 			System.out.println("ticket picked up");
 			String id = received.get("id").getAsString();

@@ -20,9 +20,8 @@
         <p id = "pickup-dirs2"></p>
         <p id = "dropoff-dirs2"></p>
 
-        <h3> Contact </h3>
-        <h4 id = "deliverer-num">Phone Number</h5>
-        <textarea id = "text-message" placeholder = "Message Deliverer"></textarea>
+        <h3 id="contact-name"> Contact </h3>
+        <textarea id = "text-message" placeholder = "Message Requester"></textarea>
         <br>
         <button onclick = "sendTextToDeliverer();">Send</button>
         <br>

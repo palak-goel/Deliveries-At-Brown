@@ -233,8 +233,12 @@ public class Gui {
 		});
 
 		Spark.post("/logout", (request, response) -> {
-		  request.session().attribute("webId", null);
-		  return GSON.toJson("");
+			request.session().attribute("webId", null);
+			return GSON.toJson("");
+		});
+
+		Spark.post("/suggest", (request, response) -> {
+			return GSON.toJson("");
 		});
 
 		Spark.get("/map", (request, response) -> {
@@ -295,14 +299,14 @@ public class Gui {
 	private static class LoginValidator implements Route {
 		@Override
 		public Object handle(Request arg0, Response arg1) {
-      Map<String, Object> toServer = new HashMap<>();
+			Map<String, Object> toServer = new HashMap<>();
 			try {
 				QueryParamsMap qm = arg0.queryMap();
 				System.out.println("validating");
 				String id = qm.value("id");
 				String password = qm.value("password");
 				if (User.userValidator(id, password)) {
-				  System.out.println("good user");
+					System.out.println("good user");
 					toServer.put("result", true);
 					User user = User.byId(id);
 					arg0.session().attribute("webId", user.getWebId());
@@ -312,9 +316,9 @@ public class Gui {
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
-        toServer.put("result", false);
+				toServer.put("result", false);
 			}
-      return GSON.toJson(toServer);
+			return GSON.toJson(toServer);
 		}
 	}
 

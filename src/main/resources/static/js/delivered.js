@@ -30,7 +30,9 @@ function initMap() {
             document.getElementById("duration").innerText = pickUpDirs["duration"]
             var pickUpDirections = ""
             for (var i = 0; i < pickUpDirs["directions"].length; i++) {
-                pickUpDirections += pickUpDirs["directions"][i].instructions;
+                pickUpDirections += pickUpDirs["directions"][i].instructions.replace(/<[^>]*>/g, " ");
+                pickUpDirections += '\n';
+                console.log(pickUpDirections)
             }
             document.getElementById("pickup-dirs").innerText = pickUpDirections;
         })
@@ -42,7 +44,8 @@ function initMap() {
             document.getElementById("duration2").innerText = dropoffDirs["duration"]
             var dropoffDirections = ""
             for (var i = 0; i < dropoffDirs["directions"].length; i++) {
-                dropoffDirections += dropoffDirs["directions"][i].instructions;
+                dropoffDirections += dropoffDirs["directions"][i].instructions.replace(/<[^>]*>/g, " ");
+                dropoffDirections += '\n';
             }
             document.getElementById("pickup-dirs2").innerText = dropoffDirections;
         })
@@ -50,6 +53,11 @@ function initMap() {
 
     //calcRoute(userPosition, pickup);
     //calcRoute(pickup, dropoff);
+}
+
+function cleanText(directions) {
+
+    return directions;
 }
 
 function getUserLocation(userPositionArgs, resolve) {

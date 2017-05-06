@@ -30,6 +30,7 @@ public final class OrderBean extends DeliveryObjectBean<Order> implements Order,
 	private double ranking;
 	private boolean inDb = false;
 	private String phone;
+
 	private OrderBean(String newId, User newOrderer, User newDeliverer, Location newPickup, Location newDropoff,
 			double pickupT, double dropoffT) {
 		super(newId);
@@ -44,18 +45,19 @@ public final class OrderBean extends DeliveryObjectBean<Order> implements Order,
 	}
 
 	private void addPrice(double newPrice) {
-	  this.price = newPrice;
+		this.price = newPrice;
 	}
 
 	private void setDbStatus(Boolean db) {
-	  inDb = db;
+		inDb = db;
 	}
 
 	private void addOrderStatus(OrderStatus newOrderStatus) {
 		status = newOrderStatus;
 	}
+
 	private void addPhone(String newPhone) {
-	  phone = newPhone;
+		phone = newPhone;
 	}
 
 	private void addItems(List<String> newItems) {
@@ -74,21 +76,21 @@ public final class OrderBean extends DeliveryObjectBean<Order> implements Order,
 
 	@Override
 	public String getPhone() {
-	  return phone;
+		return phone;
 	}
 
 	@Override
 	public void assignDeliverer(User newDeliverer) {
-	  if (inDb && Database.getConnection() != null) {
-	    try (PreparedStatement prep = Database.getConnection()
-	        .prepareStatement("UPDATE orders SET deliverer_id = ? WHERE id = ?")) {
-	      prep.setString(1, newDeliverer.getId());
-	      prep.setString(2, super.getId());
-	      prep.executeUpdate();
-	    } catch (SQLException e) {
-        e.printStackTrace();
-      }
-	  }
+		if (inDb && Database.getConnection() != null) {
+			try (PreparedStatement prep = Database.getConnection()
+					.prepareStatement("UPDATE orders SET deliverer_id = ? WHERE id = ?")) {
+				prep.setString(1, newDeliverer.getId());
+				prep.setString(2, super.getId());
+				prep.executeUpdate();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
 		deliverer = newDeliverer;
 	}
 
@@ -116,15 +118,15 @@ public final class OrderBean extends DeliveryObjectBean<Order> implements Order,
 	public void setPrice(double newPrice) {
 		price = newPrice;
 		if (inDb && Database.getConnection() != null) {
-      try (PreparedStatement prep = Database.getConnection()
-          .prepareStatement("UPDATE orders SET price = ? WHERE id = ?")) {
-        prep.setDouble(1, newPrice);
-        prep.setString(2, super.getId());
-        prep.executeUpdate();
-      } catch (SQLException e) {
-        e.printStackTrace();
-      }
-    }
+			try (PreparedStatement prep = Database.getConnection()
+					.prepareStatement("UPDATE orders SET price = ? WHERE id = ?")) {
+				prep.setDouble(1, newPrice);
+				prep.setString(2, super.getId());
+				prep.executeUpdate();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	@Override
@@ -134,17 +136,17 @@ public final class OrderBean extends DeliveryObjectBean<Order> implements Order,
 
 	@Override
 	public void setOrderStatus(OrderStatus newStatus) {
-	  if (inDb && Database.getConnection() != null) {
-	    try (PreparedStatement prep = Database.getConnection()
-	        .prepareStatement("INSERT INTO order_status(order_id, status) VALUES(?, ?, ?)")) {
-	      prep.setString(1, super.getId());
-	      prep.setInt(2, newStatus.ordinal());
-	      prep.setLong(3, System.currentTimeMillis());
-	      prep.executeUpdate();
-	    } catch (SQLException e) {
-	      e.printStackTrace();
-	    }
-	  }
+		if (inDb && Database.getConnection() != null) {
+			try (PreparedStatement prep = Database.getConnection()
+					.prepareStatement("INSERT INTO order_status(order_id, status) VALUES(?, ?, ?)")) {
+				prep.setString(1, super.getId());
+				prep.setInt(2, newStatus.ordinal());
+				prep.setLong(3, System.currentTimeMillis());
+				prep.executeUpdate();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
 		status = newStatus;
 	}
 
@@ -169,33 +171,34 @@ public final class OrderBean extends DeliveryObjectBean<Order> implements Order,
 
 	@Override
 	public void addToDatabase() {
+		System.out.println("Adding order to db");
 		try (PreparedStatement prep = Database.getConnection().prepareStatement(ORDER_ADD)) {
 			prep.setString(1, super.getId());
 			prep.setString(2, orderer.getId());
 			if (deliverer != null) {
-        prep.setString(3, deliverer.getId());
+				prep.setString(3, deliverer.getId());
 			}
 			if (pickupTime == null) {
-		     prep.setDouble(4, -1);
+				prep.setDouble(4, -1);
 			} else {
-	      prep.setDouble(4, pickupTime);
+				prep.setDouble(4, pickupTime);
 			}
 			if (dropoffTime == null) {
-        prep.setDouble(5, -1);
+				prep.setDouble(5, -1);
 			} else {
-       prep.setDouble(5, dropoffTime);
+				prep.setDouble(5, dropoffTime);
 			}
 			prep.setString(6, pickupL.getId());
 			prep.setString(SEVEN, dropoffL.getId());
 			if (price == null) {
-        prep.setDouble(EIGHT, -1);
+				prep.setDouble(EIGHT, -1);
 			} else {
-       prep.setDouble(EIGHT, price);
+				prep.setDouble(EIGHT, price);
 			}
 			if (phone == null) {
-			  prep.setString(9, "");
+				prep.setString(9, "");
 			} else {
-			  prep.setString(9, phone);
+				prep.setString(9, phone);
 			}
 			prep.executeUpdate();
 		} catch (SQLException exc) {
@@ -222,7 +225,7 @@ public final class OrderBean extends DeliveryObjectBean<Order> implements Order,
 		inDb = true;
 		orderer.setPendingUpdate();
 		if (deliverer != null) {
-	    deliverer.setPendingUpdate();
+			deliverer.setPendingUpdate();
 		}
 	}
 
@@ -275,6 +278,7 @@ public final class OrderBean extends DeliveryObjectBean<Order> implements Order,
 		private OrderStatus status;
 		private double price;
 		private boolean db = false;
+
 		public OrderBuilder setId(String id) {
 			idB = id;
 			return this;
@@ -326,13 +330,13 @@ public final class OrderBean extends DeliveryObjectBean<Order> implements Order,
 		}
 
 		public OrderBuilder setDbStatus(boolean newStatus) {
-		  db = newStatus;
-		  return this;
+			db = newStatus;
+			return this;
 		}
 
 		public OrderBuilder setPhone(String newPhone) {
-		  phone = newPhone;
-		  return this;
+			phone = newPhone;
+			return this;
 		}
 
 		public Order build() {
@@ -359,17 +363,19 @@ public final class OrderBean extends DeliveryObjectBean<Order> implements Order,
 		ranking = rank;
 	}
 
-  private static int counter = 0;
-  /**
-   * Returns the next id for an order.
-   * @return the id.
-   */
-  protected static String getNextId() {
-    if (counter == 0) {
-      counter = OrderProxy.checkCounter();
-    }
-    counter++;
-    return "/o/" + counter;
-  }
+	private static int counter = 0;
+
+	/**
+	 * Returns the next id for an order.
+	 * 
+	 * @return the id.
+	 */
+	protected static String getNextId() {
+		if (counter == 0) {
+			counter = OrderProxy.checkCounter();
+		}
+		counter++;
+		return "/o/" + counter;
+	}
 
 }

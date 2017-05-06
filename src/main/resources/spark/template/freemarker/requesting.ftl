@@ -60,8 +60,8 @@
 				      <input type="text" id = "price" class="form-control" placeholder="text">
 				    </div>
 			 	 </fieldset>
-			 	 <button type="button" class="btn btn-success">Confirm Order</button>
-			 	 <button type="button" class="btn btn-danger">Cancel Order</button>
+			 	 <button type="button" class="btn btn-success" id="so" onclick="submitOrder();">Confirm Order</button>
+			 	 <button type="button" class="btn btn-danger" onclick="cancelOrder();">Cancel Order</button>
 			</form>
 		</div>
 	</div>

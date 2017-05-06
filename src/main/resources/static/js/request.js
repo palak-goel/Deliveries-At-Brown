@@ -18,6 +18,20 @@ $(document).ready(() => {
     document.getElementById("submit_order").addEventListener('click', function() {
         sendFormToServer();
     });
+    $.post("/pending-orders", 
+      {}, responseJSON => {
+            data = JSON.parse(responseJSON)
+            console.log(responseJSON);
+            if (data.stored === "true") {
+            $("#pick-up-loc").val(data.pickup)
+      $("#drop-off-loc").val(data.dropoff)
+    $("#item").val(data.item)
+    $("#time").val(data.time)
+    $("#price").val(data.price)
+} else {
+
+}
+      });
 });
 
 function initMap() {
@@ -99,12 +113,15 @@ function sendFormToServer() {
         localStorage.pickupLon = pickUpLocation.lng 
         localStorage.dropoffLat = dropOffLocation.lat
         localStorage.dropoffLon = dropOffLocation.lng
+        /*
         localStorage.pickup = pickUpLoc
         localStorage.dropoff = dropOffLoc
         localStorage.item = item
         localStorage.time = time
         localStorage.price = price
         console.log(document.cookie)
+        */
+        console.log(pickUpLoc)
         $.post("/submit-request", 
             {pickupLat: pickUpLocation.lat, 
                 pickupLon: pickUpLocation.lng, 
@@ -112,10 +129,12 @@ function sendFormToServer() {
                 dropoffLon: dropOffLocation.lng, 
                 pickup: pickUpLoc,
                 dropoff: dropOffLoc,
-                item: item, time: time, price: price}, responseJSON => {
+                item: item, time: time, price: price, phone: "1112223333", submit: false}, responseJSON => {
                 console.log(responseJSON);
                 window.location.href = '/requesting';
+               
         });
+         
     });
     
 }

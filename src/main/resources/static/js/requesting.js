@@ -18,12 +18,21 @@ conn.onmessage = msg => {
   }
 }
 
+var dta = {};
+
 $(document).ready(() => {
-    $("#pickup-loc").attr("placeholder", localStorage.pickup)
-    $("#dropoff-loc").attr("placeholder", localStorage.dropoff)
-    $("#item").attr("placeholder", localStorage.item)
-    $("#time").attr("placeholder", localStorage.time)
-    $("#price").attr("placeholder", localStorage.price)
+  $.post("/pending-orders", 
+      {}, responseJSON => {
+            data = JSON.parse(responseJSON)
+            console.log(responseJSON);
+            $("#pickup-loc").attr("placeholder", data.pickup)
+      $("#dropoff-loc").attr("placeholder", data.dropoff)
+    $("#item").attr("placeholder", data.item)
+    $("#time").attr("placeholder", data.time)
+    $("#price").attr("placeholder", data.price)
+               dta = data;
+      });
+    
 });
 //pick up location
 var pickup = {lat: parseFloat(localStorage.pickupLat), lng: parseFloat(localStorage.pickupLon)}
@@ -48,4 +57,16 @@ function initMap() {
     //console.log(coord.length);
     //calcRoute("Kabob And Curry", {lat: 41.830556, lng: -71.402381});
 
+}
+
+function submitOrder() {
+  $.post("/submit-request", dta, responseJSON => {
+                console.log(responseJSON);
+                $('#so').attr("disabled", true);
+                //window.location.href = '/requesting';
+        });
+}
+
+function cancelOrder() {
+  window.location.href = '/request';
 }

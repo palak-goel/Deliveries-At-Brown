@@ -47,7 +47,7 @@ conn.onmessage = msg => {
           case MESSAGE_TYPE.CONNECT:
         console.log("HI");
         myId = data.id
-        conn.send(JSON.stringify({jid: jid, type: MESSAGE_TYPE.CONNECT}))
+        conn.send(JSON.stringify({jid: getJid(), type: MESSAGE_TYPE.CONNECT}))
           conn.send(JSON.stringify({type: MESSAGE_TYPE.GET_ORDERS}))
           console.log("INNER")
         break;
@@ -64,8 +64,9 @@ conn.onmessage = msg => {
       table.find("tr:gt(0)").remove();
         for(let i = 0; i< data.orders.length; i++){
           let order = data.orders[i];
-          let pickup = order.pickupL.lat;
-          let dropoff = order.dropoffL.lat;
+          console.log(order)
+          let pickup = data.pickup[i];
+          let dropoff = data.dropoff[i];
           let time = order.dropoffTime;
           let price = order.price;
           let items = order.items[0];
@@ -96,6 +97,6 @@ function submitPrefencesToServer() {
 
 function takeOrder(arg) {
   console.log(userPosition)
-  data = {type: MESSAGE_TYPE.REMOVE_ORDER, id: arg, jid: getJid()}
+  data = {type: MESSAGE_TYPE.REMOVE_ORDER, id: arg, jid: getJid(), dLat: userPosition.lat, dLng: userPosition.lng}
   conn.send(JSON.stringify(data))
 }

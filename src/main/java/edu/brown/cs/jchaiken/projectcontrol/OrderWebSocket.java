@@ -1,6 +1,7 @@
 package edu.brown.cs.jchaiken.projectcontrol;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -82,7 +83,7 @@ public class OrderWebSocket {
 		} else {
 			System.out.println("ticket picked up");
 			String id = received.get("id").getAsString();
-			Order o = Manager.getOrder(id);
+			Order o = Order.byId(id);
 			String jid = received.get("jid").getAsString();
 			User u = User.byWebId(Manager.getSession(jid).attribute("webId"));
 			o.assignDeliverer(u);
@@ -96,13 +97,23 @@ public class OrderWebSocket {
 				String z = s.attribute("webId");
 				System.out.println(z);
 				System.out.println(socketidUser.keySet());
+				double dlat = received.get("dLat").getAsDouble();
+				double dlng = received.get("dLng").getAsDouble();
+				double dropLat = o.getDropoffLocation().getLatitude();
+				double dropLng = o.getDropoffLocation().getLongitude();
+				double pickupLat = o.getPickupLocation().getLatitude();
+				double pickupLng = o.getPickupLocation().getLongitude();
 				if (reqId.equals(s.attribute("webId"))) {
 					String y = Manager.getUserJid(reqId);
 					System.out.println(y);
-					Map<String, Object> msg = ImmutableMap.of("type", MESSAGE_TYPE.REQUESTED.ordinal(), "name",
-							u.getName(), "phone", u.getCell());
+					Map<String, Object> msg = ImmutableMap.<String, Object>builder()
+							.put("type", MESSAGE_TYPE.REQUESTED.ordinal()).put("name", u.getName())
+							.put("phone", u.getCell()).put("delivLat", dlat).put("delivLng", dlng)
+							.put("dropLat", dropLat).put("dropLng", dropLng).put("pickLat", pickupLat)
+							.put("pickLng", pickupLng).build();
 					socketidUser.get(y).getRemote().sendString(GSON.toJson(msg));
 					sendRemoveOrder(o);
+					return;
 				}
 			}
 		}
@@ -158,6 +169,14 @@ public class OrderWebSocket {
 		try {
 			Map<String, Object> toServer = new HashMap<>();
 			toServer.put("orders", orders);
+			List<String> start = new ArrayList<>();
+			List<String> end = new ArrayList<>();
+			for (Order o : orders) {
+				start.add(o.getPickupLocation().getName());
+				end.add(o.getDropoffLocation().getName());
+			}
+			toServer.put("pickup", start);
+			toServer.put("dropoff", end);
 			toServer.put("type", MESSAGE_TYPE.ADD_ORDER.ordinal());
 			String msg = GSON.toJson(toServer);
 			s.getRemote().sendString(msg);

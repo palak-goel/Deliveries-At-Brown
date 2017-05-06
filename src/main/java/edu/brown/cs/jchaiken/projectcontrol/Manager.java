@@ -3,6 +3,7 @@ package edu.brown.cs.jchaiken.projectcontrol;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -40,7 +41,7 @@ public class Manager {
 	private static final Gson GSON = new Gson();
 	private static Map<String, Session> sessionMap = Collections.synchronizedMap(new HashMap<>());
 	private static Map<String, String> widToJid = Collections.synchronizedMap(new HashMap<>());
-	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("hh:mm");
+	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("HH:mm");
 
 	/**
 	 * Constructor for Manager.
@@ -130,19 +131,31 @@ public class Manager {
 				double dLat = Double.parseDouble(qm.value("dropoffLat"));
 				double dLon = Double.parseDouble(qm.value("dropoffLon"));
 				String item = qm.value("item");
+				System.out.println(qm.value("time"));
 				Date time = DATE_FORMAT.parse(qm.value("time"));
+				// System.out.println(time);
 				Date cur = new Date();
-				System.out.println(time);
+				cur = DATE_FORMAT.parse(DATE_FORMAT.format(cur));
 				System.out.println(cur);
-				System.out.println(time.getTime());
-				System.out.println(cur.getTime());
+				Calendar c = Calendar.getInstance();
+				c.setTimeInMillis(System.currentTimeMillis());
+				System.out.println(c);
+				Calendar uT = Calendar.getInstance();
+				uT.setTime(time);
+				c.set(Calendar.HOUR_OF_DAY, uT.get(Calendar.HOUR_OF_DAY));
+				c.set(Calendar.MINUTE, uT.get(Calendar.MINUTE));
+				if (time.before(cur)) {
+					c.add(Calendar.DATE, 1);
+				}
+				time = c.getTime();
+				System.out.println(time);
 				double price = Double.parseDouble(qm.value("price"));
 				OrderBuilder builder = new OrderBuilder();
 				User curr = User.byWebId(req.session().attribute("webId"));
 				Location pickup = Location.newLocation(pLat, pLon, qm.value("pickup"));
 				Location dropoff = Location.newLocation(dLat, dLon, qm.value("dropoff"));
 				builder.setOrderer(curr).setPickup(pickup).setDropoff(dropoff).setPrice(price)
-						.setDropoffTime(System.currentTimeMillis() / 1000).setItems(Arrays.asList(item))
+						.setDropoffTime(time.getTime() / 1000).setItems(Arrays.asList(item))
 						.setOrderStatus(OrderStatus.UNASSIGNED).setPhone(qm.value("phone"));
 				if (qm.value("submit").equals("true")) {
 					Order o = builder.build();

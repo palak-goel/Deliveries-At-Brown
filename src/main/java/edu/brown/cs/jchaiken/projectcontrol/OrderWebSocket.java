@@ -142,9 +142,9 @@ public class OrderWebSocket {
 			toServer.put("orders", orders);
 			List<String> start = new ArrayList<>();
 			List<String> end = new ArrayList<>();
-			for (Order o : orders) {
-				start.add(o.getPickupLocation().getName());
-				end.add(o.getDropoffLocation().getName());
+			for (Order os : orders) {
+				start.add(os.getPickupLocation().getName());
+				end.add(os.getDropoffLocation().getName());
 			}
 			toServer.put("pickup", start);
 			toServer.put("dropoff", end);
@@ -166,9 +166,9 @@ public class OrderWebSocket {
 			toServer.put("orders", orders);
 			List<String> start = new ArrayList<>();
 			List<String> end = new ArrayList<>();
-			for (Order o : orders) {
-				start.add(o.getPickupLocation().getName());
-				end.add(o.getDropoffLocation().getName());
+			for (Order os : orders) {
+				start.add(os.getPickupLocation().getName());
+				end.add(os.getDropoffLocation().getName());
 			}
 			toServer.put("pickup", start);
 			toServer.put("dropoff", end);

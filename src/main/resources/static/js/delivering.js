@@ -2,6 +2,8 @@
 var pickup = {lat: parseFloat(localStorage.pickupLat), lng: parseFloat(localStorage.pickupLon)}
 //drop off location
 var dropoff = {lat: parseFloat(localStorage.dropoffLat), lng: parseFloat(localStorage.dropoffLon)}
+console.log(pickup)
+console.log(dropoff)
 $(document).ready(() => {
 	$("#pickup-loc").attr("placeholder", localStorage.pickup)
       $("#dropoff-loc").attr("placeholder", localStorage.dropoff)

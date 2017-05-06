@@ -100,9 +100,9 @@ function takeOrder(arg) {
     data = {type: MESSAGE_TYPE.REMOVE_ORDER, id: arg, jid: getJid(), dLat: userPosition.lat, dLng: userPosition.lng}
     order = all_orders[arg]
     localStorage.pickupLat = order.pickupL.data.lat
-    localStorage.pickupLon = order.pickupL.data.lon
+    localStorage.pickupLon = order.pickupL.data.lng
     localStorage.dropoffLat = order.dropoffL.data.lat
-    localStorage.dropoffLon = order.dropoffL.data.lon
+    localStorage.dropoffLon = order.dropoffL.data.lng
     localStorage.pickup = order.pickupL.data.name
     localStorage.dropoff = order.dropoffL.data.name
     localStorage.id = arg

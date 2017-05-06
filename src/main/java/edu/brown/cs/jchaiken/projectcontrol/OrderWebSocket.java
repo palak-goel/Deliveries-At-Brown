@@ -1,6 +1,7 @@
 package edu.brown.cs.jchaiken.projectcontrol;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -82,7 +83,7 @@ public class OrderWebSocket {
 		} else {
 			System.out.println("ticket picked up");
 			String id = received.get("id").getAsString();
-			Order o = Manager.getOrder(id);
+			Order o = Order.byId(id);
 			String jid = received.get("jid").getAsString();
 			User u = User.byWebId(Manager.getSession(jid).attribute("webId"));
 			o.assignDeliverer(u);
@@ -168,6 +169,14 @@ public class OrderWebSocket {
 		try {
 			Map<String, Object> toServer = new HashMap<>();
 			toServer.put("orders", orders);
+			List<String> start = new ArrayList<>();
+			List<String> end = new ArrayList<>();
+			for (Order o : orders) {
+				start.add(o.getPickupLocation().getName());
+				end.add(o.getDropoffLocation().getName());
+			}
+			toServer.put("pickup", start);
+			toServer.put("dropoff", end);
 			toServer.put("type", MESSAGE_TYPE.ADD_ORDER.ordinal());
 			String msg = GSON.toJson(toServer);
 			s.getRemote().sendString(msg);

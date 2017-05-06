@@ -9,10 +9,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
 import com.google.gson.Gson;
 
 import edu.brown.cs.jchaiken.deliveryobject.Location;
@@ -38,12 +35,9 @@ public class Manager {
 
 	private static List<User> activeDeliverers = Collections.synchronizedList(new ArrayList<>());
 	private static List<Order> pendingOrders = Collections.synchronizedList(new ArrayList<>());
-	private static Map<String, Order> ordMap = Collections.synchronizedMap(new HashMap<>());
+	private static Map<String, Order> jidToOrder = Collections.synchronizedMap(new HashMap<>());
 	private static Map<User, Order> pendingMatches = Collections.synchronizedMap(new HashMap<>());
 	private static final Gson GSON = new Gson();
-	private static final int MAX_CACHE = 50000;
-	private static Cache<User, Order> completedOrder = CacheBuilder.newBuilder().maximumSize(MAX_CACHE)
-			.expireAfterAccess(125, TimeUnit.MINUTES).build();
 	private static Map<String, Session> sessionMap = Collections.synchronizedMap(new HashMap<>());
 	private static Map<String, String> widToJid = Collections.synchronizedMap(new HashMap<>());
 	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("hh:mm");
@@ -73,10 +67,6 @@ public class Manager {
 
 	public static Session getSession(String id) {
 		return sessionMap.get(id);
-	}
-
-	public static Order getOrder(String id) {
-		return ordMap.get(id);
 	}
 
 	public List<Order> getPendingOrders() {
@@ -149,33 +139,60 @@ public class Manager {
 				double price = Double.parseDouble(qm.value("price"));
 				OrderBuilder builder = new OrderBuilder();
 				User curr = User.byWebId(req.session().attribute("webId"));
-				Location pickup = Location.newLocation(pLat, pLon,
-						"namePickup"/* TODO: add name */);
-				Location dropoff = Location.newLocation(dLat, dLon,
-						"nameDropoff"/* TODO: add name */);
-				Order o = builder.setOrderer(curr).setPickup(pickup).setDropoff(dropoff).setPrice(price)
-						.setDropoffTime(0).setItems(Arrays.asList(item)).setOrderStatus(OrderStatus.UNASSIGNED)
-						.setPhone(
-								"6667778888"/* TODO: restaurant phone number */)
-						.build();
-				o.addToDatabase();
-				ordMap.put(o.getId(), o);
-				System.out.println("ORDER WEB ID");
-				System.out.println(o.getOrderer().getWebId());
-				System.out.println(curr.getWebId());
-				/*
-				 * Map<String, Object> variables = new
-				 * ImmutableMap.Builder<String, Object>() .put("pickupLoc",
-				 * qm.value("pickup")).put("dropoffLoc",
-				 * qm.value("dropoff")).put("price", price) .put("time",
-				 * time).put("item", item).build();
-				 */
-				// Not used
-				OrderWebSocket.sendAddOrder(o);
+				Location pickup = Location.newLocation(pLat, pLon, qm.value("pickup"));
+				Location dropoff = Location.newLocation(dLat, dLon, qm.value("dropoff"));
+				builder.setOrderer(curr).setPickup(pickup).setDropoff(dropoff).setPrice(price)
+						.setDropoffTime(System.currentTimeMillis() / 1000).setItems(Arrays.asList(item))
+						.setOrderStatus(OrderStatus.UNASSIGNED).setPhone(qm.value("phone"));
+				if (qm.value("submit").equals("true")) {
+					Order o = builder.build();
+					System.out.println("ADDING TO QUEUE");
+					jidToOrder.remove(req.session().id());
+					o.addToDatabase();
+					System.out.println("ORDER WEB ID");
+					System.out.println(o.getOrderer().getWebId());
+					System.out.println(curr.getWebId());
+					/*
+					 * Map<String, Object> variables = new
+					 * ImmutableMap.Builder<String, Object>() .put("pickupLoc",
+					 * qm.value("pickup")).put("dropoffLoc",
+					 * qm.value("dropoff")).put("price", price) .put("time",
+					 * time).put("item", item).build();
+					 */
+					// Not used
+					OrderWebSocket.sendAddOrder(o);
+				} else {
+					Order o = builder.setId("").build();
+					jidToOrder.put(req.session().id(), o);
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 			return new Object();
+		}
+	}
+
+	public static class PendingOrders implements Route {
+		@Override
+		public Object handle(Request arg0, Response arg1) throws Exception {
+			Order o = jidToOrder.get(arg0.session().id());
+			Map<String, Object> res = new HashMap<>();
+			if (o == null) {
+				res.put("stored", "false");
+				return GSON.toJson(res);
+			}
+			res.put("stored", "true");
+			res.put("pickupLat", o.getPickupLocation().getLatitude());
+			res.put("pickupLon", o.getPickupLocation().getLongitude());
+			res.put("dropoffLat", o.getDropoffLocation().getLatitude());
+			res.put("dropoffLon", o.getDropoffLocation().getLongitude());
+			res.put("pickup", o.getPickupLocation().getName());
+			res.put("dropoff", o.getDropoffLocation().getName());
+			res.put("item", o.getOrderItems().get(0));
+			res.put("time", DATE_FORMAT.format(new Date((long) 1000 * (int) o.getDropoffTime())));
+			res.put("price", o.getPrice());
+			res.put("submit", true);
+			return GSON.toJson(res);
 		}
 	}
 }

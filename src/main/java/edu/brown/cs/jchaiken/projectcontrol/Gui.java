@@ -94,6 +94,7 @@ public class Gui {
 		Spark.post("validate-login", new LoginValidator());
 		Spark.post("/submit-request", new Manager.OrderMaker());
 		Spark.get("/forgot-password", new PasswordReset(), freeMarker);
+		Spark.post("/pending-orders", new Manager.PendingOrders());
 
 		Spark.post("/send-code", (request, response) -> {
 			// TODO: phone number check stuff

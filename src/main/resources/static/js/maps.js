@@ -200,4 +200,11 @@ function handleLocationError(browserHasGeolocation, infoWindow, pos) {
     infoWindow.open(map);
 }
 
-
+function getUserLocation(userPositionArgs, resolve) {
+    navigator.geolocation.getCurrentPosition(function(position) {
+        userPositionArgs["lat"] = position.coords.latitude;
+        userPositionArgs["lng"] = position.coords.longitude;
+        resolve()
+    })
+    
+}

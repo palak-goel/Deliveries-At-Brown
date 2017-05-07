@@ -20,6 +20,7 @@ import edu.brown.cs.jchaiken.deliveryobject.Order;
 import edu.brown.cs.jchaiken.deliveryobject.Order.OrderStatus;
 import edu.brown.cs.jchaiken.deliveryobject.OrderBean.OrderBuilder;
 import edu.brown.cs.jchaiken.deliveryobject.User;
+import edu.brown.cs.mhasan3.messaging.Sender;
 import spark.QueryParamsMap;
 import spark.Request;
 import spark.Response;
@@ -198,6 +199,8 @@ public class Manager {
 			Manager.removeActiveUser(Manager.getUserJid(o.getOrderer().getWebId()));
 			Manager.removeActiveUser(Manager.getUserJid(o.getDeliverer().getWebId()));
 			OrderWebSocket.completeOrderRequester(widToJid.get(o.getOrderer().getWebId()));
+			Sender sender = new Sender(o.getOrderer().getCell());
+			sender.updateMessage("complete", o);
 			return "";
 		}
 	}

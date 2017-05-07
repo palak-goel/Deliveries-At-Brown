@@ -21,6 +21,7 @@ import com.google.gson.JsonObject;
 
 import edu.brown.cs.jchaiken.deliveryobject.Order;
 import edu.brown.cs.jchaiken.deliveryobject.User;
+import edu.brown.cs.mhasan3.messaging.Sender;
 
 /**
  * Web socket class to handle live interactions between orders,
@@ -133,6 +134,8 @@ public class OrderWebSocket {
 						sendRemoveOrder(o);
 						// Manager.setActiveUser(jid);
 						// Manager.setActiveUser(y);
+						Sender sender = new Sender(o.getOrderer().getCell());
+						sender.updateMessage("confirm", o);
 						return;
 					}
 				}

@@ -23,7 +23,6 @@
         <i class="fa fa-envelope fa-2x" aria-hidden="true"></i>
         <span id = "email" class = "contact-info"></span>
     </div>
-
     <div id = "history">
         <h2>History</h2>
         <h3>Order History</h3>
@@ -39,7 +38,7 @@
           </tbody>
         </table>
         <h3>Deliver History</h3>
-        <table id="table">
+        <table id="otherTable">
           <tr>
             <th>Pick-Up</th>
             <th>Drop-Off</th>

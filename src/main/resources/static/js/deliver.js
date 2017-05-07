@@ -73,7 +73,10 @@ function addOrders(data) {
           }).then(function() {
             distance = parseFloat(dist1) + parseFloat(directionObject2["distance"]);
             duration = parseFloat(dur1) + parseFloat(directionObject2["duration"]);
-            table.append('<tr><td>'+ pickup + '</td><td>' + duration + " min" + '</td><td>' + 
+            $.post("/user-rating", {id: order.id}, responseJSON => {
+              json_data = JSON.parse(responseJSON);
+              usr_rating = json_data.rating
+              table.append('<tr><td>'+ pickup + '</td><td>' + usr_rating + '</td><td>' + duration + " min" + '</td><td>' + 
               distance.toFixed(2) + " mi" + "</td><td>" + time + '</td><td>' + "$" + price + '</td><td>'+ items+ 
           '</td><td><button id="takeorder" onclick = "takeOrder(\'' + order.id + 
           '\');"> Take Order</button></td></tr>');
@@ -87,8 +90,9 @@ function addOrders(data) {
             console.log(data_resp)
             if (data_resp.isActive ===true) {
          $('#takeorder').prop("disabled", true);
-    }
-    });
+          }
+          });
+            });
           })
         }) 
       }

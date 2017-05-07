@@ -29,6 +29,11 @@ $(document).ready(() => {
 		deliveries = data.deliver // past deliveries
 		order = data.order // past orders
 		//TODO
+		
+		// table.append('<tr><td>'+ pickup + '</td><td>' + usr_rating + '</td><td>' + duration + " min" + '</td><td>' + 
+  //             distance.toFixed(2) + " mi" + "</td><td>" + time + '</td><td>' + "$" + price + '</td><td>'+ items+ 
+  //         '</td><td><button id="takeorder" onclick = "takeOrder(\'' + order.id + 
+  //         '\');"> Take Order</button></td></tr>');
 		console.log(deliveries)
 		console.log(order)
 	});

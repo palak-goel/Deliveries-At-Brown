@@ -129,27 +129,18 @@ public class Sender {
    */
   public void updateMessage(String upd, Order o) {
     switch (upd) {
-    case "confirm":
+    case "confirm": // Send this to a requester as soon as an order has been
+                    // claimed
       content = "Your order has been claimed by" + " "
-          + o.getDeliverer().getName();
-      break;
-    case "estimate":
-      content = "Your order will be delivered at approximately "
+          + o.getDeliverer().getName()
+          + " . Your order will be delivered at approximately "
           + o.getDropoffTime();
       break;
-    case "warning":
-      content = "Your allocated time to deliver the item you have selected is running out";
-      break;
-    case "cancel":
+    case "cancel": // When a delivery has been cancelled before it has been
+                   // claimed
       content = "Your delivery has been cancelled";
       break;
-    case "tellDeliverer":
-      content = "The user requesting the item has cancelled it";
-      break;
-    case "outside":
-      content = "Your deliverer is outside your current location";
-      break;
-    case "complete":
+    case "complete": // Send to deliverer when they have completed the task
       content = "Your delivery has succesfully been completed";
       break;
     }

@@ -1,17 +1,13 @@
 <#assign content>
 <div id = "top-banner">
 	<h1 id = "banner">Deliveries @ Brown</h1>
-	<ul>
-		<li><a href="/about">About D@B</a></li>
-		<li><a href="/faq">FAQs</a></li>
-	</ul>
 </div>
 <div id = "reset">
 <p>Enter Phone Number To Reset Password</p>
 <form class="form-inline">
   <div class="form-group">
-    <label class="sr-only" for="exampleInputEmail3">Phone Number</label>
-    <input type="text" class="form-control" id="phone" placeholder="Phone">
+    <input type="text" class="form-control" id="area_code" placeholder="Area Code" maxlength="3" size="10">
+    <input type="text" class="form-control" id="phone" placeholder="Phone Number" maxlength="7" size="14">
   </div>
   <type="submit" button onclick = "reset()" class="btn btn-default">Send Code</button>
 </form>

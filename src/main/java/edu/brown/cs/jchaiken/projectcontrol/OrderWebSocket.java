@@ -38,7 +38,7 @@ public class OrderWebSocket {
 	private static Map<String, Session> socketidUser = new ConcurrentHashMap<>();
 
 	private enum MESSAGE_TYPE {
-		CONNECT, ADD_ORDER, REMOVE_ORDER, REQUESTED, GET_ORDERS, DELIVERED, COMPLETED;
+		CONNECT, ADD_ORDER, REMOVE_ORDER, REQUESTED, GET_ORDERS, DELIVERED, COMPLETED, TIMED_OUT;
 	}
 
 	@OnWebSocketConnect
@@ -240,6 +240,10 @@ public class OrderWebSocket {
 		} catch (IOException e) {
 
 		}
+	}
+
+	public static void sendTimeOut(Order o) {
+
 	}
 
 }

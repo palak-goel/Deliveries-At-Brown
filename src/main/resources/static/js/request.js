@@ -14,18 +14,39 @@ conn.onmessage = msg => {
   }
 }
 
-function setItemSuggests(){
-    $('#items').append("<option value='Cookie'>");
-    $('#items').append("<option value='Brownie'>");
+function setItemSuggests(arr){
+    for(let i = 0; i< arr.length; i++){
+        if(i < 4){
+        $('#items').append("<option value=" + arr[i] + ">");
+    }
+    }
+    
 }
-function setPickupSuggests(){
+function setPickupSuggests(arr){
+    for(let i = 0; i< arr.length; i++){
+        if(i < 4){
+        $('#items').append("<option value=" + arr[i] + ">");
+    }
+    }
 
 }
-function setDropOffSuggests(){
+function setDropOffSuggests(arr){
+    for(let i = 0; i< arr.length; i++){
+        if(i < 4){
+        $('#items').append("<option value=" + arr[i] + ">");
+    }
+    }
 
 }
 
 $(document).ready(() => {
+    $.post("/suggest", {}, responseJSON => {
+        const responseObject = JSON.parse(responseJSON);
+        setPickupSuggests(responseObject.pickup);
+        setItemSuggests(responseObject.items);
+        setDropOffSuggests(responseObject.dropoff);
+
+    });
     setItemSuggests();
     setPickupSuggests();
     setDropOffSuggests();

@@ -404,10 +404,8 @@ public class Gui {
 			QueryParamsMap qm = arg0.queryMap();
 			String name = qm.value("name");
 			String email = qm.value("email");
-			System.out.println(email);
 			String stripeToken = qm.value("stripe");
 			String cell = qm.value("cell");
-			System.out.println(cell);
 			int password = qm.value("password").hashCode();
 			Map<String, Object> toServer = new HashMap<>();
 			if (User.accountExists(email)) {

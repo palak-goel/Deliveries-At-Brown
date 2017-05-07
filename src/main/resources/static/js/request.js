@@ -55,6 +55,7 @@ $(document).ready(() => {
         if (data.isActive === true) {
     $('.form-control').attr("disabled", true);
      $('#submit_order').attr("disabled", true);
+     $("#backLink").attr("hidden", false);
 }
 });
 });

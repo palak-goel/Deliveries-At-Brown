@@ -45,6 +45,8 @@
             </div>
         <center>
            <input type = "submit" id = "submit_order" value = "Submit Order">
+           <br>
+           <a id = "backLink" href = "/requesting" hidden>Go back to pending request</a>
         </center>
         
 </div>

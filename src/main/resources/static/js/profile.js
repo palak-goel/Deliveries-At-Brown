@@ -23,6 +23,13 @@ $(document).ready(() => {
 	document.getElementById("phone-number").innerText = phoneNumber
 	document.getElementById("email").innerText = mail
 	});
+	// type is either "order" or "deliv"
+	$.post("/order-history", {}, responseJson => {
+		data = JSON.parse(responseJson)
+		deliveries = data.deliver // past deliveries
+		order = data.order // past orders
+		//TODO
+	});
 
 
 });

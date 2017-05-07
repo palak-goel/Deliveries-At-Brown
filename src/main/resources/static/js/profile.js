@@ -29,6 +29,8 @@ $(document).ready(() => {
 		deliveries = data.deliver // past deliveries
 		order = data.order // past orders
 		//TODO
+		console.log(deliveries)
+		console.log(order)
 	});
 
 

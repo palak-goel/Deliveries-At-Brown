@@ -27,16 +27,22 @@
   };
 }*/
 
+function initMap() {
+
+}
 
 var all_orders = {}
-
+var all_funs = []
 var ordering_flag = true;
 
-function addOrders() {
+function addOrders(data) {
+  for (var i = 0; i < all_funs.length; i++) {
+    clearTimeout(all_funs[i])
+  }
   const table = $('table');
   table.find("tr:gt(0)").remove();
-  var days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
-
+  var days = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+  var userPosition = {}
   new Promise(function(resolve, reject) {
     getUserLocation(userPosition, resolve)
   }).then(function() {
@@ -47,53 +53,54 @@ function addOrders() {
         let pickup = data.pickup[i];
         let dropoff = data.dropoff[i];
         let day = new Date(order.dropoffTime * 1000);
-        var time = days[day.getDay()] + " " + day.getHours() + ":" + day.getMinutes()
+        let ts = day.toLocaleTimeString();
+        time = days[day.getDay()] + " " + ts.split(":")[0] + ":" + ts.split(":")[1] + ts.split(" ")[1]
         let price = order.price;
         let items = order.items[0];
-
         var distance = 0;
         var duration = 0;
         var directionObject1 = {}
+        let pickupObj = {lat: order.pickupL.data.lat, lng: order.pickupL.data.lng}
+        let dropoffObj = {lat: order.dropoffL.data.lat, lng: order.dropoffL.data.lng}
         new Promise(function(resolve, reject) {
-          getDistanceDuration(userPosition, pickup, directionObject1, resolve)
+          getDistanceDuration(userPosition, pickupObj, directionObject1, resolve)
         }).then(function() {
           var dist1 = directionObject1["distance"]
           var dur1 = directionObject1["duration"]
           var directionObject2 = {}
           new Promise(function(resolve, reject) {
-            getDistanceDuration(pickup, dropoff, directionObject2, resolve)
+            getDistanceDuration(pickupObj, dropoffObj, directionObject2, resolve)
           }).then(function() {
             distance = parseFloat(dist1) + parseFloat(directionObject2["distance"]);
             duration = parseFloat(dur1) + parseFloat(directionObject2["duration"]);
-
-            console.log(distance)
-            console.log(duration)
-            
-            table.append('<tr><td>'+ pickup + '</td><td>' + dropoff + '</td><td>' + time + 
-          '</td><td>' + price + '</td><td>'+ items+ 
+            table.append('<tr><td>'+ pickup + '</td><td>' + duration + " min" + '</td><td>' + 
+              distance.toFixed(2) + " mi" + "</td><td>" + time + '</td><td>' + "$" + price + '</td><td>'+ items+ 
           '</td><td><button id="takeorder" onclick = "takeOrder(\'' + order.id + 
           '\');"> Take Order</button></td></tr>');
-
-
-
+            diff = order.dropoffTime * 1000 - new Date().getTime()
+            console.log(diff)
+            //all_funs.push(setTimeout(refresh, order.dropoffTime * 1000));
+            all_funs.push(setTimeout(refresh, diff));
+            $.post("/is-active", 
+          {}, responseJSON => {
+            data_resp = JSON.parse(responseJSON)
+            console.log(data_resp)
+            if (data_resp.isActive ===true) {
+         $('#takeorder').prop("disabled", true);
+    }
+    });
           })
         }) 
       }
     })
-    $.post("/is-active", 
-          {}, responseJSON => {
-            data_resp = JSON.parse(responseJSON)
-            if (data_resp.isActive ===true) {
-         $('#submit_order').attr("disabled", true);
-    }
-    });
+    
 }
 
 conn.onmessage = msg => {
   console.log(msg.data)
   const data = JSON.parse(msg.data)
   switch(data.type) {
-          case MESSAGE_TYPE.CONNECT:
+      case MESSAGE_TYPE.CONNECT:
         console.log("HI");
         myId = data.id
         conn.send(JSON.stringify({jid: getJid(), type: MESSAGE_TYPE.CONNECT}))
@@ -105,41 +112,9 @@ conn.onmessage = msg => {
         }
           console.log("INNER")
         break;
-    /*
-      case MESSAGE_TYPE.CONNECT:
-        console.log("HI");
-        myId = data.id
-        conn.send(JSON.stringify({jid: jid, type: MESSAGE_TYPE.CONNECT}))
-        break;*/
     case MESSAGE_TYPE.ADD_ORDER:
       console.log("Adding order");
-      //console.log(data);
-      
-      const table = $('table');
-      table.find("tr:gt(0)").remove();
-      var days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
-        for(let i = 0; i< data.orders.length; i++){
-          let order = data.orders[i];
-          all_orders[order.id] = order;
-          console.log(order)
-          let pickup = data.pickup[i];
-          let dropoff = data.dropoff[i];
-          let day = new Date(order.dropoffTime * 1000);
-          var time = days[day.getDay()] + " " + day.getHours() + ":" + day.getMinutes()
-          let price = order.price;
-          let items = order.items[0];
-          table.append('<tr><td>'+ pickup + '</td><td>' + dropoff + '</td><td>' + time + 
-            '</td><td>' + price + '</td><td>'+ items+ 
-            '</td><td><button id="takeorder" onclick = "takeOrder(\'' + order.id + 
-            '\');"> Take Order</button></td></tr>');
-        }
-        $.post("/is-active", 
-              {}, responseJSON => {
-                data_resp = JSON.parse(responseJSON)
-                if (data_resp.isActive ===true) {
-             $('#submit_order').attr("disabled", true);
-        }
-        });
+        addOrders(data);
 
       break;
     case MESSAGE_TYPE.DELIVERED:
@@ -201,5 +176,15 @@ function takeOrder(arg) {
   })
 
 
+
+
   
 }
+  function refresh() {
+    console.log("REFRESHING")
+    if (ordering_flag) {
+          sendOrdering();
+        } else {
+          submitPreferencesToServer();
+        }
+  }

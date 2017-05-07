@@ -14,7 +14,7 @@ function getDistanceDuration(start, end, dirs, resolve) {
     var directionsService = new google.maps.DirectionsService();
     directionsService.route(request, function(result, status) {
         if (status == 'OK') {
-            directionsDisplay.setDirections(result);
+            //directionsDisplay.setDirections(result);
             //distance of route
             distance = result.routes[0].legs[0].distance.text;
             duration = result.routes[0].legs[0].duration.text;

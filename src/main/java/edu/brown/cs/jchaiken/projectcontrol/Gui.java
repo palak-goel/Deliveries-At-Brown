@@ -151,6 +151,7 @@ public class Gui {
 		});
 		Spark.post("/is-active", (request, response) -> {
 			String jid = request.session().id();
+			System.out.println(jid);
 			return GSON.toJson(ImmutableMap.of("isActive", Manager.isActiveUser(jid)));
 		});
 
@@ -245,14 +246,25 @@ public class Gui {
 			OrderWebSocket.sendRemoveOrder(o);
 			return GSON.toJson("");
 		});
+		Spark.post("/order-history", (request, response) -> {
+			QueryParamsMap qm = request.queryMap();
+			String jid = request.session().id();
+			User u = User.byWebId(Manager.getSession(jid).attribute("webId"));
+			Map<String, Object> res = new HashMap<>();
+			if (qm.value("type").equals("deliver")) {
+				res.put("orders", u.pastDeliveries());
+			} else {
+				res.put("orders", u.pastOrders());
+			}
+			return GSON.toJson(res);
+		});
 		Spark.post("/logout", (request, response) -> {
 			request.session().attribute("webId", null);
 			return GSON.toJson("");
 		});
 
 		Spark.post("/suggest", (request, response) -> {
-			QueryParamsMap qm = request.queryMap();
-			String jid = qm.value("jid");
+			String jid = request.session().id();
 			User u = User.byWebId(Manager.getSession(jid).attribute("webId"));
 			Suggestor s = new Suggestor(u);
 			Map<String, Object> m = new HashMap<>();

@@ -13,11 +13,16 @@ conn.onmessage = msg => {
     case MESSAGE_TYPE.REQUESTED:
       const jid = getJid()
       console.log("REQUESTED");
-      localStorage.name = data.name;
-      localStorage.cell = data.phone;
-      localStorage.dLat = data.delivLat;
-      localStorage.dLng = data.delivLng;
-      window.location.href = '/requested';
+      if (data.error === "CLAIMED" || data.error === "TIME") {
+        console.log("ERROR");
+        window.location.href = '/request'
+      } else {
+        localStorage.name = data.name;
+        localStorage.cell = data.phone;
+        localStorage.dLat = data.delivLat;
+        localStorage.dLng = data.delivLng;
+        window.location.href = '/requested';
+      }
       break;
   }
 }
@@ -30,7 +35,11 @@ $(document).ready(() => {
             data = JSON.parse(responseJSON)
             console.log(responseJSON);
             $("#pickup-loc").attr("placeholder", data.pickup)
-      $("#dropoff-loc").attr("placeholder", data.dropoff)
+            var dr_loc = data.dropoff
+            if (dr_loc === "Current Location") {
+              dr_loc = "User Location"
+            }
+      $("#dropoff-loc").attr("placeholder", dr_loc)
     $("#item").attr("placeholder", data.item)
     $("#time").attr("placeholder", data.time)
     $("#price").attr("placeholder", data.price)
@@ -68,20 +77,33 @@ function submitOrder() {
   $.post("/submit-request", dta, responseJSON => {
     data = JSON.parse(responseJSON)
     id = data.id
+    localStorage.id = id;
     has_submitted = true;
-
-                console.log(responseJSON);
-                $('#so').attr("disabled", true);
-                //window.location.href = '/requesting';
+          console.log(responseJSON);
+          $('#so').attr("disabled", true);
+          //window.location.href = '/requesting';
         });
 }
 
 function cancelOrder() {
-  if (has_submitted) {
+  $.post("/is-active", 
+  {}, responseJSON => {
+    data_resp = JSON.parse(responseJSON)
+    console.log(data_resp)
+    if (data_resp.isActive ===true) {
+      $.post("/delete-order", {id: localStorage.id}, responseJSON => {
+ window.location.href = '/request';
+    });
+    } else {
+      window.location.href = '/request';
+    }
+    });
+  /*if (has_submitted) {
+    console.log("POSTING")
     $.post("/delete-order", {id: id}, responseJSON => {
  window.location.href = '/request';
     })
   } else {
   window.location.href = '/request';
-}
+}*/
 }

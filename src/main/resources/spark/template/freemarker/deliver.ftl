@@ -15,9 +15,10 @@
     <table id="table">
       <tr>
         <th>Pick-Up Location</th>
-        <th>Drop-Off Location</th>
-        <th>Time</th>
-        <th>Price</th>
+        <th>Walking Time</th>
+        <th>Distance</th>
+        <th>Claim By</th>
+        <th>Tip</th>
         <th>Item</th>
         <th>Accept</th>
       </tr>
@@ -58,6 +59,9 @@
 <#include "main.ftl">
 <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
 <script type="text/javascript" src = "/js/font-awesome.js"></script>
+<script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyClZcJ2MUKJqouuGJRDIGqM1r9om9057sc&callback=initMap">
+    </script>
 <script type="text/javascript" src="js/maps.js"></script>
 <script type="text/javascript" src="js/delivery_websockets.js"></script>
 <script type="text/javascript" src="js/deliver.js"></script>

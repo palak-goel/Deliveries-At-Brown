@@ -31,15 +31,15 @@ final class UserBean extends DeliveryObjectBean<User> implements User {
 	transient private Collection<Order> currOrders;
 	private String paymentId;
 	private String cell;
-	private final int password;
+	transient private final int password;
 	private double distancePref;
 	private double feePref;
 	private double timePref;
 	private List<Double> ordererRatings;
 	private List<Double> delivererRatings;
 	private AccountStatus status;
-	private String webId;
-	private static Set<String> webIds = Collections.synchronizedSet(new HashSet<String>());
+	transient private String webId;
+	transient private static Set<String> webIds = Collections.synchronizedSet(new HashSet<String>());
 
 	UserBean(String email, String newName, String newPaymentId, String cellNum, Integer newPass,
 			AccountStatus newStatus) {
@@ -140,8 +140,8 @@ final class UserBean extends DeliveryObjectBean<User> implements User {
 		chargeParams.put("amount", amount);
 		chargeParams.put("currency", "usd");
 		chargeParams.put("customer", paymentId);
-		chargeParams.put("description", "You ordered: "
-		    + items + " from " + pickup + " to be delivered to " + destination);
+		chargeParams.put("description",
+				"You ordered: " + items + " from " + pickup + " to be delivered to " + destination);
 		chargeParams.put("receipt_email", super.getId());
 		try {
 			Charge charge = Charge.create(chargeParams);

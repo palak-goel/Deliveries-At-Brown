@@ -42,7 +42,7 @@ public class Manager {
 	private static Map<String, Session> sessionMap = Collections.synchronizedMap(new HashMap<>());
 	private static Map<String, String> widToJid = Collections.synchronizedMap(new HashMap<>());
 	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("HH:mm");
-	private static Set<String> activeUsers = new HashSet<>();
+	private static Set<String> activeUsers = Collections.synchronizedSet(new HashSet<>());
 
 	/**
 	 * Constructor for Manager.
@@ -84,7 +84,16 @@ public class Manager {
 	}
 
 	public List<Order> getPendingOrders() {
-		return new ArrayList<>(pendingOrders);
+		List<Order> os = new ArrayList<>();
+		for (Order o : new ArrayList<>(pendingOrders)) {
+			if (System.currentTimeMillis() / 1000L <= o.getDropoffTime()) {
+				os.add(o);
+			} else {
+				OrderWebSocket.sendTimeout(o);
+				removeOrder(o);
+			}
+		}
+		return os;
 	}
 
 	synchronized static List<Order> rank(User u) {
@@ -93,10 +102,17 @@ public class Manager {
 
 	public synchronized static void addOrder(Order o) {
 		pendingOrders.add(o);
+		activeUsers.add(widToJid.get(o.getOrderer().getWebId()));
+		System.out.println("ACTIVEUSERS");
+		for (String s : activeUsers) {
+			System.out.println(s);
+		}
 	}
 
-	synchronized static void removeOrder(Order o) {
-		pendingOrders.remove(o);
+	synchronized static boolean removeOrder(Order o) {
+		activeUsers.remove(widToJid.get(o.getOrderer().getWebId()));
+		jidToOrder.remove(widToJid.get(o.getOrderer().getWebId()));
+		return pendingOrders.remove(o);
 	}
 
 	public static class OrderMaker implements Route {
@@ -105,30 +121,25 @@ public class Manager {
 			QueryParamsMap qm = req.queryMap();
 			System.out.println("HERE");
 			try {
-				System.out.println("at order maker");
 				double pLat = Double.parseDouble(qm.value("pickupLat"));
 				double pLon = Double.parseDouble(qm.value("pickupLon"));
 				double dLat = Double.parseDouble(qm.value("dropoffLat"));
 				double dLon = Double.parseDouble(qm.value("dropoffLon"));
 				String item = qm.value("item");
-				System.out.println(qm.value("time"));
 				Date time = DATE_FORMAT.parse(qm.value("time"));
-				// System.out.println(time);
 				Date cur = new Date();
 				cur = DATE_FORMAT.parse(DATE_FORMAT.format(cur));
-				System.out.println(cur);
 				Calendar c = Calendar.getInstance();
 				c.setTimeInMillis(System.currentTimeMillis());
-				System.out.println(c);
 				Calendar uT = Calendar.getInstance();
 				uT.setTime(time);
 				c.set(Calendar.HOUR_OF_DAY, uT.get(Calendar.HOUR_OF_DAY));
 				c.set(Calendar.MINUTE, uT.get(Calendar.MINUTE));
+				c.set(Calendar.SECOND, 0);
 				if (time.before(cur)) {
 					c.add(Calendar.DATE, 1);
 				}
 				time = c.getTime();
-				System.out.println(time);
 				double price = Double.parseDouble(qm.value("price"));
 				OrderBuilder builder = new OrderBuilder();
 				User curr = User.byWebId(req.session().attribute("webId"));
@@ -140,19 +151,8 @@ public class Manager {
 				if (qm.value("submit").equals("true")) {
 					Order o = builder.build();
 					System.out.println("ADDING TO QUEUE");
-					jidToOrder.remove(req.session().id());
+
 					o.addToDatabase();
-					System.out.println("ORDER WEB ID");
-					System.out.println(o.getOrderer().getWebId());
-					System.out.println(curr.getWebId());
-					/*
-					 * Map<String, Object> variables = new
-					 * ImmutableMap.Builder<String, Object>() .put("pickupLoc",
-					 * qm.value("pickup")).put("dropoffLoc",
-					 * qm.value("dropoff")).put("price", price) .put("time",
-					 * time).put("item", item).build();
-					 */
-					// Not used
 					OrderWebSocket.sendAddOrder(o);
 					return GSON.toJson(ImmutableMap.of("id", o.getId()));
 				} else {
@@ -198,6 +198,8 @@ public class Manager {
 			o.setOrderStatus(Order.OrderStatus.COMPLETED);
 			o.getOrderer().addPastOrder(o);
 			o.getDeliverer().addPastDelivery(o);
+			Manager.removeActiveUser(Manager.getUserJid(o.getOrderer().getWebId()));
+			Manager.removeActiveUser(Manager.getUserJid(o.getDeliverer().getWebId()));
 			OrderWebSocket.completeOrderRequester(widToJid.get(o.getOrderer().getWebId()));
 			return "";
 		}

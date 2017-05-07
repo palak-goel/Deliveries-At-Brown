@@ -43,13 +43,10 @@ public class OrderWebSocket {
 
 	@OnWebSocketConnect
 	public void connected(Session session) throws IOException {
-		// TODO Add the session to the queue
 		SESSIONS.add(session);
-		// TODO Build the CONNECT message
 		JsonObject msg = new JsonObject();
 		msg.addProperty("id", nextId);
 		msg.addProperty("type", MESSAGE_TYPE.CONNECT.ordinal());
-		// TODO Send the CONNECT message
 		session.getRemote().sendString(GSON.toJson(msg));
 		nextId++;
 	}
@@ -69,8 +66,6 @@ public class OrderWebSocket {
 		SESSIONS.remove(session);
 	}
 
-	// Added message ... update all tabs
-	// Ticket taken message... update all tabs
 	@OnWebSocketMessage
 	public void message(Session session, String message) throws IOException {
 		System.out.println(message);
@@ -86,6 +81,21 @@ public class OrderWebSocket {
 			System.out.println("ticket picked up");
 			String id = received.get("id").getAsString();
 			Order o = Order.byId(id);
+			if (!Manager.removeOrder(o)) {
+				session.getRemote().sendString(
+						GSON.toJson(ImmutableMap.of("error", "CLAIMED", "type", MESSAGE_TYPE.DELIVERED.ordinal())));
+				return;
+			}
+			Manager.addOrder(o);
+			if (o.getDropoffTime() < (System.currentTimeMillis() / 1000L)) {
+				session.getRemote().sendString(
+						GSON.toJson(ImmutableMap.of("error", "TIME", "type", MESSAGE_TYPE.DELIVERED.ordinal())));
+				sendRemoveOrder(o);
+				Session req = socketidUser.get(Manager.getUserJid(o.getOrderer().getWebId()));
+				req.getRemote().sendString(
+						GSON.toJson(ImmutableMap.of("error", "TIME", "type", MESSAGE_TYPE.REQUESTED.ordinal())));
+				return;
+			}
 			String jid = received.get("jid").getAsString();
 			User u = User.byWebId(Manager.getSession(jid).attribute("webId"));
 			o.assignDeliverer(u);
@@ -109,6 +119,8 @@ public class OrderWebSocket {
 					double pickupLat = o.getPickupLocation().getLatitude();
 					double pickupLng = o.getPickupLocation().getLongitude();
 					if (reqId.equals(s.attribute("webId"))) {
+						Manager.setActiveUser(Manager.getUserJid(o.getOrderer().getWebId()));
+						Manager.setActiveUser(Manager.getUserJid(o.getDeliverer().getWebId()));
 						System.out.println("Found requested id");
 						String y = Manager.getUserJid(reqId);
 						System.out.println(y);
@@ -119,8 +131,8 @@ public class OrderWebSocket {
 								.put("pickLng", pickupLng).build();
 						socketidUser.get(y).getRemote().sendString(GSON.toJson(msg));
 						sendRemoveOrder(o);
-						Manager.setActiveUser(jid);
-						Manager.setActiveUser(y);
+						// Manager.setActiveUser(jid);
+						// Manager.setActiveUser(y);
 						return;
 					}
 				}
@@ -242,8 +254,13 @@ public class OrderWebSocket {
 		}
 	}
 
-	public static void sendTimeOut(Order o) {
-
+	public static void sendTimeout(Order o) {
+		Session req = socketidUser.get(Manager.getUserJid(o.getOrderer().getWebId()));
+		try {
+			req.getRemote().sendString(
+					GSON.toJson(ImmutableMap.of("error", "TIME", "type", MESSAGE_TYPE.REQUESTED.ordinal())));
+		} catch (IOException e) {
+		}
 	}
 
 }

@@ -61,11 +61,16 @@ conn.onmessage = msg => {
         conn.send(JSON.stringify({jid: jid, type: MESSAGE_TYPE.CONNECT}))
         break;*/
     case MESSAGE_TYPE.DELIVERED:
-      localStorage.pLat = data.pLat;
-      localStorage.pLng = data.pLng;
-      localStorage.dLat = data.dLat;
-      localStorage.dLng = data.dLng;
-      window.location.href = '/delivered';
+      if (data.error === "TIME") {
+        console.log("error")
+        window.location.href = "/deliver"
+      } else {
+        localStorage.pLat = data.pLat;
+        localStorage.pLng = data.pLng;
+        localStorage.dLat = data.dLat;
+        localStorage.dLng = data.dLng;
+        window.location.href = '/delivered';
+      }
       break;
   }
 }

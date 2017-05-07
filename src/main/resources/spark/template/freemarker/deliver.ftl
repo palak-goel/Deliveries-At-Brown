@@ -45,10 +45,12 @@
     </div>
     <div class="form-group">
       <label for="formGroupExampleInput">Distance</label>
+      <span><i>(In miles)</i></span>
         <input id = "distance" type="number" min = "0" max = "10" step = "0.1" class="form-control" id="formGroupExampleInput" placeholder="How far?">
     </div>
     <div class="form-group">
       <label for="formGroupExampleInput">Duration</label>
+      <span><i>(In minutes)</i></span>
         <input id = "duration" type="number" min = "0" max = "60" step = "0.1" class="form-control" id="formGroupExampleInput" placeholder="How long?">
     </div>
     <center>

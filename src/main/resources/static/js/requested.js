@@ -5,7 +5,7 @@ var dropoff = {lat: parseFloat(localStorage.dropoffLat), lng: parseFloat(localSt
 //deliverer location
 var delivererLocation = {lat: parseFloat(localStorage.dLat), lng: parseFloat(localStorage.dLng)}
 //deliverer name
-var delivererName = localStorage.name;
+var delivererName = capitalizeFirstLetter(localStorage.name.split(" ")[0]) + " " + capitalizeFirstLetter(localStorage.name.split(" ")[1]);
 //deliverer number
 var delivererNumber = localStorage.cell;
 
@@ -27,12 +27,20 @@ function initMap() {
     pickupDirs = {}
     new Promise(function(resolve, reject) {
         calcRoute(delivererLocation, pickup, pickupDirs, resolve);
-    }).then(console.log(pickupDirs))
+    }).then(function() {
+      dropoffDirs = {}
+      new Promise(function(resolve, reject) {
+          calcRoute(pickup, dropoff, dropoffDirs, resolve);
+      }).then(function() {
+        var durationMessage = "Your order will take ";
+        var duration = parseFloat(pickupDirs["duration"]) + parseFloat(dropoffDirs["duration"])
+        durationMessage += duration
+        durationMessage += " minutes to complete"
+        document.getElementById("duration").innerText = durationMessage
+      })
+    })
 
-    dropoffDirs = {}
-    new Promise(function(resolve, reject) {
-        calcRoute(pickup, dropoff, dropoffDirs, resolve);
-    }).then(console.log(dropoffDirs))
+    
 
     //console.log(coord.length);
     //calcRoute("Kabob And Curry", {lat: 41.830556, lng: -71.402381});
@@ -67,4 +75,6 @@ conn.onmessage = msg => {
   }
 }
 
-
+function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}

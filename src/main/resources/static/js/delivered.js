@@ -8,7 +8,7 @@ var pickup = {lat: parseFloat(localStorage.pLat), lng: parseFloat(localStorage.p
 var dropoff = {lat: parseFloat(localStorage.dLat), lng: parseFloat(localStorage.dLng)}
 
 function initMap() {
-    document.getElementById("contact-name").innerText = localStorage.name;
+    document.getElementById("contact-name").innerText = capitalizeFirstLetter(localStorage.name.split(" ")[0]) + " " + capitalizeFirstLetter(localStorage.name.split(" ")[1]);
     var brown = {lat: 41.826820, lng: -71.402931};
     map = new google.maps.Map(document.getElementById('map'), {
       zoom: 16,
@@ -28,8 +28,6 @@ function initMap() {
         new Promise(function(resolve, reject) {
             calcRoute(userPositionArgs, pickup, pickUpDirs, resolve)
         }).then(function() {
-            document.getElementById("distance").innerText = pickUpDirs["distance"]
-            document.getElementById("duration").innerText = pickUpDirs["duration"]
             var pickUpDirections = ""
             for (var i = 0; i < pickUpDirs["directions"].length; i++) {
                 pickUpDirections += pickUpDirs["directions"][i].instructions.replace(/<[^>]*>/g, " ");
@@ -42,8 +40,6 @@ function initMap() {
         new Promise(function(resolve, reject) {
             calcRoute(pickup, dropoff, dropoffDirs, resolve)
         }).then(function() {
-            document.getElementById("distance2").innerText = dropoffDirs["distance"]
-            document.getElementById("duration2").innerText = dropoffDirs["duration"]
             var dropoffDirections = ""
             for (var i = 0; i < dropoffDirs["directions"].length; i++) {
                 dropoffDirections += dropoffDirs["directions"][i].instructions.replace(/<[^>]*>/g, " ");
@@ -63,3 +59,6 @@ function completeDelivery() {
     });
 }
 
+function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}

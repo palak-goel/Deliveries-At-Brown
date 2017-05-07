@@ -54,7 +54,7 @@ function initMap() {
 }
 
 function completeDelivery() {
-    $.post("/complete-order", {id: localStorage.id}, responseJson => {
+    $.post("/complete-order", {id: localStorage.id, price: $("#price").val()}, responseJson => {
         window.location.href = '/deliverycompleted';
     });
 }

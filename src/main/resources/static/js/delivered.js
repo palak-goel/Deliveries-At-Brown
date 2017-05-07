@@ -34,9 +34,9 @@ function initMap() {
             for (var i = 0; i < pickUpDirs["directions"].length; i++) {
                 pickUpDirections += pickUpDirs["directions"][i].instructions.replace(/<[^>]*>/g, " ");
                 pickUpDirections += '\n';
-                this.sendDirectionsToDeliverer(pickUpDirections);
             }
             console.log(pickUpDirections);
+            this.sendDirectionsToDeliverer(pickUpDirections);
             document.getElementById("pickup-dirs").innerText = pickUpDirections;
         })
         var dropoffDirs = {}
@@ -47,8 +47,8 @@ function initMap() {
             for (var i = 0; i < dropoffDirs["directions"].length; i++) {
                 dropoffDirections += dropoffDirs["directions"][i].instructions.replace(/<[^>]*>/g, " ");
                 dropoffDirections += '\n';
-                this.sendDirectionsToDeliverer(dropoffDirections);
             }
+            this.sendDirectionsToDeliverer(dropoffDirections);
             console.log(dropoffDirections)
             document.getElementById("pickup-dirs2").innerText = dropoffDirections;
         })

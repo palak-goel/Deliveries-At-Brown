@@ -38,7 +38,7 @@
           </tbody>
         </table>
         <h3>Deliver History</h3>
-        <table id="table">
+        <table id="otherTable">
           <tr>
             <th>Pick-Up</th>
             <th>Drop-Off</th>

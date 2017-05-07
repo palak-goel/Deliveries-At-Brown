@@ -5,7 +5,8 @@ const MESSAGE_TYPE = {
   REQUESTED: 3,
   GET_ORDERS: 4,
   DELIVERED: 5,
-  COMPLETED: 6
+  COMPLETED: 6,
+  TIMED_OUT: 7
 };
 
 function getCookie(cname) {

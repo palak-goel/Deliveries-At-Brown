@@ -56,9 +56,7 @@ function sendTextToDeliverer() {
         content : message
     }
     $.post("/sendText", postParameters, responseJSON => {
-        });
-
-    
+        });    
 }
 
 conn.onmessage = msg => {

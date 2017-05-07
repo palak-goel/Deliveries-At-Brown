@@ -26,9 +26,41 @@
     }
   };
 }*/
+$(document).ready(() => {
 
+})
 
 var all_orders = {}
+
+var ordering_flag = true;
+
+function addOrders() {
+  const table = $('table');
+  table.find("tr:gt(0)").remove();
+  var days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+    for(let i = 0; i< data.orders.length; i++){
+      let order = data.orders[i];
+      all_orders[order.id] = order;
+      console.log(order)
+      let pickup = data.pickup[i];
+      let dropoff = data.dropoff[i];
+      let day = new Date(order.dropoffTime * 1000);
+      var time = days[day.getDay()] + " " + day.getHours() + ":" + day.getMinutes()
+      let price = order.price;
+      let items = order.items[0];
+      table.append('<tr><td>'+ pickup + '</td><td>' + dropoff + '</td><td>' + time + 
+        '</td><td>' + price + '</td><td>'+ items+ 
+        '</td><td><button id="takeorder" onclick = "takeOrder(\'' + order.id + 
+        '\');"> Take Order</button></td></tr>');
+    }
+    $.post("/is-active", 
+          {}, responseJSON => {
+            data_resp = JSON.parse(responseJSON)
+            if (data_resp.isActive ===true) {
+         $('#submit_order').attr("disabled", true);
+    }
+    });
+}
 
 conn.onmessage = msg => {
   console.log(msg.data)
@@ -38,7 +70,12 @@ conn.onmessage = msg => {
         console.log("HI");
         myId = data.id
         conn.send(JSON.stringify({jid: getJid(), type: MESSAGE_TYPE.CONNECT}))
-          conn.send(JSON.stringify({type: MESSAGE_TYPE.GET_ORDERS}))
+          //conn.send(JSON.stringify({type: MESSAGE_TYPE.GET_ORDERS}))
+          if (ordering_flag) {
+          sendOrdering();
+        } else {
+          submitPreferencesToServer();
+        }
           console.log("INNER")
         break;
     /*
@@ -50,6 +87,7 @@ conn.onmessage = msg => {
     case MESSAGE_TYPE.ADD_ORDER:
       console.log("Adding order");
       //console.log(data);
+      
       const table = $('table');
       table.find("tr:gt(0)").remove();
       var days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
@@ -65,9 +103,17 @@ conn.onmessage = msg => {
           let items = order.items[0];
           table.append('<tr><td>'+ pickup + '</td><td>' + dropoff + '</td><td>' + time + 
             '</td><td>' + price + '</td><td>'+ items+ 
-            '</td><td><button onclick = "takeOrder(\'' + order.id + 
+            '</td><td><button id="takeorder" onclick = "takeOrder(\'' + order.id + 
             '\');"> Take Order</button></td></tr>');
         }
+        $.post("/is-active", 
+              {}, responseJSON => {
+                data_resp = JSON.parse(responseJSON)
+                if (data_resp.isActive ===true) {
+             $('#submit_order').attr("disabled", true);
+        }
+        });
+
       break;
     case MESSAGE_TYPE.DELIVERED:
       localStorage.pLat = data.pLat;
@@ -80,6 +126,7 @@ conn.onmessage = msg => {
 }
 
 function sendOrdering(){
+  ordering_flag = true
   let orderBy = $('input[name=order]:checked', '#radio').val();
   console.log(orderBy);
   const postParameters = {
@@ -90,10 +137,11 @@ function sendOrdering(){
   return;
 }
 
-function submitPrefencesToServer() {
-	let pri = document.getElementbyID("price");
-	let dist = document.getElementbyID("distance");
-	let tim = document.getElementbyID("time");
+function submitPreferencesToServer() {
+  ordering_flag = false
+	let pri = $("#price").val();
+	let dist = $("#distance").val();
+	let time = $("#duration").val();
 	const postParameters = {
 		price: pri,
 		distance: dist,

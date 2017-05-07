@@ -1,3 +1,5 @@
+var has_submitted = false;
+var id = "";
 
 conn.onmessage = msg => {
   console.log(msg.data)
@@ -64,6 +66,10 @@ function initMap() {
 function submitOrder() {
   document.getElementById("status-text").innerText = "Waiting For Deliverer"
   $.post("/submit-request", dta, responseJSON => {
+    data = JSON.parse(responseJSON)
+    id = data.id
+    has_submitted = true;
+
                 console.log(responseJSON);
                 $('#so').attr("disabled", true);
                 //window.location.href = '/requesting';
@@ -71,5 +77,11 @@ function submitOrder() {
 }
 
 function cancelOrder() {
+  if (has_submitted) {
+    $.post("/delete-order", {id: id}, responseJSON => {
+ window.location.href = '/request';
+    })
+  } else {
   window.location.href = '/request';
+}
 }

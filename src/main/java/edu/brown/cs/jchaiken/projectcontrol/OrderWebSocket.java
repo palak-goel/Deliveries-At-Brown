@@ -119,6 +119,8 @@ public class OrderWebSocket {
 								.put("pickLng", pickupLng).build();
 						socketidUser.get(y).getRemote().sendString(GSON.toJson(msg));
 						sendRemoveOrder(o);
+						Manager.setActiveUser(jid);
+						Manager.setActiveUser(y);
 						return;
 					}
 				}
@@ -191,6 +193,27 @@ public class OrderWebSocket {
 
 	public static void sendOrders(Session s) {
 		List<Order> orders = MGR.getPendingOrders();
+		try {
+			Map<String, Object> toServer = new HashMap<>();
+			toServer.put("orders", orders);
+			List<String> start = new ArrayList<>();
+			List<String> end = new ArrayList<>();
+			for (Order o : orders) {
+				start.add(o.getPickupLocation().getName());
+				end.add(o.getDropoffLocation().getName());
+			}
+			toServer.put("pickup", start);
+			toServer.put("dropoff", end);
+			toServer.put("type", MESSAGE_TYPE.ADD_ORDER.ordinal());
+			String msg = GSON.toJson(toServer);
+			s.getRemote().sendString(msg);
+		} catch (IOException e) {
+
+		}
+	}
+
+	public static void sendOrders(String jid, List<Order> orders) {
+		Session s = socketidUser.get(jid);
 		try {
 			Map<String, Object> toServer = new HashMap<>();
 			toServer.put("orders", orders);

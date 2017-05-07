@@ -51,4 +51,25 @@ function sendTextToDeliverer() {
     
 }
 
+conn.onmessage = msg => {
+  console.log(msg.data)
+  const data = JSON.parse(msg.data)
+  switch(data.type) {
+    case MESSAGE_TYPE.CONNECT:
+        console.log("HI");
+        myId = data.id
+        conn.send(JSON.stringify({jid: getJid(), type: MESSAGE_TYPE.CONNECT}))
+        break;
+    case MESSAGE_TYPE.COMPLETED:
+      const jid = getJid()
+      console.log("REQUESTED");
+      localStorage.name = data.name;
+      localStorage.cell = data.phone;
+      localStorage.dLat = data.delivLat;
+      localStorage.dLng = data.delivLng;
+      window.location.href = 'http://localhost:4567/requested';
+      break;
+  }
+}
+
 

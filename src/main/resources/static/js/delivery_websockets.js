@@ -4,7 +4,8 @@ const MESSAGE_TYPE = {
   REMOVE_ORDER: 2,
   REQUESTED: 3,
   GET_ORDERS: 4,
-  DELIVERED: 5
+  DELIVERED: 5,
+  COMPLETED: 6
 };
 
 function getCookie(cname) {

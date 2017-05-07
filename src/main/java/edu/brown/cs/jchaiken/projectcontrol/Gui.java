@@ -6,6 +6,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -15,6 +16,7 @@ import com.google.gson.Gson;
 import com.stripe.Stripe;
 import com.stripe.model.Charge;
 
+import edu.brown.cs.jchaiken.deliveryobject.Order;
 import edu.brown.cs.jchaiken.deliveryobject.User;
 import edu.brown.cs.jchaiken.deliveryobject.User.AccountStatus;
 import edu.brown.cs.jchaiken.deliveryobject.User.UserBuilder;
@@ -94,6 +96,7 @@ public class Gui {
 		Spark.get("/login", new LoginHandler(""), freeMarker);
 		Spark.post("/create-account", new AccountCreator());
 		Spark.post("validate-login", new LoginValidator());
+		Spark.post("complete-order", new Manager.CompletedOrder());
 		Spark.post("/submit-request", new Manager.OrderMaker());
 		Spark.get("/forgot-password", new PasswordReset(), freeMarker);
 		Spark.post("/pending-orders", new Manager.PendingOrders());
@@ -145,6 +148,10 @@ public class Gui {
 			Map<String, Object> toServer = new HashMap<>();
 			toServer.put("status", status);
 			return GSON.toJson(toServer);
+		});
+		Spark.post("/is-active", (request, response) -> {
+			String jid = request.session().id();
+			return GSON.toJson(ImmutableMap.of("isActive", Manager.isActiveUser(jid)));
 		});
 
 		// Palak's Stuff
@@ -223,7 +230,6 @@ public class Gui {
 			Map<String, Object> variables = ImmutableMap.of("title", "Request");
 			return freeMarker.render(new ModelAndView(variables, "delivering.ftl"));
 		});
-
 		Spark.get("/delivered", (request, response) -> {
 			String webId = request.session().attribute("webId");
 			if (webId == null || User.byWebId(webId) == null) {
@@ -233,7 +239,12 @@ public class Gui {
 			Map<String, Object> variables = ImmutableMap.of("title", "Request");
 			return freeMarker.render(new ModelAndView(variables, "delivered.ftl"));
 		});
-
+		Spark.post("/delete-order", (request, response) -> {
+			QueryParamsMap qm = request.queryMap();
+			Order o = Order.byId(qm.value("id"));
+			OrderWebSocket.sendRemoveOrder(o);
+			return GSON.toJson("");
+		});
 		Spark.post("/logout", (request, response) -> {
 			request.session().attribute("webId", null);
 			return GSON.toJson("");
@@ -251,30 +262,40 @@ public class Gui {
 			return GSON.toJson(m);
 		});
 		Spark.post("/submit-Ordering", (request, response) -> {
-			QueryParamsMap qm = request.queryMap();
-			String jid = qm.value("jid");
-			User u = User.byWebId(Manager.getSession(jid).attribute("webId"));
-			String opt = qm.value("option");
-			Ranker r = new Ranker(MANAGER, u);
-			if (opt.equals("tip")) {
-				return GSON.toJson(ImmutableMap.of("orders", r.orderByPrice()));
-			} else if (opt.equals("distance")) {
-				return GSON.toJson(ImmutableMap.of("orders", r.orderByDistance()));
-			} else {
-				return GSON.toJson(ImmutableMap.of("orders", r.orderByTime()));
+			try {
+				QueryParamsMap qm = request.queryMap();
+				User u = User.byWebId(request.session().attribute("webId"));
+				String opt = qm.value("option");
+				Ranker r = new Ranker(MANAGER, u);
+				List<Order> os = new ArrayList<>();
+				if (opt.equals("tip")) {
+					os = r.orderByPrice();
+				} else if (opt.equals("distance")) {
+					os = r.orderByDistance();
+				} else {
+					os = r.orderByTime();
+				}
+				OrderWebSocket.sendOrders(request.session().id(), os);
+				return "";
+			} catch (Exception e) {
+				e.printStackTrace();
+				return "";
 			}
 		});
 		Spark.post("/submit-Preferences", (request, response) -> {
-			QueryParamsMap qm = request.queryMap();
-			String jid = qm.value("jid");
-			User u = User.byWebId(Manager.getSession(jid).attribute("webId"));
-			double price = Double.parseDouble(qm.value("price"));
-			double distance = Double.parseDouble(qm.value("distance"));
-			double time = Double.parseDouble(qm.value("time"));
-			u.addDeliveryPreferences(distance, price, time);
-			;
-			Ranker r = new Ranker(MANAGER, u);
-			return GSON.toJson(ImmutableMap.of("orders", r.rank()));
+			try {
+				QueryParamsMap qm = request.queryMap();
+				User u = User.byWebId(request.session().attribute("webId"));
+				double price = Double.parseDouble(qm.value("price"));
+				double distance = Double.parseDouble(qm.value("distance"));
+				double time = Double.parseDouble(qm.value("time"));
+				u.addDeliveryPreferences(distance, price, time);
+				Ranker r = new Ranker(MANAGER, u);
+				OrderWebSocket.sendOrders(request.session().id(), r.rank());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return "";
 		});
 		Spark.get("/map", (request, response) -> {
 			String webId = request.session().attribute("webId");
@@ -381,42 +402,43 @@ public class Gui {
 				toServer.put("success", false);
 				toServer.put("error", "Account already exists");
 			} else {
-				if (testCharge(stripeToken).equals("error")){
-				  toServer.put("error", "stripe error");
-	        toServer.put("success", false);
+				if (testCharge(stripeToken).equals("error")) {
+					toServer.put("error", "stripe error");
+					toServer.put("success", false);
 				} else {
-				  toServer.put("error", "");
-				  UserBuilder builder = new UserBuilder();
-	        User user = builder.setId(email).setName(name).setPassword(password).setCell(cell)
-	            .setPayment(stripeToken).setOrdererRatings(new ArrayList<Double>())
-	            .setDelivererRatings(new ArrayList<Double>()).setStatus(AccountStatus.ACTIVE)
-	            .setDelivererRatings(new ArrayList<Double>()).setOrdererRatings(new ArrayList<Double>())
-	            .build();
-	        user.addToDatabase();
-	        arg0.session().attribute("webId", user.getWebId());
-	        Manager.saveSession(arg0.session().id(), arg0.session());
-	        toServer.put("success", true);
+					toServer.put("error", "");
+					UserBuilder builder = new UserBuilder();
+					User user = builder.setId(email).setName(name).setPassword(password).setCell(cell)
+							.setPayment(stripeToken).setOrdererRatings(new ArrayList<Double>())
+							.setDelivererRatings(new ArrayList<Double>()).setStatus(AccountStatus.ACTIVE)
+							.setDelivererRatings(new ArrayList<Double>()).setOrdererRatings(new ArrayList<Double>())
+							.build();
+					user.addToDatabase();
+					arg0.session().attribute("webId", user.getWebId());
+					Manager.saveSession(arg0.session().id(), arg0.session());
+					toServer.put("success", true);
 				}
 			}
 			return GSON.toJson(toServer);
 		}
+
 		private String testCharge(String token) {
-		  Map<String, Object> params = new HashMap<String, Object>();
-      params.put("amount", TEST_CHARGE);
-      params.put("currency", "usd");
-      params.put("description", "Test charge");
-      params.put("source", token);
-      try {
-        Charge charge = Charge.create(params);
-        if (!charge.getPaid()) {
-          return "error";
-        } else {
-          charge.refund();
-        }
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
-      return "";
+			Map<String, Object> params = new HashMap<String, Object>();
+			params.put("amount", TEST_CHARGE);
+			params.put("currency", "usd");
+			params.put("description", "Test charge");
+			params.put("source", token);
+			try {
+				Charge charge = Charge.create(params);
+				if (!charge.getPaid()) {
+					return "error";
+				} else {
+					charge.refund();
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return "";
 		}
 	}
 

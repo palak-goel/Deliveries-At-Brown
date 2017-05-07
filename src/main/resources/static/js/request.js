@@ -43,10 +43,20 @@ $(document).ready(() => {
     $("#item").val(data.item)
     $("#time").val(data.time)
     $("#price").val(data.price)
+    
 } else {
 
 }
       });
+    $.post("/is-active", 
+      {}, responseJSON => {
+        data = JSON.parse(responseJSON)
+        console.log(data)
+        if (data.isActive === true) {
+    $('.form-control').attr("disabled", true);
+     $('#submit_order').attr("disabled", true);
+}
+});
 });
 
 function initMap() {

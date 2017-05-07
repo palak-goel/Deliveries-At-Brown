@@ -29,7 +29,7 @@
 <div id="form">
     <h3>Order by:</h3>
     <form id="radio">
-    <input type="radio" name="order" value="tip"> Tip<br>
+    <input type="radio" name="order" value="tip" checked> Tip<br>
     <input type="radio" name="order" value="distance"> Distance<br>
     <input type="radio" name="order" value="time"> Time
     </form>
@@ -51,7 +51,7 @@
         <input id = "duration" type="number" min = "0" max = "60" step = "0.1" class="form-control" id="formGroupExampleInput" placeholder="How long?">
     </div>
     <center>
-       <button onclick = "sendPreferencesToServer();"> Submit Preferences </button>
+       <button onclick = "submitPreferencesToServer();"> Submit Preferences </button>
     </center>
 </div>
 </#assign>

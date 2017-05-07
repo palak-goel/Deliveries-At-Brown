@@ -8,9 +8,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 
 import edu.brown.cs.jchaiken.deliveryobject.Location;
@@ -34,7 +37,6 @@ import spark.Session;
  */
 public class Manager {
 
-	private static List<User> activeDeliverers = Collections.synchronizedList(new ArrayList<>());
 	private static List<Order> pendingOrders = Collections.synchronizedList(new ArrayList<>());
 	private static Map<String, Order> jidToOrder = Collections.synchronizedMap(new HashMap<>());
 	private static Map<User, Order> pendingMatches = Collections.synchronizedMap(new HashMap<>());
@@ -42,11 +44,24 @@ public class Manager {
 	private static Map<String, Session> sessionMap = Collections.synchronizedMap(new HashMap<>());
 	private static Map<String, String> widToJid = Collections.synchronizedMap(new HashMap<>());
 	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("HH:mm");
+	private static Set<String> activeUsers = new HashSet<>();
 
 	/**
 	 * Constructor for Manager.
 	 */
 	public Manager() {
+	}
+
+	public static void setActiveUser(String jid) {
+		activeUsers.add(jid);
+	}
+
+	public static boolean isActiveUser(String jid) {
+		return activeUsers.contains(jid);
+	}
+
+	public static void removeActiveUser(String jid) {
+		activeUsers.remove(jid);
 	}
 
 	public static List<Session> allSessions() {
@@ -72,30 +87,6 @@ public class Manager {
 
 	public List<Order> getPendingOrders() {
 		return new ArrayList<>(pendingOrders);
-	}
-
-	// Trigger handler
-	static synchronized boolean select(User u, Order o) {
-		activeDeliverers.remove(u);
-		pendingOrders.remove(o);
-		pendingMatches.put(u, o);
-		return true;
-	}
-
-	synchronized void onQuitUser(User u) {
-		Order o = pendingMatches.get(u);
-		pendingOrders.add(o);
-		// UNDO user transactions
-		// Finish payment
-	}
-
-	synchronized void onQuitOrder(Order o) {
-		pendingOrders.remove(o);
-		// Handle order quitting
-	}
-
-	synchronized void onEntryUser(User u) {
-		activeDeliverers.add(u);
 	}
 
 	synchronized static List<Order> rank(User u) {
@@ -174,6 +165,7 @@ public class Manager {
 					 */
 					// Not used
 					OrderWebSocket.sendAddOrder(o);
+					return GSON.toJson(ImmutableMap.of("id", o.getId()));
 				} else {
 					Order o = builder.setId("").build();
 					jidToOrder.put(req.session().id(), o);
@@ -186,6 +178,30 @@ public class Manager {
 	}
 
 	public static class PendingOrders implements Route {
+		@Override
+		public Object handle(Request arg0, Response arg1) throws Exception {
+			Order o = jidToOrder.get(arg0.session().id());
+			Map<String, Object> res = new HashMap<>();
+			if (o == null) {
+				res.put("stored", "false");
+				return GSON.toJson(res);
+			}
+			res.put("stored", "true");
+			res.put("pickupLat", o.getPickupLocation().getLatitude());
+			res.put("pickupLon", o.getPickupLocation().getLongitude());
+			res.put("dropoffLat", o.getDropoffLocation().getLatitude());
+			res.put("dropoffLon", o.getDropoffLocation().getLongitude());
+			res.put("pickup", o.getPickupLocation().getName());
+			res.put("dropoff", o.getDropoffLocation().getName());
+			res.put("item", o.getOrderItems().get(0));
+			res.put("time", DATE_FORMAT.format(new Date((long) 1000 * (int) o.getDropoffTime())));
+			res.put("price", o.getPrice());
+			res.put("submit", true);
+			return GSON.toJson(res);
+		}
+	}
+
+	public static class CompletedOrder implements Route {
 		@Override
 		public Object handle(Request arg0, Response arg1) throws Exception {
 			Order o = jidToOrder.get(arg0.session().id());

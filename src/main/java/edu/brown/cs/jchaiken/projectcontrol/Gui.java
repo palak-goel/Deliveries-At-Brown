@@ -140,7 +140,12 @@ public class Gui {
 			}
 			return GSON.toJson(toServer);
 		});
-
+		Spark.post("/user-rating", (request, response) -> {
+			QueryParamsMap qm = request.queryMap();
+			Order o = Order.byId(qm.value("id"));
+			double rtg = o.getOrderer().getOrdererRating();
+			return GSON.toJson(ImmutableMap.of("rating", rtg));
+		});
 		Spark.post("/reset-password", (request, response) -> {
 			String email = request.queryMap().value("email");
 			String newPass = request.queryMap().value("password");

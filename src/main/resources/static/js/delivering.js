@@ -69,6 +69,7 @@ conn.onmessage = msg => {
         localStorage.pLng = data.pLng;
         localStorage.dLat = data.dLat;
         localStorage.dLng = data.dLng;
+
         window.location.href = '/delivered';
       }
       break;
@@ -84,4 +85,5 @@ function submitOrder() {
 function cancelOrder() {
   window.location.href = '/deliver';
 }
+
 

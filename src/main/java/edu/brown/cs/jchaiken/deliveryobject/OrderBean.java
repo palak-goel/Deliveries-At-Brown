@@ -138,7 +138,7 @@ public final class OrderBean extends DeliveryObjectBean<Order> implements Order,
 	public void setOrderStatus(OrderStatus newStatus) {
 		if (inDb && Database.getConnection() != null) {
 			try (PreparedStatement prep = Database.getConnection()
-					.prepareStatement("INSERT INTO order_status(order_id, status) VALUES(?, ?, ?)")) {
+					.prepareStatement("INSERT INTO order_status VALUES(?, ?, ?)")) {
 				prep.setString(1, super.getId());
 				prep.setInt(2, newStatus.ordinal());
 				prep.setLong(3, System.currentTimeMillis());

@@ -36,6 +36,8 @@ function initMap() {
         var duration = parseFloat(pickupDirs["duration"]) + parseFloat(dropoffDirs["duration"])
         durationMessage += duration
         durationMessage += " minutes to complete"
+        var dropoffTime = new Date();
+        dropoffTime.setMinutes(dropoffTime.getMinutes() + duration);
         document.getElementById("duration").innerText = durationMessage
       })
     })

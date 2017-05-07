@@ -34,6 +34,7 @@ function initMap() {
                 pickUpDirections += '\n';
                 console.log(pickUpDirections)
             }
+            console.log(pickUpDirections);
             document.getElementById("pickup-dirs").innerText = pickUpDirections;
         })
         var dropoffDirs = {}
@@ -45,6 +46,7 @@ function initMap() {
                 dropoffDirections += dropoffDirs["directions"][i].instructions.replace(/<[^>]*>/g, " ");
                 dropoffDirections += '\n';
             }
+            console.log(dropoffDirections)
             document.getElementById("pickup-dirs2").innerText = dropoffDirections;
         })
     });
@@ -61,4 +63,16 @@ function completeDelivery() {
 
 function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+function sendTextToDeliverer() {
+    var message = document.getElementById("text-message").value;
+    const postParameters = {
+        number : delivererNumber,
+        content : message
+    }
+    $.post("/sendText", postParameters, responseJSON => {
+        });
+
+    
 }

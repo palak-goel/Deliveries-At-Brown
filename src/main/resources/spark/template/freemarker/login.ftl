@@ -49,7 +49,7 @@
   </div>
   <div class="form-group">
     <label class="sr-only" for="exampleInputEmail3">Re-enter password</label>
-    <input type="text" class="form-control" id="password_check" placeholder="Re-enter password">
+    <input type="password" class="form-control" id="password_check" placeholder="Re-enter password">
   </div>
   <input type = "hidden" name = "from" id = "from" value = "${from}">
   <div class="form-row">

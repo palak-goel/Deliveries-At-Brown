@@ -1,10 +1,6 @@
 <#assign content>
 <div id = "top-banner">
 	<h1 id = "banner">Deliveries @ Brown</h1>
-	<ul>
-		<li><a href="/about">About D@B</a></li>
-		<li><a href="/faq">FAQs</a></li>
-	</ul>
 </div>
 <div id = "reset">
 <p>Enter Phone Number To Reset Password</p>

@@ -1,3 +1,54 @@
+
+#top-banner {
+	top: 0;
+  left: 0;
+	background-color: black;
+	width: 100%;
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+
+#reset {
+	height: 100px;
+	width: 300px;
+	text-align: center;
+	margin: auto;
+	position: relative;
+	top: 300px;
+}
+#enter_code {
+	margin: auto;
+	height: 100px;
+	width: 300px;
+	text-align: center;
+	margin: auto;
+	position: relative;
+	top: 300px;
+}
+#enter_password {
+	margin: auto;
+	height: 100px;
+	width: 300px;
+	text-align: center;
+	margin: auto;
+	position: relative;
+	top: 300px;
+}
+#success {
+	margin: auto;
+	height: 100px;
+	width: 300px;
+	text-align: center;
+	margin: auto;
+	position: relative;
+	top: 300px;
+}
+#banner {
+	color: white;
+	text-align: center;
+	font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+}
+
 #loader {
     border: 16px solid #f3f3f3; /* Light grey */
     border-top: 16px solid #3498db; /* Blue */

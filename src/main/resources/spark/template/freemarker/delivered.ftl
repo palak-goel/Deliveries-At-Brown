@@ -10,12 +10,8 @@
 	<div id="map"></div>
 	<div id="right">
         <h3> Directions </h3>
-        <p id = "distance"></p>
-        <p id = "duration"></p>
         <p id = "pickup-dirs"></p>
         <p id = "dropoff-dirs"></p>
-        <p id = "distance2"></p>
-        <p id = "duration2"></p>
         <p id = "pickup-dirs2"></p>
         <p id = "dropoff-dirs2"></p>
 

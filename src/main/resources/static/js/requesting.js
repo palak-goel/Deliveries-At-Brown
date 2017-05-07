@@ -45,6 +45,14 @@ $(document).ready(() => {
     $("#price").attr("placeholder", data.price)
                dta = data;
       });
+  $.post("/is-active", 
+  {}, responseJSON => {
+    data_resp = JSON.parse(responseJSON)
+    console.log(data_resp)
+    if (data_resp.isActive ===true) {
+      $('#so').attr("disabled", true);
+    }
+    });
     
 });
 //pick up location

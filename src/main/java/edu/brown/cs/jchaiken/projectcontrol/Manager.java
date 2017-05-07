@@ -71,10 +71,7 @@ public class Manager {
 	}
 
 	public static void saveSession(String id, Session session) {
-		System.out.println("SAVING SESH");
-		System.out.println(id);
-		System.out.println((String) session.attribute("webId"));
-		System.out.println("---");
+		System.out.println("Saving Session");
 		sessionMap.put(id, session);
 		widToJid.put(session.attribute("webId"), id);
 	}

@@ -73,7 +73,7 @@ function addOrders(data) {
           }).then(function() {
             distance = parseFloat(dist1) + parseFloat(directionObject2["distance"]);
             duration = parseFloat(dur1) + parseFloat(directionObject2["duration"]);
-            table.append('<tr><td>'+ pickup + '</td><td>' + duration + " min" + '</td><td>' + 
+            table.append('<tr><td>'+ pickup + '</td><td>' + 4 + '</td><td>' + duration + " min" + '</td><td>' + 
               distance.toFixed(2) + " mi" + "</td><td>" + time + '</td><td>' + "$" + price + '</td><td>'+ items+ 
           '</td><td><button id="takeorder" onclick = "takeOrder(\'' + order.id + 
           '\');"> Take Order</button></td></tr>');

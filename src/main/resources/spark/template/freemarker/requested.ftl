@@ -12,6 +12,9 @@
     <center>
         <h2> Deliverer </h2>
         <h3 id = "deliverer-name">Deliverer</h3>
+        <br>
+        <h5 id = "duration"></h5>
+        <br>
         <textarea id = "text-message" placeholder = "Message Deliverer"></textarea>
         <br>
         <button onclick = "sendTextToDeliverer();">Send</button>

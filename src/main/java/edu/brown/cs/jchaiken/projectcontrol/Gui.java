@@ -258,15 +258,11 @@ public class Gui {
 			return GSON.toJson("");
 		});
 		Spark.post("/order-history", (request, response) -> {
-			QueryParamsMap qm = request.queryMap();
 			String jid = request.session().id();
 			User u = User.byWebId(Manager.getSession(jid).attribute("webId"));
 			Map<String, Object> res = new HashMap<>();
-			if (qm.value("type").equals("deliver")) {
-				res.put("orders", u.pastDeliveries());
-			} else {
-				res.put("orders", u.pastOrders());
-			}
+			res.put("deliver", u.pastDeliveries());
+			res.put("order", u.pastOrders());
 			return GSON.toJson(res);
 		});
 		Spark.post("/logout", (request, response) -> {

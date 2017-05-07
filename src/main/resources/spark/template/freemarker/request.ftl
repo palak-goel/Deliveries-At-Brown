@@ -35,6 +35,7 @@
             </div>
             <div class="form-group">
                 <label for="formGroupExampleInput">Time</label>
+                <span><i>(Expiration time for request)</i></span>
                 <input type="time" id="time" name="usr_time" class="form-control" id="formGroupExampleInput">
             </div>
             <div class="form-group">
@@ -44,6 +45,8 @@
             </div>
         <center>
            <input type = "submit" id = "submit_order" value = "Submit Order">
+           <br>
+           <a id = "backLink" href = "/requesting" hidden>Go back to pending request</a>
         </center>
         
 </div>

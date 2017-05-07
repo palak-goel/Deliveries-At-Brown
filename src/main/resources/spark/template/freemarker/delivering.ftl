@@ -39,6 +39,7 @@
                  </fieldset>
                  <button type="button" class="btn btn-success" id="so" onclick="submitOrder();">Confirm</button>
                  <button type="button" class="btn btn-danger" onclick="cancelOrder();">Cancel</button>
+                 <p>Please verify restaurant hours and item availability before claiming the ticket!</p>
             </form>
         </div>
     </div>

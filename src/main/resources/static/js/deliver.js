@@ -34,6 +34,7 @@ function initMap() {
 var all_orders = {}
 var all_funs = []
 var ordering_flag = true;
+var ord_info = {order: [], pickup: [], dropoff: [], day: [], time: [], price: [], items: [], distance: [], duration: [], directionObject1: [], pickupObj: [], dropoffObj: [], dist1: [], dur1: [], directionObject2: []}
 
 function addOrders(data) {
   for (var i = 0; i < all_funs.length; i++) {
@@ -54,23 +55,25 @@ function addOrders(data) {
         let dropoff = data.dropoff[i];
         let day = new Date(order.dropoffTime * 1000);
         let ts = day.toLocaleTimeString();
-        time = days[day.getDay()] + " " + ts.split(":")[0] + ":" + ts.split(":")[1] + ts.split(" ")[1]
+        let time = days[day.getDay()] + " " + ts.split(":")[0] + ":" + ts.split(":")[1] + ts.split(" ")[1]
         let price = order.price;
         let items = order.items[0];
-        var distance = 0;
-        var duration = 0;
-        var directionObject1 = {}
+        let distance = 0;
+        let duration = 0;
+        let directionObject1 = {}
         let pickupObj = {lat: order.pickupL.data.lat, lng: order.pickupL.data.lng}
         let dropoffObj = {lat: order.dropoffL.data.lat, lng: order.dropoffL.data.lng}
         new Promise(function(resolve, reject) {
           getDistanceDuration(userPosition, pickupObj, directionObject1, resolve)
         }).then(function() {
-          var dist1 = directionObject1["distance"]
-          var dur1 = directionObject1["duration"]
-          var directionObject2 = {}
+          let dist1 = directionObject1["distance"]
+          let dur1 = directionObject1["duration"]
+          let directionObject2 = {}
           new Promise(function(resolve, reject) {
             getDistanceDuration(pickupObj, dropoffObj, directionObject2, resolve)
           }).then(function() {
+            console.log("THIS IS I" + i)
+            console.log(time)
             distance = parseFloat(dist1) + parseFloat(directionObject2["distance"]);
             duration = parseFloat(dur1) + parseFloat(directionObject2["duration"]);
             $.post("/user-rating", {id: order.id}, responseJSON => {
@@ -101,8 +104,8 @@ function addOrders(data) {
 }
 
 conn.onmessage = msg => {
-  console.log(msg.data)
   const data = JSON.parse(msg.data)
+  console.log(data)
   switch(data.type) {
       case MESSAGE_TYPE.CONNECT:
         console.log("HI");

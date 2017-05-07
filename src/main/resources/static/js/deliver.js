@@ -170,7 +170,7 @@ function takeOrder(arg) {
     localStorage.ulat = userPosition.lat 
     localStorage.ulng = userPosition.lng
     localStorage.name = order.orderer.data.name;
-    window.location.href = 'http://localhost:4567/delivering';    
+    window.location.href = '/delivering';    
   })
 
 

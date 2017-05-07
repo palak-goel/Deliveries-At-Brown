@@ -62,7 +62,7 @@ conn.onmessage = msg => {
         break;
     case MESSAGE_TYPE.COMPLETED:
       console.log("REQUESTED");
-      window.location.href = 'http://localhost:4567/ordercompleted';
+      window.location.href = '/ordercompleted';
       break;
   }
 }

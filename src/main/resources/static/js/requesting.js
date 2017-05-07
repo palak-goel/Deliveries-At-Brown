@@ -17,7 +17,7 @@ conn.onmessage = msg => {
       localStorage.cell = data.phone;
       localStorage.dLat = data.delivLat;
       localStorage.dLng = data.delivLng;
-      window.location.href = 'http://localhost:4567/requested';
+      window.location.href = '/requested';
       break;
   }
 }

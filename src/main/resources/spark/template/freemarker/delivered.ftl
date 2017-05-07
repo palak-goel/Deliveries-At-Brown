@@ -10,12 +10,8 @@
 	<div id="map"></div>
 	<div id="right">
         <h3> Directions </h3>
-        <p id = "distance"></p>
-        <p id = "duration"></p>
         <p id = "pickup-dirs"></p>
         <p id = "dropoff-dirs"></p>
-        <p id = "distance2"></p>
-        <p id = "duration2"></p>
         <p id = "pickup-dirs2"></p>
         <p id = "dropoff-dirs2"></p>
 
@@ -25,6 +21,10 @@
         <button onclick = "sendTextToDeliverer();">Send</button>
         <br>
         <br>
+        <h3> Price </h3>
+        <div class="form-group">
+            <span><input id = "price" type="number" min = "0" step = "0.01" class="form-control" id="formGroupExampleInput" placeholder="Insert amount"></span>
+        </div>
         <form action = "/deliverycompleted">
             <button onclick = "completeDelivery();">Complete Delivery</button>
         </form>

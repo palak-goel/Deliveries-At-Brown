@@ -132,7 +132,7 @@ function addPickup(location) {
    var marker = new google.maps.Marker({
         position: location,
         icon: {
-            path: fontawesome.markers.CUTLERY,
+            path: fontawesome.markers.SHOPPING_CART,
             scale: 0.7,
             strokeWeight: 1.0,
             fillColor: 'black',
@@ -168,8 +168,8 @@ function addEateries() {
         var marker = new google.maps.Marker({
             position: location,
             icon: {
-                path: fontawesome.markers.CUTLERY,
-                scale: 0.4,
+                path: fontawesome.markers.SHOPPING_CART,
+                scale: 0.6,
                 strokeWeight: 1.0,
                 fillColor: 'black',
                 fillOpacity: 1.0

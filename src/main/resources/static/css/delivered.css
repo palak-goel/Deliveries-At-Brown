@@ -17,6 +17,11 @@
 	height: 600px;
   width: 28%;
   float: right;
+  margin-right: 20px;
+}
+
+#price {
+  width: 155px;
 }
 
 ul {

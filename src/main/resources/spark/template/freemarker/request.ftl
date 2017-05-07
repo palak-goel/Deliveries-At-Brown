@@ -35,6 +35,7 @@
             </div>
             <div class="form-group">
                 <label for="formGroupExampleInput">Time</label>
+                <span><i>(Expiration time for request)</i></span>
                 <input type="time" id="time" name="usr_time" class="form-control" id="formGroupExampleInput">
             </div>
             <div class="form-group">

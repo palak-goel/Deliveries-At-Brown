@@ -65,6 +65,7 @@ conn.onmessage = msg => {
         console.log("error")
         window.location.href = "/deliver"
       } else {
+        console.log(data)
         localStorage.pLat = data.pLat;
         localStorage.pLng = data.pLng;
         localStorage.dLat = data.dLat;

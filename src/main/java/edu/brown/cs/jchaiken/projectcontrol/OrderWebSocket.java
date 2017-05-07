@@ -141,6 +141,7 @@ public class OrderWebSocket {
 						// Manager.setActiveUser(y);
 						Sender sender = new Sender(o.getOrderer().getCell());
 						sender.updateMessage("confirm", o);
+						sender.sendMessage();
 						return;
 					}
 				}

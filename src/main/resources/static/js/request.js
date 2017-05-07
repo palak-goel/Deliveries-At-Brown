@@ -15,6 +15,7 @@ conn.onmessage = msg => {
 }
 
 function setItemSuggests(arr){
+    console.log(arr)
     for(let i = 0; i< arr.length; i++){
         if(i < 4){
         $('#items').append("<option value=" + arr[i] + ">");
@@ -42,14 +43,12 @@ function setDropOffSuggests(arr){
 $(document).ready(() => {
     $.post("/suggest", {}, responseJSON => {
         const responseObject = JSON.parse(responseJSON);
+        console.log(responseObject)
         setPickupSuggests(responseObject.pickup);
         setItemSuggests(responseObject.items);
         setDropOffSuggests(responseObject.dropoff);
 
     });
-    setItemSuggests();
-    setPickupSuggests();
-    setDropOffSuggests();
     
     document.getElementById("submit_order").addEventListener('click', function() {
         sendFormToServer();

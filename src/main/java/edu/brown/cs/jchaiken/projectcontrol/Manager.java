@@ -204,6 +204,7 @@ public class Manager {
 			OrderWebSocket.completeOrderRequester(widToJid.get(o.getOrderer().getWebId()));
 			Sender sender = new Sender(o.getOrderer().getCell());
 			sender.updateMessage("complete", o);
+			sender.sendMessage();
 			return "";
 		}
 	}

@@ -204,24 +204,10 @@ public class Manager {
 	public static class CompletedOrder implements Route {
 		@Override
 		public Object handle(Request arg0, Response arg1) throws Exception {
-			Order o = jidToOrder.get(arg0.session().id());
-			Map<String, Object> res = new HashMap<>();
-			if (o == null) {
-				res.put("stored", "false");
-				return GSON.toJson(res);
-			}
-			res.put("stored", "true");
-			res.put("pickupLat", o.getPickupLocation().getLatitude());
-			res.put("pickupLon", o.getPickupLocation().getLongitude());
-			res.put("dropoffLat", o.getDropoffLocation().getLatitude());
-			res.put("dropoffLon", o.getDropoffLocation().getLongitude());
-			res.put("pickup", o.getPickupLocation().getName());
-			res.put("dropoff", o.getDropoffLocation().getName());
-			res.put("item", o.getOrderItems().get(0));
-			res.put("time", DATE_FORMAT.format(new Date((long) 1000 * (int) o.getDropoffTime())));
-			res.put("price", o.getPrice());
-			res.put("submit", true);
-			return GSON.toJson(res);
+			QueryParamsMap qm = arg0.queryMap();
+			Order o = Order.byId(qm.value("id"));
+			o.setOrderStatus(Order.OrderStatus.COMPLETED);
+			return "";
 		}
 	}
 }

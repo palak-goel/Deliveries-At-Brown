@@ -61,13 +61,8 @@ conn.onmessage = msg => {
         conn.send(JSON.stringify({jid: getJid(), type: MESSAGE_TYPE.CONNECT}))
         break;
     case MESSAGE_TYPE.COMPLETED:
-      const jid = getJid()
       console.log("REQUESTED");
-      localStorage.name = data.name;
-      localStorage.cell = data.phone;
-      localStorage.dLat = data.delivLat;
-      localStorage.dLng = data.delivLng;
-      window.location.href = 'http://localhost:4567/requested';
+      window.location.href = 'http://localhost:4567/ordercompleted';
       break;
   }
 }

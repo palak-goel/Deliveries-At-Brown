@@ -233,4 +233,13 @@ public class OrderWebSocket {
 		}
 	}
 
+	public static void completeOrderRequester(String requesterJid) {
+		try {
+			Session s = socketidUser.get(requesterJid);
+			s.getRemote().sendString(GSON.toJson(ImmutableMap.of("type", MESSAGE_TYPE.COMPLETED.ordinal())));
+		} catch (IOException e) {
+
+		}
+	}
+
 }

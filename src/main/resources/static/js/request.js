@@ -26,6 +26,7 @@ function setDropOffSuggests(){
 }
 
 $(document).ready(() => {
+    console.log(window.location.hostname)
     setItemSuggests();
     setPickupSuggests();
     setDropOffSuggests();

@@ -58,7 +58,9 @@ function initMap() {
 }
 
 function completeDelivery() {
-    
+    $.post("/complete-order", {id: localStorage.id}, responseJson => {
+        window.location.href = 'http://localhost:4567/deliverycompleted';
+    })
     return directions;
 }
 

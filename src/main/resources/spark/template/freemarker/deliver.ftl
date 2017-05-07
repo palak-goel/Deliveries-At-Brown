@@ -15,7 +15,8 @@
     <table id="table">
       <tr>
         <th>Pick-Up Location</th>
-        <th>Walking Time</th>
+        <th>Rating</th>
+        <th>Duration</th>
         <th>Distance</th>
         <th>Claim By</th>
         <th>Tip</th>

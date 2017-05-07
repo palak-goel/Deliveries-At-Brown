@@ -26,9 +26,7 @@
     }
   };
 }*/
-$(document).ready(() => {
 
-})
 
 var all_orders = {}
 
@@ -38,21 +36,50 @@ function addOrders() {
   const table = $('table');
   table.find("tr:gt(0)").remove();
   var days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+
+  new Promise(function(resolve, reject) {
+    getUserLocation(userPosition, resolve)
+  }).then(function() {
     for(let i = 0; i< data.orders.length; i++){
-      let order = data.orders[i];
-      all_orders[order.id] = order;
-      console.log(order)
-      let pickup = data.pickup[i];
-      let dropoff = data.dropoff[i];
-      let day = new Date(order.dropoffTime * 1000);
-      var time = days[day.getDay()] + " " + day.getHours() + ":" + day.getMinutes()
-      let price = order.price;
-      let items = order.items[0];
-      table.append('<tr><td>'+ pickup + '</td><td>' + dropoff + '</td><td>' + time + 
-        '</td><td>' + price + '</td><td>'+ items+ 
-        '</td><td><button id="takeorder" onclick = "takeOrder(\'' + order.id + 
-        '\');"> Take Order</button></td></tr>');
-    }
+        let order = data.orders[i];
+        all_orders[order.id] = order;
+        console.log(order)
+        let pickup = data.pickup[i];
+        let dropoff = data.dropoff[i];
+        let day = new Date(order.dropoffTime * 1000);
+        var time = days[day.getDay()] + " " + day.getHours() + ":" + day.getMinutes()
+        let price = order.price;
+        let items = order.items[0];
+
+        var distance = 0;
+        var duration = 0;
+        var directionObject1 = {}
+        new Promise(function(resolve, reject) {
+          getDistanceDuration(userPosition, pickup, directionObject1, resolve)
+        }).then(function() {
+          var dist1 = directionObject1["distance"]
+          var dur1 = directionObject1["duration"]
+          var directionObject2 = {}
+          new Promise(function(resolve, reject) {
+            getDistanceDuration(pickup, dropoff, directionObject2, resolve)
+          }).then(function() {
+            distance = parseFloat(dist1) + parseFloat(directionObject2["distance"]);
+            duration = parseFloat(dur1) + parseFloat(directionObject2["duration"]);
+
+            console.log(distance)
+            console.log(duration)
+            
+            table.append('<tr><td>'+ pickup + '</td><td>' + dropoff + '</td><td>' + time + 
+          '</td><td>' + price + '</td><td>'+ items+ 
+          '</td><td><button id="takeorder" onclick = "takeOrder(\'' + order.id + 
+          '\');"> Take Order</button></td></tr>');
+
+
+
+          })
+        }) 
+      }
+    })
     $.post("/is-active", 
           {}, responseJSON => {
             data_resp = JSON.parse(responseJSON)

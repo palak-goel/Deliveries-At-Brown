@@ -69,7 +69,8 @@ conn.onmessage = msg => {
         localStorage.pLng = data.pLng;
         localStorage.dLat = data.dLat;
         localStorage.dLng = data.dLng;
-
+        localStorage.dcell = data.dcell;
+        localStorage.rcell = data.rcell
         window.location.href = '/delivered';
       }
       break;

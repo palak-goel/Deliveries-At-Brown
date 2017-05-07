@@ -100,10 +100,15 @@ public class OrderWebSocket {
 			String jid = received.get("jid").getAsString();
 			User u = User.byWebId(Manager.getSession(jid).attribute("webId"));
 			o.assignDeliverer(u);
-			session.getRemote()
-					.sendString(GSON.toJson(ImmutableMap.of("type", MESSAGE_TYPE.DELIVERED.ordinal(), "pLat",
-							o.getPickupLocation().getLatitude(), "pLng", o.getPickupLocation().getLongitude(), "dLat",
-							o.getDropoffLocation().getLatitude(), "dLng", o.getDropoffLocation().getLongitude())));
+			Map<String, Object> m = new HashMap<>();
+			m.put("type", MESSAGE_TYPE.DELIVERED.ordinal());
+			m.put("pLat", o.getPickupLocation().getLatitude());
+			m.put("pLng", o.getPickupLocation().getLongitude());
+			m.put("dLat", o.getDropoffLocation().getLatitude());
+			m.put("dLng", o.getDropoffLocation().getLongitude());
+			m.put("dcell", o.getDeliverer().getCell());
+			m.put("rcell", o.getOrderer().getCell());
+			session.getRemote().sendString(GSON.toJson(m));
 			String reqId = o.getOrderer().getWebId();
 			System.out.println(o.getOrderer().getName());
 			System.out.println("---");

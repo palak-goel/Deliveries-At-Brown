@@ -7,5 +7,7 @@ function submitRating() {
 		rating = 0;
 	}
 	console.log(rating)
-	window.location.href = '/deliver';
+	$.post("/rating", {id: localStorage.id, role:"deliverer", rating: rating}, responseJson => {
+		window.location.href = '/deliver';
+	})
 }

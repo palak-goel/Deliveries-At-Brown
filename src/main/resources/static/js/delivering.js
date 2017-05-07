@@ -72,6 +72,7 @@ conn.onmessage = msg => {
 
 function submitOrder() {
   data = {type: MESSAGE_TYPE.REMOVE_ORDER, id: localStorage.id, jid: getJid(), dLat: localStorage.ulat, dLng: localStorage.ulng}
+  console.log(data)
   conn.send(JSON.stringify(data))
 }
 

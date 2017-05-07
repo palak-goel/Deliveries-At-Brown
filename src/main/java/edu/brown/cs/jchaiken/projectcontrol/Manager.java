@@ -4,7 +4,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -39,7 +38,6 @@ public class Manager {
 
 	private static List<Order> pendingOrders = Collections.synchronizedList(new ArrayList<>());
 	private static Map<String, Order> jidToOrder = Collections.synchronizedMap(new HashMap<>());
-	private static Map<User, Order> pendingMatches = Collections.synchronizedMap(new HashMap<>());
 	private static final Gson GSON = new Gson();
 	private static Map<String, Session> sessionMap = Collections.synchronizedMap(new HashMap<>());
 	private static Map<String, String> widToJid = Collections.synchronizedMap(new HashMap<>());
@@ -99,15 +97,6 @@ public class Manager {
 
 	synchronized static void removeOrder(Order o) {
 		pendingOrders.remove(o);
-	}
-
-	static void checkStatus() {
-		Collection<Order> os = pendingMatches.values();
-		for (Order o : os) {
-			// Look at time of order
-			// Do some sort of check based on that, possibly message order
-			// o.message()?
-		}
 	}
 
 	public static class OrderMaker implements Route {
@@ -207,6 +196,25 @@ public class Manager {
 			QueryParamsMap qm = arg0.queryMap();
 			Order o = Order.byId(qm.value("id"));
 			o.setOrderStatus(Order.OrderStatus.COMPLETED);
+			o.getOrderer().addPastOrder(o);
+			o.getDeliverer().addPastDelivery(o);
+			OrderWebSocket.completeOrderRequester(widToJid.get(o.getOrderer().getWebId()));
+			return "";
+		}
+	}
+
+	public static class Rating implements Route {
+		@Override
+		public Object handle(Request arg0, Response arg1) throws Exception {
+			QueryParamsMap qm = arg0.queryMap();
+			String role = qm.value("role");
+			double score = Double.parseDouble(qm.value("rating"));
+			Order o = Order.byId(qm.value("id"));
+			if (role.equals("deliverer")) {
+				o.getOrderer().addOrdererRating(score);
+			} else {
+				o.getDeliverer().addDelivererRating(score);
+			}
 			return "";
 		}
 	}

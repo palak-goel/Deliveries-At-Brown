@@ -60,7 +60,6 @@ function initMap() {
 function completeDelivery() {
     $.post("/complete-order", {id: localStorage.id}, responseJson => {
         window.location.href = '/deliverycompleted';
-    })
-    return directions;
+    });
 }
 

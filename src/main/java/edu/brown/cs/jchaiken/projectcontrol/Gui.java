@@ -15,6 +15,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import com.stripe.Stripe;
 import com.stripe.model.Charge;
+import com.stripe.model.Customer;
 
 import edu.brown.cs.jchaiken.deliveryobject.Order;
 import edu.brown.cs.jchaiken.deliveryobject.User;
@@ -433,14 +434,19 @@ public class Gui {
 				toServer.put("success", false);
 				toServer.put("error", "exists");
 			} else {
-				if (testCharge(stripeToken).equals("error")) {
+			  Map<String, Object> customerParams = new HashMap<>();
+			  customerParams.put("description", "Customer for Deliveries @ Brown");
+			  customerParams.put("source", stripeToken);
+			  // ^ obtained with Stripe.js
+			  Customer customer = Customer.create(customerParams);
+				if (testCharge(customer.getId()).equals("error")) {
 					toServer.put("error", "stripe error");
 					toServer.put("success", false);
 				} else {
 					toServer.put("error", "");
 					UserBuilder builder = new UserBuilder();
 					User user = builder.setId(email).setName(name).setPassword(password).setCell(cell)
-							.setPayment(stripeToken).setOrdererRatings(new ArrayList<Double>())
+							.setPayment(customer.getId()).setOrdererRatings(new ArrayList<Double>())
 							.setDelivererRatings(new ArrayList<Double>()).setStatus(AccountStatus.ACTIVE)
 							.setDelivererRatings(new ArrayList<Double>()).setOrdererRatings(new ArrayList<Double>())
 							.build();
@@ -453,12 +459,12 @@ public class Gui {
 			return GSON.toJson(toServer);
 		}
 
-		private String testCharge(String token) {
+		private String testCharge(String customerId) {
 			Map<String, Object> params = new HashMap<String, Object>();
 			params.put("amount", TEST_CHARGE);
 			params.put("currency", "usd");
 			params.put("description", "Test charge");
-			params.put("source", token);
+			params.put("source", customerId);
 			try {
 				Charge charge = Charge.create(params);
 				if (!charge.getPaid()) {

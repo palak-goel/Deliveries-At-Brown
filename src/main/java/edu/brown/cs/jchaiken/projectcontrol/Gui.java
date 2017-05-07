@@ -93,6 +93,17 @@ public class Gui {
 		FreeMarkerEngine freeMarker = createEngine();
 		Spark.webSocket("/deliverysocket", OrderWebSocket.class);
 		// Setup Spark Routes
+		Spark.get("/", (request, response) -> {
+		  if (request.session().attribute("webId") != null) {
+		    Map<String, Object> variables = new HashMap<>();
+		    variables.put("title", "profile");
+		    response.redirect("/profile");
+		    return freeMarker.render(new ModelAndView(variables, "profile.ftl"));
+		  } else {
+		    response.redirect("/login");
+        return new LoginHandler("");
+		  }
+		});
 		Spark.get("/login", new LoginHandler(""), freeMarker);
 		Spark.post("/create-account", new AccountCreator());
 		Spark.post("validate-login", new LoginValidator());
@@ -373,8 +384,11 @@ public class Gui {
 				System.out.println("validating");
 				String id = qm.value("id");
 				String password = qm.value("password");
+				if (!checkSql(id)) {
+				  toServer.put("result", false);
+				  return GSON.toJson(toServer);
+				}
 				if (User.userValidator(id, password)) {
-					System.out.println("good user");
 					toServer.put("result", true);
 					User user = User.byId(id);
 					arg0.session().attribute("webId", user.getWebId());
@@ -404,15 +418,17 @@ public class Gui {
 			QueryParamsMap qm = arg0.queryMap();
 			String name = qm.value("name");
 			String email = qm.value("email");
-			System.out.println(email);
 			String stripeToken = qm.value("stripe");
 			String cell = qm.value("cell");
-			System.out.println(cell);
 			int password = qm.value("password").hashCode();
 			Map<String, Object> toServer = new HashMap<>();
+			if (!checkSql(name) || !checkSql(email) || !checkSql(cell)) {
+			  toServer.put("success", false);
+			  return GSON.toJson(toServer);
+			}
 			if (User.accountExists(email)) {
 				toServer.put("success", false);
-				toServer.put("error", "Account already exists");
+				toServer.put("error", "exists");
 			} else {
 				if (testCharge(stripeToken).equals("error")) {
 					toServer.put("error", "stripe error");
@@ -452,6 +468,15 @@ public class Gui {
 			}
 			return "";
 		}
+	}
+
+	private static boolean checkSql(String toCheck) {
+	  toCheck = toCheck.toLowerCase().trim();
+	  if (toCheck.contains("insert into ") || toCheck.contains("update " )
+	      || toCheck.contains("select ") || toCheck.contains("remove ")) {
+	    return false;
+	  }
+	  return true;
 	}
 
 	/**

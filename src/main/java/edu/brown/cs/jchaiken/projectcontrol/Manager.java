@@ -20,6 +20,7 @@ import edu.brown.cs.jchaiken.deliveryobject.Order;
 import edu.brown.cs.jchaiken.deliveryobject.Order.OrderStatus;
 import edu.brown.cs.jchaiken.deliveryobject.OrderBean.OrderBuilder;
 import edu.brown.cs.jchaiken.deliveryobject.User;
+import edu.brown.cs.mhasan3.messaging.Sender;
 import spark.QueryParamsMap;
 import spark.Request;
 import spark.Response;
@@ -192,12 +193,17 @@ public class Manager {
 		public Object handle(Request arg0, Response arg1) throws Exception {
 			QueryParamsMap qm = arg0.queryMap();
 			Order o = Order.byId(qm.value("id"));
+			double price = Double.parseDouble(qm.value("price"));
 			o.setOrderStatus(Order.OrderStatus.COMPLETED);
 			o.getOrderer().addPastOrder(o);
+			o.getOrderer().charge(o.getPrice() + price + 7.60, o.getOrderItems().get(0),
+					o.getPickupLocation().getName(), o.getDropoffLocation().getName());
 			o.getDeliverer().addPastDelivery(o);
 			Manager.removeActiveUser(Manager.getUserJid(o.getOrderer().getWebId()));
 			Manager.removeActiveUser(Manager.getUserJid(o.getDeliverer().getWebId()));
 			OrderWebSocket.completeOrderRequester(widToJid.get(o.getOrderer().getWebId()));
+			Sender sender = new Sender(o.getOrderer().getCell());
+			sender.updateMessage("complete", o);
 			return "";
 		}
 	}

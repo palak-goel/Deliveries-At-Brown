@@ -214,7 +214,8 @@ class UserProxy extends DeliveryObjectProxy<User> implements User {
 						try (ResultSet orders = orderPrep.executeQuery()) {
 							while (orders.next()) {
 								Order order = Order.byId(orders.getString(1));
-								if (order.getDeliverer().getId().equals(super.getId())) {
+								if (order.getDeliverer() != null && 
+								    order.getDeliverer().getId().equals(super.getId())) {
 									if (order.status() == OrderStatus.COMPLETED) {
 										newUser.addPastDelivery(order);
 									} else {

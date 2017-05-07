@@ -36,6 +36,7 @@ function initMap() {
                 pickUpDirections += '\n';
                 this.sendDirectionsToDeliverer(pickUpDirections);
             }
+            console.log(pickUpDirections);
             document.getElementById("pickup-dirs").innerText = pickUpDirections;
         })
         var dropoffDirs = {}
@@ -48,6 +49,7 @@ function initMap() {
                 dropoffDirections += '\n';
                 this.sendDirectionsToDeliverer(dropoffDirections);
             }
+            console.log(dropoffDirections)
             document.getElementById("pickup-dirs2").innerText = dropoffDirections;
         })
     });
@@ -76,11 +78,23 @@ function sendDirectionsToDeliverer(string){
 }
 
 function completeDelivery() {
-    $.post("/complete-order", {id: localStorage.id}, responseJson => {
+    $.post("/complete-order", {id: localStorage.id, price: $("#price").val()}, responseJson => {
         window.location.href = '/deliverycompleted';
     });
 }
 
 function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+function sendTextToDeliverer() {
+    var message = document.getElementById("text-message").value;
+    const postParameters = {
+        number : delivererNumber,
+        content : message
+    }
+    $.post("/sendText", postParameters, responseJSON => {
+        });
+
+    
 }

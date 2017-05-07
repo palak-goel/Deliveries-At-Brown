@@ -4,7 +4,7 @@ function reset() {
 		//check phone number here
 		$("#reset").hide();
 		returnPackage = {
-			cell: document.getElementById("phone").value
+			cell: document.getElementById("area_code").value + document.getElementById("phone").value
 		}
 		phoneNumber = returnPackage.cell;
 		$.post("send-code", returnPackage, responseJSON => {

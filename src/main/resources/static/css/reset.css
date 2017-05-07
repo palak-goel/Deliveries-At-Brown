@@ -10,12 +10,13 @@
 
 #reset {
 	height: 100px;
-	width: 300px;
+	width: 400px;
 	text-align: center;
 	margin: auto;
 	position: relative;
 	top: 300px;
 }
+
 #enter_code {
 	margin: auto;
 	height: 100px;
@@ -25,6 +26,7 @@
 	position: relative;
 	top: 300px;
 }
+
 #enter_password {
 	margin: auto;
 	height: 100px;
@@ -34,6 +36,7 @@
 	position: relative;
 	top: 300px;
 }
+
 #success {
 	margin: auto;
 	height: 100px;

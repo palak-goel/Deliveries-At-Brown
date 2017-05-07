@@ -15,6 +15,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import com.stripe.Stripe;
 import com.stripe.model.Charge;
+import com.stripe.model.Customer;
 
 import edu.brown.cs.jchaiken.deliveryobject.Order;
 import edu.brown.cs.jchaiken.deliveryobject.User;
@@ -94,15 +95,15 @@ public class Gui {
 		Spark.webSocket("/deliverysocket", OrderWebSocket.class);
 		// Setup Spark Routes
 		Spark.get("/", (request, response) -> {
-		  if (request.session().attribute("webId") != null) {
-		    Map<String, Object> variables = new HashMap<>();
-		    variables.put("title", "profile");
-		    response.redirect("/profile");
-		    return freeMarker.render(new ModelAndView(variables, "profile.ftl"));
-		  } else {
-		    response.redirect("/login");
-        return new LoginHandler("");
-		  }
+			if (request.session().attribute("webId") != null) {
+				Map<String, Object> variables = new HashMap<>();
+				variables.put("title", "profile");
+				response.redirect("/profile");
+				return freeMarker.render(new ModelAndView(variables, "profile.ftl"));
+			} else {
+				response.redirect("/login");
+				return new LoginHandler("");
+			}
 		});
 		Spark.get("/login", new LoginHandler(""), freeMarker);
 		Spark.post("/create-account", new AccountCreator());
@@ -260,6 +261,8 @@ public class Gui {
 			QueryParamsMap qm = request.queryMap();
 			Order o = Order.byId(qm.value("id"));
 			OrderWebSocket.sendRemoveOrder(o);
+			Sender sender = new Sender(o.getOrderer().getCell());
+			sender.updateMessage("cancel", o);
 			return GSON.toJson("");
 		});
 		Spark.post("/order-history", (request, response) -> {
@@ -386,8 +389,8 @@ public class Gui {
 				String id = qm.value("id");
 				String password = qm.value("password");
 				if (!checkSql(id)) {
-				  toServer.put("result", false);
-				  return GSON.toJson(toServer);
+					toServer.put("result", false);
+					return GSON.toJson(toServer);
 				}
 				if (User.userValidator(id, password)) {
 					toServer.put("result", true);
@@ -424,21 +427,26 @@ public class Gui {
 			int password = qm.value("password").hashCode();
 			Map<String, Object> toServer = new HashMap<>();
 			if (!checkSql(name) || !checkSql(email) || !checkSql(cell)) {
-			  toServer.put("success", false);
-			  return GSON.toJson(toServer);
+				toServer.put("success", false);
+				return GSON.toJson(toServer);
 			}
 			if (User.accountExists(email)) {
 				toServer.put("success", false);
 				toServer.put("error", "exists");
 			} else {
-				if (testCharge(stripeToken).equals("error")) {
+			  Map<String, Object> customerParams = new HashMap<>();
+			  customerParams.put("description", "Customer for Deliveries @ Brown");
+			  customerParams.put("source", stripeToken);
+			  // ^ obtained with Stripe.js
+			  Customer customer = Customer.create(customerParams);
+				if (testCharge(customer.getId()).equals("error")) {
 					toServer.put("error", "stripe error");
 					toServer.put("success", false);
 				} else {
 					toServer.put("error", "");
 					UserBuilder builder = new UserBuilder();
 					User user = builder.setId(email).setName(name).setPassword(password).setCell(cell)
-							.setPayment(stripeToken).setOrdererRatings(new ArrayList<Double>())
+							.setPayment(customer.getId()).setOrdererRatings(new ArrayList<Double>())
 							.setDelivererRatings(new ArrayList<Double>()).setStatus(AccountStatus.ACTIVE)
 							.setDelivererRatings(new ArrayList<Double>()).setOrdererRatings(new ArrayList<Double>())
 							.build();
@@ -451,12 +459,12 @@ public class Gui {
 			return GSON.toJson(toServer);
 		}
 
-		private String testCharge(String token) {
+		private String testCharge(String customerId) {
 			Map<String, Object> params = new HashMap<String, Object>();
 			params.put("amount", TEST_CHARGE);
 			params.put("currency", "usd");
 			params.put("description", "Test charge");
-			params.put("source", token);
+			params.put("source", customerId);
 			try {
 				Charge charge = Charge.create(params);
 				if (!charge.getPaid()) {
@@ -472,12 +480,12 @@ public class Gui {
 	}
 
 	private static boolean checkSql(String toCheck) {
-	  toCheck = toCheck.toLowerCase().trim();
-	  if (toCheck.contains("insert into ") || toCheck.contains("update " )
-	      || toCheck.contains("select ") || toCheck.contains("remove ")) {
-	    return false;
-	  }
-	  return true;
+		toCheck = toCheck.toLowerCase().trim();
+		if (toCheck.contains("insert into ") || toCheck.contains("update ") || toCheck.contains("select ")
+				|| toCheck.contains("remove ")) {
+			return false;
+		}
+		return true;
 	}
 
 	/**

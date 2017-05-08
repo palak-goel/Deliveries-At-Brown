@@ -28,6 +28,28 @@ $(document).ready(() => {
 		data = JSON.parse(responseJson)
 		deliveries = data.deliver // past deliveries
 		order = data.order // past orders
+		ordTable = $("#ordTable")
+		delivTable = $("#delivTable")
+		for (var i = 0; i < order.length; i++) {
+			let pickup = order[i].data.pickupL.data.name
+			let dropoff = order[i].data.dropoffL.data.name
+			if (dropoff === "Current Location") {
+				dropoff = "User Location"
+			}
+			let item = order[i].data.items[0]
+			let tip = order[i].data.price
+			ordTable.append("<tr><td>" +  pickup + '</td><td>' + dropoff + '</td><td>' + item + '</td><td>' + tip + "</td></tr>")
+		}
+		for (var i = 0; i < deliveries.length; i++) {
+			let pickup = deliveries[i].data.pickupL.data.name
+			let dropoff = deliveries[i].data.dropoffL.data.name
+			if (dropoff === "Current Location") {
+				dropoff = "User Location"
+			}
+			let item = deliveries[i].data.items[0]
+			let tip = deliveries[i].data.price
+			delivTable.append("<tr><td>" +  pickup + '</td><td>' + dropoff + '</td><td>' + item + '</td><td>' + tip + "</td></tr>")
+		}
 		//TODO
 		
 		// table.append('<tr><td>'+ pickup + '</td><td>' + usr_rating + '</td><td>' + duration + " min" + '</td><td>' + 

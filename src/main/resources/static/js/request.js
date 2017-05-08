@@ -17,16 +17,44 @@ conn.onmessage = msg => {
 function setItemSuggests(arr){
     console.log(arr)
     for(let i = 0; i< arr.length; i++){
-        if(i < 4){
+        if(i < 3){
         $('#items').append("<option value=" + arr[i] + ">");
     }
     }
     
 }
-function setPickupSuggests(arr){
+
+function setItemCorrects(arr){
+    $('#items').empty();
     for(let i = 0; i< arr.length; i++){
         if(i < 4){
         $('#items').append("<option value=" + arr[i] + ">");
+    }
+    } 
+}
+
+function setPickupCorrects(arr){
+    $('#pickups').empty();
+    for(let i = 0; i< arr.length; i++){
+        if(i < 4){
+        $('#pickups').append("<option value=" + arr[i] + ">");
+    }
+    } 
+}
+
+function setDropoffCorrects(arr){
+    $('#dropoffs').empty();
+    for(let i = 0; i< arr.length; i++){
+        if(i < 4){
+        $('#dropoffs').append("<option value=" + arr[i] + ">");
+    }
+    } 
+}
+
+function setPickupSuggests(arr){
+    for(let i = 0; i< arr.length; i++){
+        if(i < 4){
+        $('#pickups').append("<option value=" + arr[i] + ">");
     }
     }
 
@@ -34,7 +62,7 @@ function setPickupSuggests(arr){
 function setDropOffSuggests(arr){
     for(let i = 0; i< arr.length; i++){
         if(i < 4){
-        $('#items').append("<option value=" + arr[i] + ">");
+        $('#dropoffs').append("<option value=" + arr[i] + ">");
     }
     }
 
@@ -78,6 +106,38 @@ $(document).ready(() => {
      $("#backLink").attr("hidden", false);
 }
 });
+    $(document).keyup(event => {
+       $.post("/correct", {}, responseJSON => {
+        const responseObject = JSON.parse(responseJSON);
+        console.log(responseObject)
+        setPickupCorrects(responseObject.pick);
+        setItemCorrects(responseObject.items);
+        setDropOffCorrects(responseObject.drop);
+
+    });
+        
+         // $.post("/mapCorrect", postParameters, responseJSON => {
+
+         //     const responseObject = JSON.parse(responseJSON);   
+         //     let one = responseObject.results;
+         //     let toPassOne = document.getElementById("opt");
+         //     let two = responseObject.second;
+         //     let toPassTwo = document.getElementById("opt1");
+         //     let three = responseObject.third;
+         //     let toPassThree = document.getElementById("opt2");
+         //     let four = responseObject.fourth;
+         //     let toPassFour = document.getElementById("opt3");
+             
+         //     updateBox(toPassOne, one);
+         //     updateBox(toPassTwo, two);
+         //     updateBox(toPassThree, three);
+         //     updateBox(toPassFour, four);
+             
+             
+             
+        });
+        
+  //  })
 });
 
 function initMap() {

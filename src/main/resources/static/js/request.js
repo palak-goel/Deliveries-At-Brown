@@ -107,12 +107,22 @@ $(document).ready(() => {
 }
 });
     $(document).keyup(event => {
-       $.post("/correct", {}, responseJSON => {
+        var pickUpLoc = document.getElementById("pick-up-loc").value;
+        console.log(pickUpLoc)
+        var dropOffLoc = document.getElementById("drop-off-loc").value;
+        console.log(dropOffLoc)
+        var ite = document.getElementById("item").value;
+        const postParamaters = {
+            pickup : pickUpLoc,
+            dropoff : dropOffLoc,
+            item : ite
+        }
+       $.post("/correct", postParamaters, responseJSON => {
         const responseObject = JSON.parse(responseJSON);
         console.log(responseObject)
         setPickupCorrects(responseObject.pick);
         setItemCorrects(responseObject.items);
-        setDropOffCorrects(responseObject.drop);
+        setDropoffCorrects(responseObject.drop);
 
     });
         

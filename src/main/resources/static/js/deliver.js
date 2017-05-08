@@ -47,6 +47,10 @@ function addOrders(data) {
   new Promise(function(resolve, reject) {
     getUserLocation(userPosition, resolve)
   }).then(function() {
+    if (data.orders.length == 0) {
+      console.log("ORDERS LENGTH IS ZERO")
+      table.find("tr:gt(0)").remove();
+    }
     for(let i = 0; i< data.orders.length; i++){
         let order = data.orders[i];
         all_orders[order.id] = order;
@@ -123,9 +127,9 @@ conn.onmessage = msg => {
           console.log("INNER")
         break;
     case MESSAGE_TYPE.ADD_ORDER:
+    case MESSAGE_TYPE.REMOVE_ORDER:
       console.log("Adding order");
         addOrders(data);
-
       break;
     case MESSAGE_TYPE.DELIVERED:
       localStorage.pLat = data.pLat;

@@ -1,5 +1,5 @@
 function submitRating() {
-	var rating = parseFloat(document.getElementById("ratingField").value);
+	let rating = parseFloat(document.getElementById("ratingField").value);
 	if (rating > 5) {
 		rating = 5;
 	} 

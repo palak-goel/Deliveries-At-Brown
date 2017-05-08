@@ -22,9 +22,10 @@ function login() {
 			console.log(from)
     		if (from == "") {
     			//go to home page
-    			window.location.replace("/profile")
+    			window.location.href = '/profile';
+
     		} else {
-    			window.location.replace("/profile");
+    			window.location.href = '/profile';
     		}
 
 		} else {
@@ -60,9 +61,9 @@ function createAccount(token) {
 			from = document.getElementById("from").value;
     		if (from == "") {
     			//go to home page
-    			window.location.replace("/profile")
+    			window.location.href = '/profile';
     		} else {
-    			window.location.replace("/" + from);
+    			window.location.href = '/profile';
     		}		
     	} else {
 			if ($responseObject.error == "exists") {

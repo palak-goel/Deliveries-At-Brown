@@ -14,7 +14,7 @@
             <h3 id = "status-text"> Deliver Confirmation </h3>
         </div>
         <div id = "choices">
-            <form action = "http://localhost:4567/requested">
+            <form action = "/requested">
                 <fieldset disabled>
                     <div class="form-group">
                       <label for="disabledTextInput">Pick Up Location</label>

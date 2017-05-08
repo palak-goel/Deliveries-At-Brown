@@ -3,8 +3,11 @@
 	<h1 id = "banner">Deliveries @ Brown</h1>
 </div>
 <div id = "reset">
-<p>Enter Phone Number To Reset Password</p>
+<p>Enter Email and Phone Number To Reset Password</p>
 <form class="form-inline">
+<div class="form-group">
+    <input type="text" class="form-control" id="acc_email" placeholder="Email">
+  </div>
   <div class="form-group">
     <input type="text" class="form-control" id="area_code" placeholder="Area Code" maxlength="3" size="10">
     <input type="text" class="form-control" id="phone" placeholder="Phone Number" maxlength="7" size="14">

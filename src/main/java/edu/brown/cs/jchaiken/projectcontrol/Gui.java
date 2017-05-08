@@ -235,7 +235,7 @@ public class Gui {
 				response.redirect("/login?from=deliver");
 				return new LoginHandler("deliver").handle(request, response);
 			}
-			Map<String, Object> variables = ImmutableMap.of("title", "Request");
+			Map<String, Object> variables = ImmutableMap.of("title", "Deliver");
 			return freeMarker.render(new ModelAndView(variables, "deliver.ftl"));
 		});
 
@@ -245,7 +245,7 @@ public class Gui {
 				response.redirect("/login?from=delivering");
 				return new LoginHandler("delivering").handle(request, response);
 			}
-			Map<String, Object> variables = ImmutableMap.of("title", "Request");
+			Map<String, Object> variables = ImmutableMap.of("title", "Deliver");
 			return freeMarker.render(new ModelAndView(variables, "delivering.ftl"));
 		});
 		Spark.get("/delivered", (request, response) -> {
@@ -254,7 +254,7 @@ public class Gui {
 				response.redirect("/login?from=delivered");
 				return new LoginHandler("delivered").handle(request, response);
 			}
-			Map<String, Object> variables = ImmutableMap.of("title", "Request");
+			Map<String, Object> variables = ImmutableMap.of("title", "Deliver");
 			return freeMarker.render(new ModelAndView(variables, "delivered.ftl"));
 		});
 		Spark.post("/delete-order", (request, response) -> {

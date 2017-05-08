@@ -12,7 +12,7 @@
 	</div>
     <center>
     <h3> You have completed your delivery! </h3>
-    <h4> Please give the requestor a rating below: </h4>
+    <h4> Please give the requestor a rating below (out of 5): </h4>
     <br>
     <div id = "rating">
         <input id = "ratingField" type="number" min = "0" max = "5" step = "1" class="form-control" id="formGroupExampleInput">

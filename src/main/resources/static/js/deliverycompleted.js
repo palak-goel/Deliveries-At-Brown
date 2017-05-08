@@ -1,6 +1,6 @@
 function submitRating() {
 	var rating = parseFloat(document.getElementById("ratingField").value);
-	if (isNaN(rating) || rating == null || rating.length < 1) {
+	if (rating == null || rating.length < 1) {
 		alert("Must enter a numeric rating")
 		return
 	}

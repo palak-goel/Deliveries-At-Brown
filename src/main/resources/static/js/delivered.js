@@ -86,7 +86,7 @@ function sendDirectionsToDeliverer(string){
 
 function completeDelivery() {
     var priceEntered = document.getElementById("price")
-    if (isNaN(priceEntered) || priceEntered == null || priceEntered.length < 1) {
+    if (priceEntered == null || priceEntered.length < 1) {
         alert("Must enter a numeric price");
         return 5;
     }

@@ -1,5 +1,9 @@
 function submitRating() {
 	var rating = parseFloat(document.getElementById("ratingField").value);
+	if (isNaN(rating) || rating == null || rating.length < 1) {
+		alert("Must enter a numeric rating")
+		return
+	}
 	if (rating > 5) {
 		rating = 5;
 	} 

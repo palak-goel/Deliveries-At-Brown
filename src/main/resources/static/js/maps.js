@@ -214,10 +214,12 @@ function geocode(latLng, address) {
 
 //READ JSON FILE INTO THESE TYPES:
 
-var campusFood = {"Blue Room" : {location : {lat: 41.826815, lng: -71.403174}, description : "The Room that is Blue"},
-                "Ratty" : {location : {lat: 41.825184, lng: -71.400814}, description : "The Rat"},
-                "Vdub" : {location : {lat: 41.829677, lng: -71.401533}, description: "Verney - Wooley"},
-                "Andrews" : {location: {lat: 41.830556, lng: -71.402381}, description: "Andrews"}
+var campusFood = {"Blue Room" : {location : {lat: 41.826815, lng: -71.403174}, description : "<b>Blue Room</b><br><i>Mon-Fri:</i> 7:30AM to 9PM<br><i>Sat-Sun:</i> 9AM to 5PM"},
+                "Ratty" : {location : {lat: 41.825184, lng: -71.400814}, description : "<b>The Ratty</b><br><i>Mon-Sat:</i> 7:30AM to 7:30PM<br><i>Sun:</i> 10:30AM to 7:30PM"},
+                "Ivy Room" : {location : {lat: 41.824884, lng: -71.401144}, description : "<b>Ivy Room</b><br><i>Sun:</i> 7:45PM to 12:00AM<br><i>Mon-Thurs:</i> 11:30AM to 1:45PM, 7:30PM to 12:00AM<br><i>Fri:</i> 11:30 AM to 1:45PM<br><i>Sun:</i> Closed"},
+                "Vdub" : {location : {lat: 41.829677, lng: -71.401533}, description: "<b>The V-Dub</b><br><i>Mon-Fri:</i> 7:30AM to 2:00PM, 4:30PM to 7:30PM<br><i>Sat-Sun:</i> Closed"},
+                "Andrews" : {location: {lat: 41.830556, lng: -71.402381}, description: "<b>Andrews</b><br><i>Everyday:</i> 10AM to 2AM"},
+                "Joes" : {location: {lat: 41.823477, lng: -71.399632}, description: "<b>Joe's</b><br><i>Everyday:</i> 6PM to 2AM"}
             }
 
 //Handles Location Errors

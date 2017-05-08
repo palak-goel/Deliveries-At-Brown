@@ -18,6 +18,7 @@ function setItemSuggests(arr){
     console.log(arr)
     for(let i = 0; i< arr.length; i++){
         if(i < 3){
+
         $('#items').append("<option value=" + arr[i] + ">");
     }
     }
@@ -37,6 +38,7 @@ function setPickupCorrects(arr){
     $('#pickups').empty();
     for(let i = 0; i< arr.length; i++){
         if(i < 4){
+
         $('#pickups').append("<option value=" + arr[i] + ">");
     }
     } 
@@ -54,6 +56,7 @@ function setDropoffCorrects(arr){
 function setPickupSuggests(arr){
     for(let i = 0; i< arr.length; i++){
         if(i < 4){
+            console.log(arr[i]);
         $('#pickups').append("<option value=" + arr[i] + ">");
     }
     }
@@ -120,9 +123,17 @@ $(document).ready(() => {
        $.post("/correct", postParamaters, responseJSON => {
         const responseObject = JSON.parse(responseJSON);
         console.log(responseObject)
-        setPickupCorrects(responseObject.pick);
-        setItemCorrects(responseObject.items);
-        setDropoffCorrects(responseObject.drop);
+        if(responseObject.pick.length > 0){
+            setPickupCorrects(responseObject.pick);
+        }
+        if(responseObject.items.length > 0){
+            setPickupCorrects(responseObject.items);
+        }
+        if(responseObject.drop.length > 0){
+            setPickupCorrects(responseObject.drop);
+        }
+        
+        
 
     });
         

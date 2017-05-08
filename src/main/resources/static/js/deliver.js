@@ -41,7 +41,7 @@ function addOrders(data) {
     clearTimeout(all_funs[i])
   }
   const table = $('table');
-  table.find("tr:gt(0)").remove();
+  
   var days = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
   var userPosition = {}
   new Promise(function(resolve, reject) {
@@ -72,6 +72,9 @@ function addOrders(data) {
           new Promise(function(resolve, reject) {
             getDistanceDuration(pickupObj, dropoffObj, directionObject2, resolve)
           }).then(function() {
+            if (i === 0) {
+              table.find("tr:gt(0)").remove();
+            }
             console.log("THIS IS I" + i)
             console.log(time)
             distance = parseFloat(dist1) + parseFloat(directionObject2["distance"]);

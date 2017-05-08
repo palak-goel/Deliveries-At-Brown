@@ -195,9 +195,11 @@ function sendFormToServer() {
 
 
     if (pickUpLoc == null || dropOffLoc == null || item == null || time == null || price == null) {
+        alert("All boxes must be filled")
         return;
     }
     if (pickUpLoc.length == 0 || dropOffLoc.length == 0 || item.length == 0 || time.length == 0 || price.length == 0) {
+        alert("All boxes must be filled")
         return;
     }
 

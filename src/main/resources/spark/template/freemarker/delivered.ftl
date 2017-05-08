@@ -27,9 +27,7 @@
         <div class="form-group">
             <span><input id = "price" type="number" min = "0" step = "0.01" class="form-control" id="formGroupExampleInput" placeholder="Insert amount"></span>
         </div>
-        <form action = "/deliverycompleted">
-            <button onclick = "completeDelivery();">Complete Delivery</button>
-        </form>
+        <button onclick = "completeDelivery();">Complete Delivery</button>
     </div>
     </#assign>
     <#include "main.ftl">

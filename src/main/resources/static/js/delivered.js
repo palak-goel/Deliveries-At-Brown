@@ -10,6 +10,9 @@ var pickup = {lat: parseFloat(localStorage.pLat), lng: parseFloat(localStorage.p
 var dropoff = {lat: parseFloat(localStorage.dLat), lng: parseFloat(localStorage.dLng)}
 
 function initMap() {
+    //TODO
+    //document.getElementById("pick-up-loc").innerText = localStorage
+    //document.getElementById("pick-up-item").innerText = localStorage
     document.getElementById("contact-name").innerText = capitalizeFirstLetter(localStorage.name.split(" ")[0]) + " " + capitalizeFirstLetter(localStorage.name.split(" ")[1]);
     var brown = {lat: 41.826820, lng: -71.402931};
     map = new google.maps.Map(document.getElementById('map'), {

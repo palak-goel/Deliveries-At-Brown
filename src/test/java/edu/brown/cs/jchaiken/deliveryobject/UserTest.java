@@ -9,10 +9,8 @@ public class UserTest {
 
   @Test
   public void testAccountStatus() {
-    assert AccountStatus.valueOf(0).ordinal()
-      == AccountStatus.ACTIVE.ordinal();
-    assert AccountStatus.valueOf(1).ordinal()
-      == AccountStatus.CLOSED.ordinal();
+    assert AccountStatus.valueOf(0).ordinal() == AccountStatus.ACTIVE.ordinal();
+    assert AccountStatus.valueOf(1).ordinal() == AccountStatus.CLOSED.ordinal();
     assert AccountStatus.CLOSED.ordinal() == 1;
     assert AccountStatus.ACTIVE.ordinal() == 0;
   }
@@ -22,7 +20,7 @@ public class UserTest {
     assert User.byId("hey") != null;
   }
 
-  @Test (expected = IllegalArgumentException.class)
+  @Test(expected = IllegalArgumentException.class)
   public void testNulLId() {
     User.byId(null);
   }

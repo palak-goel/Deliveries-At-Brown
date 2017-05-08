@@ -1,19 +1,21 @@
 package edu.brown.cs.mhasan3.rankers;
 
+import java.io.Serializable;
 import java.util.Comparator;
 
 import edu.brown.cs.jchaiken.deliveryobject.Order;
 
 /**
  * Class describes comparator for priority queue.
- * 
+ *
  * @author shehryarhasan
  *
  */
-public class RankerQueue implements Comparator<Order> {
+public class RankerQueue implements Comparator<Order>, Serializable {
+  private static final long serialVersionUID = 732680044738249301L;
 
   /**
-   * Constructor for RankerQueue
+   * Constructor for RankerQueue.
    */
   public RankerQueue() {
 

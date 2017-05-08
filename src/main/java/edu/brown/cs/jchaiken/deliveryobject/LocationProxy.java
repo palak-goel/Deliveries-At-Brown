@@ -1,20 +1,20 @@
 package edu.brown.cs.jchaiken.deliveryobject;
 
-import edu.brown.cs.jchaiken.database.Database;
-
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashSet;
 
+import edu.brown.cs.jchaiken.database.Database;
+
 /**
  * Proxy pattern class that interacts with the database to model a location.
+ *
  * @author jacksonchaiken
  *
  */
-class LocationProxy extends DeliveryObjectProxy<Location> implements
-    Location {
+class LocationProxy extends DeliveryObjectProxy<Location> implements Location {
 
   LocationProxy(String id) {
     super(id);
@@ -49,10 +49,10 @@ class LocationProxy extends DeliveryObjectProxy<Location> implements
       prep.setString(1, super.getId());
       try (ResultSet rs = prep.executeQuery()) {
         if (rs.next()) {
-          double lat = rs.getDouble(2);
-          double lng = rs.getDouble(3);
-          String name = rs.getString(4);
-          Location loc = new LocationBean(super.getId(), lat, lng, name);
+          final double lat = rs.getDouble(2);
+          final double lng = rs.getDouble(3);
+          final String name = rs.getString(4);
+          final Location loc = new LocationBean(super.getId(), lat, lng, name);
           super.setData(loc);
         }
       }
@@ -64,8 +64,11 @@ class LocationProxy extends DeliveryObjectProxy<Location> implements
 
   /**
    * Returns a location from the database.
-   * @param lat the latitude
-   * @param lng the longitude
+   *
+   * @param lat
+   *          the latitude
+   * @param lng
+   *          the longitude
    * @return return the location, or null if it does not exist.
    */
   public static Location byLatLng(double lat, double lng) {
@@ -78,7 +81,7 @@ class LocationProxy extends DeliveryObjectProxy<Location> implements
           return new LocationProxy(rs.getString(1));
         }
       }
-    } catch (SQLException exc) {
+    } catch (final SQLException exc) {
       exc.printStackTrace();
     }
     return null;
@@ -90,15 +93,20 @@ class LocationProxy extends DeliveryObjectProxy<Location> implements
 
   /**
    * Returns a collection of locations that are inside a bounding box.
-   * @param seLat the south-eastern latitude
-   * @param seLng the south-eastern longitude
-   * @param neLat the north-eastern latitude
-   * @param neLng the north-eastern longitude
+   *
+   * @param seLat
+   *          the south-eastern latitude
+   * @param seLng
+   *          the south-eastern longitude
+   * @param neLat
+   *          the north-eastern latitude
+   * @param neLng
+   *          the north-eastern longitude
    * @return Collection of locations
    */
   public static Collection<Location> byBoundingBox(double seLat, double seLng,
       double neLat, double neLng) {
-    Collection<Location> results = new HashSet<>();
+    final Collection<Location> results = new HashSet<>();
     try (PreparedStatement prep = Database.getConnection()
         .prepareStatement(BB_QUERY)) {
       prep.setDouble(1, seLat);
@@ -110,16 +118,18 @@ class LocationProxy extends DeliveryObjectProxy<Location> implements
           results.add(new LocationProxy(rs.getString(1)));
         }
       }
-    } catch (SQLException exc) {
+    } catch (final SQLException exc) {
       exc.printStackTrace();
     }
     return results;
   }
 
   private static final String BY_N = "SELECT id FROM locations WHERE name = ?";
+
   /**
    * Returns the location with a given name, if it exists.
-   * @param name the locations name.
+   * @param name
+   *          the locations name.
    * @return the location, or null if it does not exist.
    */
   public static Location byName(String name) {
@@ -131,7 +141,7 @@ class LocationProxy extends DeliveryObjectProxy<Location> implements
           return new LocationProxy(rs.getString(1));
         }
       }
-    } catch (SQLException e) {
+    } catch (final SQLException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
@@ -145,7 +155,7 @@ class LocationProxy extends DeliveryObjectProxy<Location> implements
    * @return the colleciton of locations.
    */
   public static Collection<Location> allLocations() {
-    Collection<Location> locs = new HashSet<>();
+    final Collection<Location> locs = new HashSet<>();
     try (PreparedStatement prep = Database.getConnection()
         .prepareStatement(ALL_L)) {
       try (ResultSet rs = prep.executeQuery()) {
@@ -153,7 +163,7 @@ class LocationProxy extends DeliveryObjectProxy<Location> implements
           locs.add(new LocationProxy(rs.getString(1)));
         }
       }
-    } catch (SQLException e) {
+    } catch (final SQLException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
@@ -165,7 +175,7 @@ class LocationProxy extends DeliveryObjectProxy<Location> implements
     check();
     if (super.getData() != null) {
       super.getData().addToDatabase();
-    }  
+    }
   }
 
   @Override
@@ -184,15 +194,17 @@ class LocationProxy extends DeliveryObjectProxy<Location> implements
     }
     return null;
   }
+
   private static final String COUNTER_Q = "SELECT COUNT(id) FROM locations";
 
   protected static int checkCounter() {
     if (Database.getConnection() != null) {
-      try (PreparedStatement prep = Database.getConnection().prepareStatement(COUNTER_Q)) {
+      try (PreparedStatement prep = Database.getConnection()
+          .prepareStatement(COUNTER_Q)) {
         try (ResultSet rs = prep.executeQuery()) {
           return rs.getInt(1);
         }
-      } catch (SQLException e) {
+      } catch (final SQLException e) {
         // TODO Auto-generated catch block
         e.printStackTrace();
       }

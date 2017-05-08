@@ -8,16 +8,16 @@ public class SuggestionItemTest {
 
   @Test
   public void testBasicFunctionality() {
-    SuggestionItem ite = new SuggestionItem("Item");
-    assertEquals(ite.getID(), "Item");
+    final SuggestionItem ite = new SuggestionItem("Item");
+    assertEquals(ite.getId(), "Item");
     assertEquals((int) ite.getRank(), 0);
   }
 
   @Test
   public void testSetterGetterFunctionality() {
-    SuggestionItem ite = new SuggestionItem("Item");
+    final SuggestionItem ite = new SuggestionItem("Item");
     ite.setRank(100.0);
-    assertEquals(ite.getID(), "Item");
+    assertEquals(ite.getId(), "Item");
     assertEquals((int) ite.getRank(), 100);
   }
 

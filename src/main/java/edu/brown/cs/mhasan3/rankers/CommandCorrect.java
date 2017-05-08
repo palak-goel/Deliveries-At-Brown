@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 //import edu.brown.cs.mhasan3.CSVReader;
@@ -20,10 +21,10 @@ public class CommandCorrect {
 
   private boolean pref;
   private int led;
-  private HashMap<String, Integer> frequency;
-  private HashMap<String, Integer> bigram;
-  private Trie trie;
-  private Levenshtein lev;
+  private final HashMap<String, Integer> frequency;
+  private final HashMap<String, Integer> bigram;
+  private final Trie trie;
+  private final Levenshtein lev;
   private boolean corpus;
 
   /**
@@ -33,8 +34,8 @@ public class CommandCorrect {
     pref = true;
     corpus = false;
     led = 2;
-    frequency = new HashMap<String, Integer>();
-    bigram = new HashMap<String, Integer>();
+    frequency = new HashMap<>();
+    bigram = new HashMap<>();
     trie = new Trie();
     lev = new Levenshtein();
   }
@@ -48,7 +49,7 @@ public class CommandCorrect {
   public void addList(List<String> words) {
     for (int i = 0; i < words.size(); i++) {
       String wor = words.get(i);
-      wor = wor.replaceAll("[^a-zA-Z ]", " ").toLowerCase();
+      wor = wor.replaceAll("[^a-zA-Z ]", " ").toLowerCase(Locale.getDefault());
       trie.addWord(wor);
 
     }
@@ -83,38 +84,38 @@ public class CommandCorrect {
    */
   public List<String> combineResults(String[] inputs) {
     if (!corpus) {
-      List<String> results = new ArrayList<String>();
+      List<String> results = new ArrayList<>();
       // System.out.println("not getting res");
       return results;
     } else {
       // System.out.println("getting res");
-      List<String> results = new ArrayList<String>();
-      int siz = inputs.length;
+      List<String> results = new ArrayList<>();
+      final int siz = inputs.length;
       if (siz <= 1) {
         return results;
       }
       String toCheck = inputs[siz - 1];
-      toCheck = toCheck.replaceAll("[^a-zA-Z ]", " ").toLowerCase();
+      toCheck = toCheck.replaceAll("[^a-zA-Z ]", " ").toLowerCase(
+          Locale.getDefault());
       if (pref) {
         List<String> temp = this.checkPrefix(toCheck);
         results.addAll(temp);
       }
       List<String> temp = this.checkLED(toCheck);
       results.addAll(temp);
-      Set<String> t = new HashSet<>();
+      final Set<String> t = new HashSet<>();
       t.addAll(results);
       results.clear();
       results.addAll(t);
       if (inputs.length == 2) {
-        ResultSorter sorter = new ResultSorter(frequency, bigram);
+        final ResultSorter sorter = new ResultSorter(frequency, bigram);
         sorter.single();
         sorter.setWord(toCheck);
         Collections.sort(results, sorter);
         Collections.reverse(results);
-        List<String> finRes = new ArrayList<String>();
+        List<String> finRes = new ArrayList<>();
         for (int j = 0; j < results.size(); j++) {
-          String output = results.get(j).trim();
-          output.trim();
+          final String output = results.get(j).trim();
           if (j < 5) {
             // System.out.println(output);
             finRes.add(output);
@@ -130,27 +131,26 @@ public class CommandCorrect {
           }
         }
         String te = builder.toString();
-        te = te.replaceAll("[^a-zA-Z ]", " ").toLowerCase();
+        te = te.replaceAll("[^a-zA-Z ]", " ").toLowerCase(Locale.getDefault());
         te = te.replaceAll("\\s+", " ");
-        te.trim();
-        ResultSorter sorter = new ResultSorter(frequency, bigram);
+        te = te.trim();
+        final ResultSorter sorter = new ResultSorter(frequency, bigram);
         sorter.single();
         sorter.setWord(toCheck);
         Collections.sort(results, sorter);
         Collections.reverse(results);
-        HashMap<String, Integer> noRepeat = new HashMap<String, Integer>();
-        List<String> finRes = new ArrayList<String>();
+        HashMap<String, Integer> noRepeat = new HashMap<>();
+        final List<String> finRes = new ArrayList<>();
         int sizRep = 0;
         for (int j = 0; j < results.size(); j++) {
-          String output = te + " " + results.get(j).trim();
-          output.trim();
+          String output = (te + " " + results.get(j).trim()).trim();
           if (!noRepeat.containsKey(output)) {
             noRepeat.put(output, 1);
           } else {
             noRepeat.put(output, noRepeat.get(output) + 1);
             sizRep += 1;
           }
-          if ((j < 5 + sizRep) && (noRepeat.get(output) == 1)) {
+          if (j < 5 + sizRep && noRepeat.get(output) == 1) {
             // System.out.println(output);
             finRes.add(output);
           }
@@ -177,8 +177,8 @@ public class CommandCorrect {
    * @return LED
    */
   public List<String> checkLED(String inp) {
-    List<String> res = new ArrayList<String>();
-    for (String key : frequency.keySet()) {
+    final List<String> res = new ArrayList<>();
+    for (final String key : frequency.keySet()) {
       if (lev.findEditDistance(inp, key) <= led) {
         res.add(key);
       }
@@ -194,9 +194,7 @@ public class CommandCorrect {
    * @return prefix
    */
   public List<String> checkPrefix(String inp) {
-    List<String> res = new ArrayList<String>();
-    res = trie.traverseTrie(inp);
-    return res;
+    return trie.traverseTrie(inp);
   }
 
   /**
@@ -225,15 +223,15 @@ public class CommandCorrect {
    */
   public void prefixChange(String[] inp) {
     switch (inp[1]) {
-    case "on":
-      pref = true;
-      break;
-    case "off":
-      pref = false;
-      break;
-    default:
-      System.out.println("ERROR: Invalid Command");
-      break;
+      case "on":
+        pref = true;
+        break;
+      case "off":
+        pref = false;
+        break;
+      default:
+        System.out.println("ERROR: Invalid Command");
+        break;
     }
   }
 
@@ -247,7 +245,7 @@ public class CommandCorrect {
     int newLed = led;
     try {
       newLed = Integer.parseInt(inp[1]);
-    } catch (NumberFormatException e) {
+    } catch (final NumberFormatException e) {
       System.out.println("ERROR: INVALID INPUT, NOT A NUMBER");
     }
     led = newLed;

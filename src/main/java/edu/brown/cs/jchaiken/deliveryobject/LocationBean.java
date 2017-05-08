@@ -1,26 +1,29 @@
 package edu.brown.cs.jchaiken.deliveryobject;
 
-import edu.brown.cs.jchaiken.database.Database;
-
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+import edu.brown.cs.jchaiken.database.Database;
+
 /**
- * LocationBean models a location as a latitude longitude pair with an ID
- * once it has been read in from the database.
+ * LocationBean models a location as a latitude longitude pair with an ID once
+ * it has been read in from the database.
  * @author jacksonchaiken
  *
  */
-class LocationBean extends DeliveryObjectBean<Location> implements
-    Location {
-  private double lat;
-  private double lng;
-  private String name;
+class LocationBean extends DeliveryObjectBean<Location> implements Location {
+  private final double lat;
+  private final double lng;
+  private final String name;
+
   /**
    * Creates a new Location Bean.
-   * @param newId the location's id.
-   * @param newLat the location's latitude.
-   * @param newLng the location's longitude.
+   * @param newId
+   *          the location's id.
+   * @param newLat
+   *          the location's latitude.
+   * @param newLng
+   *          the location's longitude.
    */
   LocationBean(String newId, double newLat, double newLng, String newName) {
     super(newId);
@@ -46,15 +49,15 @@ class LocationBean extends DeliveryObjectBean<Location> implements
 
   @Override
   public void addToDatabase() {
-    try (PreparedStatement prep = Database.getConnection().prepareStatement(
-        "INSERT INTO locations VALUES (?,?,?,?);")) {
+    try (PreparedStatement prep = Database.getConnection()
+        .prepareStatement("INSERT INTO locations VALUES (?,?,?,?);")) {
       prep.setString(1, super.getId());
       prep.setDouble(2, lat);
       prep.setDouble(3, lng);
       prep.setString(4, name);
       prep.addBatch();
       prep.executeBatch();
-    } catch (SQLException exc) {
+    } catch (final SQLException exc) {
       // TODO Auto-generated catch block
       exc.printStackTrace();
     }
@@ -62,11 +65,11 @@ class LocationBean extends DeliveryObjectBean<Location> implements
 
   @Override
   public void deleteFromDatabase() {
-    try (PreparedStatement prep = Database.getConnection().prepareStatement(
-        "DELETE FROM locations WHERE id = ?")) {
+    try (PreparedStatement prep = Database.getConnection()
+        .prepareStatement("DELETE FROM locations WHERE id = ?")) {
       prep.setString(1, super.getId());
       prep.executeUpdate();
-    } catch (SQLException exc) {
+    } catch (final SQLException exc) {
       // TODO Auto-generated catch block
       exc.printStackTrace();
     }

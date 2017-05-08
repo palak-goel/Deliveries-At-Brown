@@ -1,5 +1,6 @@
 package edu.brown.cs.mhasan3.rankers;
 
+import java.io.Serializable;
 import java.util.Comparator;
 
 /**
@@ -8,7 +9,9 @@ import java.util.Comparator;
  * @author shehryarhasan
  *
  */
-public class SuggestionQueue implements Comparator<SuggestionItem> {
+public class SuggestionQueue implements Comparator<SuggestionItem>,
+    Serializable {
+  private static final long serialVersionUID = -1579786484003000132L;
 
   /**
    * Constructor for SuggestionQueue.

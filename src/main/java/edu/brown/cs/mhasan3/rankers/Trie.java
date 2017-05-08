@@ -13,9 +13,9 @@ import java.util.Stack;
  */
 
 public class Trie {
-  private TrieNode root;
+  private final TrieNode root;
   private int size;
-  private Levenshtein calc;
+  private final Levenshtein calc;
 
   /**
    * Constructor sets up instance variables.
@@ -37,7 +37,7 @@ public class Trie {
     TrieNode current = root;
     boolean newWord = false;
     for (int i = 0; i < wor.length(); i++) {
-      char c = (wor.charAt(i));
+      final char c = wor.charAt(i);
       if (!current.checkChild(c)) {
         newWord = true;
         current.addChild(c);
@@ -80,7 +80,7 @@ public class Trie {
    * @return word
    */
   public List<String> traverseTrie(String word) {
-    List<String> results = new ArrayList<String>();
+    final List<String> results = new ArrayList<>();
     TrieNode curr = root;
     int dep = 0;
     for (int i = 0; i < word.length(); i++) {
@@ -93,14 +93,14 @@ public class Trie {
       return results;
     } else {
 
-      Stack<TrieNode> stack = new Stack<TrieNode>();
+      final Stack<TrieNode> stack = new Stack<>();
       stack.add(curr);
       while (!stack.isEmpty()) {
-        TrieNode nod = stack.pop();
-        if (nod.getWord() != "") {
+        final TrieNode nod = stack.pop();
+        if (!nod.getWord().equals("")) {
           results.add(nod.getWord());
         }
-        HashMap<Character, TrieNode> ma = nod.getList();
+        final HashMap<Character, TrieNode> ma = nod.getList();
         if (ma.size() != 0) {
           stack.addAll(ma.values());
         }

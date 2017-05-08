@@ -9,7 +9,7 @@ import edu.brown.cs.jchaiken.database.Database;
 public class LocationTest {
   @Test
   public void testNotNull() {
-    Location l = Location.byId("loc");
+    final Location l = Location.byId("loc");
     assert l != null;
   }
 
@@ -17,7 +17,7 @@ public class LocationTest {
   public void testIdGenerator() {
     String lastId = Location.IdGenerator.getNextId();
     for (int x = 0; x < 10000; x++) {
-      String id = Location.IdGenerator.getNextId();
+      final String id = Location.IdGenerator.getNextId();
       assert !lastId.equals(id);
       lastId = id;
     }
@@ -26,7 +26,7 @@ public class LocationTest {
   @Test
   public void testById() {
     Database.setUrl("data/test.sqlite3");
-    Location l = Location.byId("/l/1");
+    final Location l = Location.byId("/l/1");
     assert l.getLatitude() == 42.0;
   }
 
@@ -38,7 +38,7 @@ public class LocationTest {
 
   @Test
   public void testBoundingBox() {
-    Collection<Location> box = Location.byBoundingBox(30, -80, 50, -50);
+    final Collection<Location> box = Location.byBoundingBox(30, -80, 50, -50);
     assert box.size() == 5;
   }
 }

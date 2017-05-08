@@ -1,11 +1,5 @@
 package edu.brown.cs.jchaiken.deliveryobject;
 
-
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-
-import edu.brown.cs.jchaiken.database.Database;
-
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.HashSet;
@@ -13,23 +7,31 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+
+import edu.brown.cs.jchaiken.database.Database;
+
 /**
- * DeliveryObjectProxy is a superclass for the User and Order subclasses
- * which interact with the database.
+ * DeliveryObjectProxy is a superclass for the User and Order subclasses which
+ * interact with the database.
+ *
  * @author jacksonchaiken
  *
- * @param <T> the delivery object stored in the database.
+ * @param <T>
+ *          the delivery object stored in the database.
  */
 public abstract class DeliveryObjectProxy<T extends DeliveryObject> {
-  private String id;
+  private final String id;
   private T data;
   private static final int MAX_CACHE = 50000;
   private static final int TIMEOUT = 120;
   private static Cache<String, DeliveryObject> cache = CacheBuilder.newBuilder()
       .maximumSize(MAX_CACHE).expireAfterAccess(TIMEOUT, TimeUnit.MINUTES)
       .build();
-  private static Set<String> pending = Collections.synchronizedSet(
-      new HashSet<>());
+  private static Set<String> pending = Collections
+      .synchronizedSet(new HashSet<>());
+
   DeliveryObjectProxy(String newId) {
     if (newId == null) {
       throw new IllegalArgumentException("ID is null");
@@ -44,7 +46,7 @@ public abstract class DeliveryObjectProxy<T extends DeliveryObject> {
       return;
     }
     @SuppressWarnings("unchecked")
-    T internal = (T) cache.getIfPresent(id);
+    final T internal = (T) cache.getIfPresent(id);
     data = internal;
   }
 
@@ -71,11 +73,11 @@ public abstract class DeliveryObjectProxy<T extends DeliveryObject> {
 
   protected void check() {
     checkCache();
-    if (pending.contains(id) || (data == null && Database.getConnection()
-        != null)) {
+    if (pending.contains(id)
+        || data == null && Database.getConnection() != null) {
       try {
         cache();
-      } catch (SQLException exc) {
+      } catch (final SQLException exc) {
         exc.printStackTrace();
       }
     }
@@ -94,7 +96,7 @@ public abstract class DeliveryObjectProxy<T extends DeliveryObject> {
     if (!(obj instanceof DeliveryObject)) {
       return false;
     }
-    DeliveryObject temp = (DeliveryObject) obj;
+    final DeliveryObject temp = (DeliveryObject) obj;
     if (temp.getId().equals(this.id)
         && data == cache.getIfPresent(temp.getId())) {
       return true;

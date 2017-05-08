@@ -1,5 +1,6 @@
 package edu.brown.cs.mhasan3.rankers;
 
+import java.io.Serializable;
 import java.util.Comparator;
 import java.util.HashMap;
 
@@ -9,7 +10,8 @@ import java.util.HashMap;
  * @author mhasan3
  *
  */
-public class ResultSorter implements Comparator<String> {
+public class ResultSorter implements Comparator<String>, Serializable {
+  private static final long serialVersionUID = -2001941223932527041L;
   private String word;
   private String wordBefore;
   private HashMap<String, Integer> uni;
@@ -89,12 +91,12 @@ public class ResultSorter implements Comparator<String> {
 
   @Override
   public int compare(String o1, String o2) {
-    String[] one = o1.split(" ");
-    String[] two = o2.split(" ");
-    if (one[0] == word && one.length == 1) {
+    final String[] one = o1.split(" ");
+    final String[] two = o2.split(" ");
+    if (one[0].equals(word) && one.length == 1) {
       return 1;
     }
-    if (two[0] == word && two.length == 1) {
+    if (two[0].equals(word) && two.length == 1) {
       return -1;
     }
     if (length) {
@@ -108,12 +110,12 @@ public class ResultSorter implements Comparator<String> {
       }
       if (big.containsKey(wordBefore + " " + one[0])
           && big.containsKey(wordBefore + " " + two[0])) {
-        if (big.get(wordBefore + " " + one[0]) > big.get(wordBefore + " "
-            + two[0])) {
+        if (big.get(wordBefore + " " + one[0]) > big
+            .get(wordBefore + " " + two[0])) {
           return 1;
         }
-        if (big.get(wordBefore + " " + one[0]) < big.get(wordBefore + " "
-            + two[0])) {
+        if (big.get(wordBefore + " " + one[0]) < big
+            .get(wordBefore + " " + two[0])) {
           return -1;
         }
       }

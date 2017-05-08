@@ -9,7 +9,7 @@ import java.util.HashMap;
  *
  */
 public class TrieNode {
-  private HashMap<Character, TrieNode> children;
+  private final HashMap<Character, TrieNode> children;
   private boolean end;
   private String word;
   private final char character;
@@ -21,7 +21,7 @@ public class TrieNode {
    *          character.
    */
   public TrieNode(char curr) {
-    children = new HashMap<Character, TrieNode>();
+    children = new HashMap<>();
     end = false;
     character = curr;
     word = "";
@@ -87,7 +87,7 @@ public class TrieNode {
    *          child
    */
   public void addChild(char c) {
-    TrieNode temp = new TrieNode(c);
+    final TrieNode temp = new TrieNode(c);
     children.put(c, temp);
   }
 

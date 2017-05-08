@@ -1,16 +1,24 @@
 let phoneNumber;
 function reset() {
-	if (document.getElementById("phone").value != "") {
+	returnPackage = {
+		cell: document.getElementById("area_code").value + document.getElementById("phone").value
+		email: document.getElementById("acc_email").value
+	}
+	if (returnPackage.cell != "" && returnPackage.email != "") {
 		//check phone number here
 		$("#reset").hide();
-		returnPackage = {
-			cell: document.getElementById("area_code").value + document.getElementById("phone").value
-		}
 		phoneNumber = returnPackage.cell;
 		$.post("send-code", returnPackage, responseJSON => {
-			$("#loader").hide();
-			$("#enter_code").show();
+			$responseObject = JSON.parse(responseJSON);
+			if ($responseObject.error == "") {
+				$("#loader").hide();
+				$("#enter_code").show();
+			} else {
+				alert("No account could be found matching the given email and phone number");
+			}
 		});
+	} else {
+		alert("Please enter all fields to reset password")
 	}
 }
 

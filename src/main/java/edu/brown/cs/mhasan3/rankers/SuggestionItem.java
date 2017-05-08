@@ -3,7 +3,7 @@ package edu.brown.cs.mhasan3.rankers;
 /**
  * Class describes an item that can be suggested for the user making an order or
  * setting their preferences.
- * 
+ *
  * @author shehryarhasan
  *
  */
@@ -14,7 +14,7 @@ public class SuggestionItem {
 
   /**
    * Constructor takes in an id for the item.
-   * 
+   *
    * @param id
    *          name of item
    */
@@ -25,7 +25,7 @@ public class SuggestionItem {
 
   /**
    * Sets the Rank of the item.
-   * 
+   *
    * @param tem
    *          Double for new rank
    */
@@ -35,16 +35,16 @@ public class SuggestionItem {
 
   /**
    * Returns the name of the item.
-   * 
+   *
    * @return item
    */
-  public String getID() {
+  public String getId() {
     return ident;
   }
 
   /**
    * Returns the rank of the item.
-   * 
+   *
    * @return Double for the rank.
    */
   public double getRank() {

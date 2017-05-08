@@ -1,8 +1,5 @@
 package edu.brown.cs.jchaiken.deliveryobject;
 
-import edu.brown.cs.jchaiken.database.Database;
-import edu.brown.cs.jchaiken.deliveryobject.OrderBean.OrderBuilder;
-
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -11,8 +8,12 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
+import edu.brown.cs.jchaiken.database.Database;
+import edu.brown.cs.jchaiken.deliveryobject.OrderBean.OrderBuilder;
+
 /**
  * Models an order if it has not been read in from the database yet.
+ *
  * @author jacksonchaiken
  *
  */
@@ -24,12 +25,12 @@ class OrderProxy extends DeliveryObjectProxy<Order> implements Order {
     super(newId);
   }
 
-  private static final String CACHE_QUERY
-      = "SELECT * FROM orders WHERE id = ?";
+  private static final String CACHE_QUERY = "SELECT * FROM orders WHERE id = ?";
   private static final String STATUS_QUERY
       = "SELECT status FROM order_status WHERE order_id = ?";
   private static final String ITEM_QUERY
       = "SELECT item FROM items WHERE order_id = ?";
+
   @Override
   protected void cache() throws SQLException {
     try (PreparedStatement cachePrep = Database.getConnection()
@@ -37,7 +38,7 @@ class OrderProxy extends DeliveryObjectProxy<Order> implements Order {
       cachePrep.setString(1, super.getId());
       try (ResultSet cacheSet = cachePrep.executeQuery()) {
         if (cacheSet.next()) {
-          User orderer = null;;
+          User orderer = null;
           User deliverer = null;
           if (cacheSet.getString(2) != null) {
             orderer = User.byId(cacheSet.getString(2));
@@ -45,39 +46,34 @@ class OrderProxy extends DeliveryObjectProxy<Order> implements Order {
           if (cacheSet.getString(3) != null) {
             deliverer = User.byId(cacheSet.getString(3));
           }
-          double pickupTime = cacheSet.getDouble(4);
-          double dropoffTime = cacheSet.getDouble(5);
-          Location pickupLoc = Location.byId(cacheSet.getString(6));
-          Location dropoffLoc = Location.byId(cacheSet.getString(SEVEN));
-          double price = cacheSet.getDouble(EIGHT);
-          String phone = cacheSet.getString(9);
-          OrderBuilder builder = new OrderBuilder();
-          builder.setId(super.getId())
-              .setOrderer(orderer)
-              .setDeliverer(deliverer)
-              .setPickupTime(pickupTime)
-              .setDropoffTime(dropoffTime)
-              .setDropoff(dropoffLoc)
-              .setPickup(pickupLoc)
-              .setPrice(price)
-              .setPhone(phone);
+          final double pickupTime = cacheSet.getDouble(4);
+          final double dropoffTime = cacheSet.getDouble(5);
+          final Location pickupLoc = Location.byId(cacheSet.getString(6));
+          final Location dropoffLoc = Location.byId(cacheSet.getString(SEVEN));
+          final double price = cacheSet.getDouble(EIGHT);
+          final String phone = cacheSet.getString(9);
+          final OrderBuilder builder = new OrderBuilder();
+          builder.setId(super.getId()).setOrderer(orderer)
+              .setDeliverer(deliverer).setPickupTime(pickupTime)
+              .setDropoffTime(dropoffTime).setDropoff(dropoffLoc)
+              .setPickup(pickupLoc).setPrice(price).setPhone(phone);
           try (PreparedStatement statusPrep = Database.getConnection()
               .prepareStatement(STATUS_QUERY)) {
             statusPrep.setString(1, super.getId());
             try (ResultSet statusSet = statusPrep.executeQuery()) {
               int maxStatus = -1;
               while (statusSet.next()) {
-                maxStatus  = (maxStatus < statusSet.getInt(1))
+                maxStatus = maxStatus < statusSet.getInt(1)
                     ? statusSet.getInt(1) : maxStatus;
               }
-              OrderStatus status = OrderStatus.valueOf(maxStatus);
+              final OrderStatus status = OrderStatus.valueOf(maxStatus);
               builder.setOrderStatus(status);
             }
           }
-          List<String> dbItems = new ArrayList<>();
+          final List<String> dbItems = new ArrayList<>();
           try (PreparedStatement itemPrep = Database.getConnection()
               .prepareStatement(ITEM_QUERY)) {
-            itemPrep.setString(1,  super.getId());
+            itemPrep.setString(1, super.getId());
             try (ResultSet itemSet = itemPrep.executeQuery()) {
               while (itemSet.next()) {
                 dbItems.add(itemSet.getString(1));
@@ -86,7 +82,7 @@ class OrderProxy extends DeliveryObjectProxy<Order> implements Order {
           }
           builder.setItems(dbItems);
           builder.setDbStatus(true);
-          Order newOrder = builder.build();
+          final Order newOrder = builder.build();
           assert newOrder != null;
           super.setData(newOrder);
         }
@@ -232,14 +228,15 @@ class OrderProxy extends DeliveryObjectProxy<Order> implements Order {
   private static final String ITEM_SEARCH
       = "SELECT * FROM items WHERE item = ?";
 
-
   /**
    * Returns a list of orders that contain a certain item.
-   * @param item the item to search for.
+   *
+   * @param item
+   *          the item to search for.
    * @return the list of orders with that item.
    */
   public static Collection<Order> byItem(String item) {
-    Collection<Order> orders = new HashSet<>();
+    final Collection<Order> orders = new HashSet<>();
     try (PreparedStatement prep = Database.getConnection()
         .prepareStatement(ITEM_SEARCH)) {
       prep.setString(1, item);
@@ -248,7 +245,7 @@ class OrderProxy extends DeliveryObjectProxy<Order> implements Order {
           orders.add(new OrderProxy(rs.getString(1)));
         }
       }
-    } catch (SQLException exc) {
+    } catch (final SQLException exc) {
       exc.printStackTrace();
     }
     return orders;
@@ -259,11 +256,13 @@ class OrderProxy extends DeliveryObjectProxy<Order> implements Order {
 
   /**
    * Returns a list of orders from a given pickup location.
-   * @param pickup the location id where orders are picked up.
+   *
+   * @param pickup
+   *          the location id where orders are picked up.
    * @return the list of orders.
    */
   public static Collection<Order> byPickupLocation(String pickup) {
-    Collection<Order> orders = new ArrayList<>();
+    final Collection<Order> orders = new ArrayList<>();
     try (PreparedStatement prep = Database.getConnection()
         .prepareStatement(PICKUP_SEARCH)) {
       prep.setString(1, pickup);
@@ -272,7 +271,7 @@ class OrderProxy extends DeliveryObjectProxy<Order> implements Order {
           orders.add(new OrderProxy(rs.getString(1)));
         }
       }
-    } catch (SQLException exc) {
+    } catch (final SQLException exc) {
       exc.printStackTrace();
     }
     return orders;
@@ -283,11 +282,13 @@ class OrderProxy extends DeliveryObjectProxy<Order> implements Order {
 
   /**
    * Returns a collection of orders with a given status.
-   * @param status the orders' status.
+   *
+   * @param status
+   *          the orders' status.
    * @return the orders with that status.
    */
   public static Collection<Order> byStatus(OrderStatus status) {
-    Collection<Order> results = new HashSet<>();
+    final Collection<Order> results = new HashSet<>();
     try (PreparedStatement prep = Database.getConnection()
         .prepareStatement(ALL_STATUS)) {
       prep.setInt(1, status.ordinal());
@@ -296,7 +297,7 @@ class OrderProxy extends DeliveryObjectProxy<Order> implements Order {
           results.add(new OrderProxy(rs.getString(1)));
         }
       }
-    } catch (SQLException e) {
+    } catch (final SQLException e) {
       e.printStackTrace();
     }
     return results;
@@ -330,13 +331,15 @@ class OrderProxy extends DeliveryObjectProxy<Order> implements Order {
   }
 
   private static final String COUNTER_Q = "SELECT COUNT(id) FROM orders";
+
   protected static int checkCounter() {
     if (Database.getConnection() != null) {
-      try (PreparedStatement prep = Database.getConnection().prepareStatement(COUNTER_Q)) {
+      try (PreparedStatement prep = Database.getConnection()
+          .prepareStatement(COUNTER_Q)) {
         try (ResultSet rs = prep.executeQuery()) {
           return rs.getInt(1);
         }
-      } catch (SQLException e) {
+      } catch (final SQLException e) {
         // TODO Auto-generated catch block
         e.printStackTrace();
       }

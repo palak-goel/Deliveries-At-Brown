@@ -17,11 +17,10 @@ public class OrderTest {
     assertEquals(OrderStatus.valueOf(3).ordinal(), 3);
   }
 
-
   @Test
   public void testById() {
     Database.setUrl("data/test.sqlite3");
-    Order test = Order.byId("/o/1");
+    final Order test = Order.byId("/o/1");
     assert test.getDropoffTime() == 456.0;
     assert test.getDeliverer().getId().equals("palak_goel@brown.edu");
   }
@@ -29,7 +28,7 @@ public class OrderTest {
   @Test
   public void testBadId() {
     Database.setUrl("data/test.sqlite3");
-    Order test = Order.byId("bad");
+    final Order test = Order.byId("bad");
     assert test.getDeliverer() == null;
     assert test.getPrice() == Double.MAX_VALUE;
   }
@@ -37,7 +36,7 @@ public class OrderTest {
   @Test
   public void testByPickupLocation() {
     Database.setUrl("data/test.sqlite3");
-    Collection<Order>  orders = Order.byPickupLocation("/l/4");
+    final Collection<Order> orders = Order.byPickupLocation("/l/4");
     assert orders.size() == 1;
   }
 

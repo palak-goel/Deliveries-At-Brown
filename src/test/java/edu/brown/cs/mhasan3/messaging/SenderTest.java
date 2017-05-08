@@ -8,7 +8,7 @@ public class SenderTest {
 
   @Test
   public void testSettersReceiver() {
-    Sender sender = new Sender("+14012257856");
+    final Sender sender = new Sender("+14012257856");
     assertEquals(sender.getReceiver(), "+14012257856");
     sender.updateReceiver("+14012257852");
     assertEquals(sender.getReceiver(), "+14012257852");
@@ -17,7 +17,7 @@ public class SenderTest {
 
   @Test
   public void testSettersMessage() {
-    Sender sender = new Sender("+14012257856");
+    final Sender sender = new Sender("+14012257856");
     assertEquals(sender.getContent(), null);
     sender.updateReceiver("+16783829540");
     assertEquals(sender.getReceiver(), "+16783829540");

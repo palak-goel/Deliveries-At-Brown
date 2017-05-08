@@ -3,14 +3,16 @@ package edu.brown.cs.jchaiken.deliveryobject;
 import java.util.Objects;
 
 /**
- * DeliveryObjectBean is a super-class for the bean subclasses which
- * provide User and Order functionality.
+ * DeliveryObjectBean is a super-class for the bean subclasses which provide
+ * User and Order functionality.
+ *
  * @author jacksonchaiken
  *
- * @param <T> The delivery object modeled as a bean.
+ * @param <T>
+ *          The delivery object modeled as a bean.
  */
 public abstract class DeliveryObjectBean<T extends DeliveryObject> {
-  private String id;
+  private final String id;
 
   DeliveryObjectBean(String newId) {
     this.id = newId;
@@ -18,6 +20,7 @@ public abstract class DeliveryObjectBean<T extends DeliveryObject> {
 
   /**
    * Returns the objects id.
+   *
    * @return the id.
    */
   public String getId() {
@@ -32,7 +35,7 @@ public abstract class DeliveryObjectBean<T extends DeliveryObject> {
     if (!(obj instanceof DeliveryObjectBean)) {
       return false;
     }
-    DeliveryObjectBean<?> temp = (DeliveryObjectBean<?>) obj;
+    final DeliveryObjectBean<?> temp = (DeliveryObjectBean<?>) obj;
     if (temp.getId().equals(this.id)) {
       return true;
     }

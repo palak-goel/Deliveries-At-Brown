@@ -1,6 +1,5 @@
 package edu.brown.cs.jchaiken.deliveryobject;
 
-
 import static org.junit.Assert.assertEquals;
 
 import java.util.Collection;
@@ -19,8 +18,8 @@ public class OrderProxyTest {
   @Test
   public void testGoodProxy() {
     Database.setUrl("data/test.sqlite3");
-    OrderProxy test = new OrderProxy("/o/1");
-    //precache
+    final OrderProxy test = new OrderProxy("/o/1");
+    // precache
     assert test.getData() == null;
     assert test.getOrderer().getId().equals("jackson_chaiken@brown.edu");
     assert test.getPickupTime() == 123;
@@ -32,7 +31,7 @@ public class OrderProxyTest {
 
   @Test
   public void testBadProxy() {
-    OrderProxy test = new OrderProxy("2");
+    final OrderProxy test = new OrderProxy("2");
     assert test.getDeliverer() == null;
     assert test.getData() == null;
     assert test.getPrice() == Double.MAX_VALUE;
@@ -44,30 +43,30 @@ public class OrderProxyTest {
   @Test
   public void testByItem() {
     Database.setUrl("data/test.sqlite3");
-    Collection<Order> muffins = OrderProxy.byItem("muffin");
+    final Collection<Order> muffins = OrderProxy.byItem("muffin");
     assert muffins.size() == 2;
-    Order muffin = muffins.iterator().next();
+    final Order muffin = muffins.iterator().next();
     assert muffin.getId().equals("/o/1") || muffin.getId().equals("/o/3");
   }
 
   @Test
   public void testByItemNoItem() {
     Database.setUrl("data/test.sqlite3");
-    Collection<Order> muffins = OrderProxy.byItem("spicy");
+    final Collection<Order> muffins = OrderProxy.byItem("spicy");
     assert muffins.size() == 0;
   }
 
   @Test
   public void testByPickupLocationGood() {
     Database.setUrl("data/test.sqlite3");
-    Collection<Order> orders = OrderProxy.byPickupLocation("/l/1");
+    final Collection<Order> orders = OrderProxy.byPickupLocation("/l/1");
     assertEquals(orders.size(), 2);
   }
-  
+
   @Test
   public void testNoPickupLoc() {
     Database.setUrl("data/test.sqlite3");
-    Collection<Order> orders = OrderProxy.byPickupLocation("hey");
+    final Collection<Order> orders = OrderProxy.byPickupLocation("hey");
     assert orders.size() == 0;
   }
 }

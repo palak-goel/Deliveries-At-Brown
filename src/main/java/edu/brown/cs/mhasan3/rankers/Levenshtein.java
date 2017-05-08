@@ -1,5 +1,7 @@
 package edu.brown.cs.mhasan3.rankers;
 
+import java.util.Locale;
+
 /**
  * Class describes the Levenshtein edit distance function.
  *
@@ -58,15 +60,15 @@ public class Levenshtein {
    * @return integer
    */
   public int findEditDistance(String one, String two) {
-    one = one.toLowerCase();
-    two = two.toLowerCase();
+    one = one.toLowerCase(Locale.getDefault());
+    two = two.toLowerCase(Locale.getDefault());
     int dist = 0;
     int subs = 0;
-    String str1 = " ".concat(one);
-    String str2 = " ".concat(two);
-    int m = str1.length();
-    int n = str2.length();
-    int[][] arr = new int[m][n];
+    final String str1 = " ".concat(one);
+    final String str2 = " ".concat(two);
+    final int m = str1.length();
+    final int n = str2.length();
+    final int[][] arr = new int[m][n];
     for (int i = 0; i < n; i++) {
       arr[0][i] = i;
     }

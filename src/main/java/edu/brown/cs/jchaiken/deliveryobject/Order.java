@@ -4,8 +4,9 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Top-level interface that allows for other classes to interact with
- * Orders without knowing the underlying state.
+ * Top-level interface that allows for other classes to interact with Orders
+ * without knowing the underlying state.
+ *
  * @author jacksonchaiken
  *
  */
@@ -13,15 +14,12 @@ public interface Order extends DeliveryObject {
 
   /**
    * Various statuses that Orders can take on.
+   *
    * @author jacksonchaiken
    *
    */
   enum OrderStatus {
-    UNASSIGNED,
-    ASSIGNED,
-    AT_LOCATION,
-    HAVE_FOOD,
-    COMPLETED;
+    UNASSIGNED, ASSIGNED, AT_LOCATION, HAVE_FOOD, COMPLETED;
 
     public static OrderStatus valueOf(int status) {
       switch (status) {
@@ -43,36 +41,43 @@ public interface Order extends DeliveryObject {
 
   /**
    * Returns the user that ordered the order.
+   *
    * @return the user who ordered.
    */
   User getOrderer();
 
   /**
    * Returns the deliverer.
+   *
    * @return the deliverer who accepted, or null if none assigned.
    */
   User getDeliverer();
 
   /**
    * Assigns a user to be the deliverer.
-   * @param deliverer the user.
+   *
+   * @param deliverer
+   *          the user.
    */
   void assignDeliverer(User deliverer);
 
   /**
    * Returns the items in the order.
+   *
    * @return the items.
    */
   List<String> getOrderItems();
 
   /**
    * Returns the pickup location.
+   *
    * @return the location
    */
   Location getPickupLocation();
 
   /**
    * Returns the dropoff location.
+   *
    * @return the location.
    */
   Location getDropoffLocation();
@@ -85,7 +90,8 @@ public interface Order extends DeliveryObject {
 
   /**
    * Sets the price.
-   * @param price the new price.
+   * @param price
+   *          the new price.
    */
   void setPrice(double price);
 
@@ -96,7 +102,8 @@ public interface Order extends DeliveryObject {
 
   /**
    * Sets the order's status. Also updates the status in the database.
-   * @param status the status.
+   * @param status
+   *          the status.
    */
   void setOrderStatus(OrderStatus status);
 
@@ -136,7 +143,8 @@ public interface Order extends DeliveryObject {
 
   /**
    * Sets the orders ranking.
-   * @param rank the ranking weight.
+   * @param rank
+   *          the ranking weight.
    */
   void setRanking(double rank);
 
@@ -148,7 +156,8 @@ public interface Order extends DeliveryObject {
 
   /**
    * Returns an order based on its id.
-   * @param id the order's id.
+   * @param id
+   *          the order's id.
    * @return the order.
    */
   static Order byId(String id) {
@@ -157,7 +166,8 @@ public interface Order extends DeliveryObject {
 
   /**
    * Returns a list of orders with a given pickup location.
-   * @param pickup the pickup location.
+   * @param pickup
+   *          the pickup location.
    * @return a list of orders.
    */
   static Collection<Order> byPickupLocation(String pickup) {
@@ -166,7 +176,8 @@ public interface Order extends DeliveryObject {
 
   /**
    * Returns orders that contain a given item.
-   * @param item the item to find.
+   * @param item
+   *          the item to find.
    * @return the list of orders
    */
   static Collection<Order> byItem(String item) {
@@ -175,12 +186,12 @@ public interface Order extends DeliveryObject {
 
   /**
    * Returns a collection of orders with the given status.
-   * @param status the status in question
+   * @param status
+   *          the status in question
    * @return the collection of orders.
    */
   static Collection<Order> byStatus(OrderStatus status) {
     return OrderProxy.byStatus(status);
   }
-
 
 }

@@ -19,13 +19,13 @@ import edu.brown.cs.jchaiken.projectcontrol.Manager;
  */
 public class Ranker {
 
-  private Manager manage;
-  private List<Order> orders;
-  private User user;
+  private final Manager manage;
+  private final List<Order> orders;
+  private final User user;
 
   /**
    * Constructor takes in the manager and the current user.
-   * 
+   *
    * @param m
    *          manager
    * @param curr
@@ -39,13 +39,14 @@ public class Ranker {
 
   /**
    * Orders by the time the order was inputted.
-   * 
+   *
    * @return list
    */
   public List<Order> orderByTime() {
-    PriorityQueue<Order> queue = new PriorityQueue<Order>(new RankerQueue());
-    for (Order o : orders) {
-      double tim = o.getDropoffTime();
+    final PriorityQueue<Order> queue = new PriorityQueue<>(
+        new RankerQueue());
+    for (final Order o : orders) {
+      final double tim = o.getDropoffTime();
       o.setRanking(tim);
       queue.add(o);
     }
@@ -53,65 +54,68 @@ public class Ranker {
   }
 
   /**
-   * Orders by the tip inputted only
-   * 
+   * Orders by the tip input only.
+   *
    * @return ordered list
    */
   public List<Order> orderByPrice() {
-    PriorityQueue<Order> queue = new PriorityQueue<Order>(new RankerQueue());
-    for (Order o : orders) {
-      double tip = o.getPrice();
+    final PriorityQueue<Order> queue = new PriorityQueue<>(
+        new RankerQueue());
+    for (final Order o : orders) {
+      final double tip = o.getPrice();
       o.setRanking(tip);
       queue.add(o);
     }
-    List<Order> q = this.returnAnswer(queue);
+    final List<Order> q = this.returnAnswer(queue);
     Collections.reverse(q);
     return q;
   }
 
   /**
-   * Orders by the distance only
-   * 
+   * Orders by the distance only.
+   *
    * @return ordered list
    */
   public List<Order> orderByDistance() {
-    PriorityQueue<Order> queue = new PriorityQueue<Order>(new RankerQueue());
-    for (Order o : orders) {
-      Location pickLoc = o.getPickupLocation();
-      double la1 = pickLoc.getLatitude();
-      double lg1 = pickLoc.getLongitude();
-      Location dropLoc = o.getDropoffLocation();
-      double la2 = dropLoc.getLatitude();
-      double lg2 = dropLoc.getLongitude();
-      double res = this.haversineFormula(la1, lg1, la2, lg2);
+    final PriorityQueue<Order> queue = new PriorityQueue<>(
+        new RankerQueue());
+    for (final Order o : orders) {
+      final Location pickLoc = o.getPickupLocation();
+      final double la1 = pickLoc.getLatitude();
+      final double lg1 = pickLoc.getLongitude();
+      final Location dropLoc = o.getDropoffLocation();
+      final double la2 = dropLoc.getLatitude();
+      final double lg2 = dropLoc.getLongitude();
+      final double res = this.haversineFormula(la1, lg1, la2, lg2);
       o.setRanking(res);
       queue.add(o);
     }
-    List<Order> q = this.returnAnswer(queue);
+    final List<Order> q = this.returnAnswer(queue);
     Collections.reverse(q);
     return q;
   }
 
   /**
    * Method is called to return the ranked list.
-   * 
+   *
    * @return List of Orders
    */
   public List<Order> rank() {
-    PriorityQueue<Order> queue = new PriorityQueue<Order>(new RankerQueue());
-    for (Order o : orders) {
-      double time = this.considerTime(o); // this has to be fixed.
-      double dist = this.considerDistance(o);
-      double stars = this.considerStars(o);
-      double payment = this.considerPayment(o);
-      double history = this.considerHistory(o);
+    final PriorityQueue<Order> queue = new PriorityQueue<>(
+        new RankerQueue());
+    for (final Order o : orders) {
+      final double time = this.considerTime(o); // this has to be fixed.
+      final double dist = this.considerDistance(o);
+      final double stars = this.considerStars(o);
+      final double payment = this.considerPayment(o);
+      final double history = this.considerHistory(o);
       // System.out.println(time);
       // System.out.println(dist);
       // System.out.println(stars);
       // System.out.println(payment);
       // System.out.println(history);
-      double weightedAverage = this.weightedAverage(time, dist, stars, payment,
-          history);
+      final double weightedAverage = this.weightedAverage(time, dist, stars,
+          payment, history);
       // System.out.println("avg" + weightedAverage);
       o.setRanking(weightedAverage);
       queue.add(o);
@@ -121,15 +125,15 @@ public class Ranker {
 
   /**
    * Helper method that turns a queue into an Arraylist.
-   * 
+   *
    * @param q
    *          queue
    * @return list
    */
   public List<Order> returnAnswer(PriorityQueue<Order> q) {
-    List<Order> ans = new ArrayList<Order>();
+    final List<Order> ans = new ArrayList<>();
     while (!q.isEmpty()) {
-      Order tem = q.poll();
+      final Order tem = q.poll();
       ans.add(tem);
     }
     return ans;
@@ -137,7 +141,7 @@ public class Ranker {
 
   /**
    * Finds the weighted average of all of the individual components.
-   * 
+   *
    * @param t
    *          time
    * @param d
@@ -152,56 +156,57 @@ public class Ranker {
    */
   public double weightedAverage(double t, double d, double s, double pay,
       double his) {
-    double ans = t + d + (3 * s) + (5 * pay) + his;
+    final double ans = t + d + (3 * s) + (5 * pay) + his;
     return ans;
   }
 
   /**
    * Considers the time of the order.
-   * 
+   *
    * @param curr
    *          Order
    * @return double for average
    */
 
   public double considerTime(Order curr) {
-    double userTime = user.getDeliveryTimePreference();
+    final double userTime = user.getDeliveryTimePreference();
     // System.out.println("user" + userTime);
-    double currTime = (System.currentTimeMillis() / 1000);
-    double endTime = curr.getDropoffTime();
+    final double currTime = (double) System.currentTimeMillis()
+        / (double) 1000;
+    final double endTime = curr.getDropoffTime();
     // System.out.println("curr" + currTime);
     // System.out.println("end" + endTime);
     // currTime =
-    double timeDiffSecs = endTime - currTime;
-    double timeDiffMins = timeDiffSecs / 60;
-    double res = Math.abs(userTime - timeDiffMins);
+    final double timeDiffSecs = endTime - currTime;
+    final double timeDiffMins = timeDiffSecs / 60;
+    final double res = Math.abs(userTime - timeDiffMins);
     return res;
   }
 
   /**
    * Considers the distance that the user will have to walk to deliver the
    * order.
-   * 
+   *
    * @param curr
    *          Order
    * @return double for average
    */
   public double considerDistance(Order curr) {
-    double userDist = user.getDeliveryDistancePreference();
-    Location pickLoc = curr.getPickupLocation();
-    double la1 = pickLoc.getLatitude();
-    double lg1 = pickLoc.getLongitude();
-    Location dropLoc = curr.getDropoffLocation();
-    double la2 = dropLoc.getLatitude();
-    double lg2 = dropLoc.getLongitude();
-    double res = this.haversineFormula(la1, lg1, la2, lg2);
-    double rem = Math.abs(userDist - res);
+    final double userDist = user.getDeliveryDistancePreference();
+    final Location pickLoc = curr.getPickupLocation();
+    final double la1 = pickLoc.getLatitude();
+    final double lg1 = pickLoc.getLongitude();
+    final Location dropLoc = curr.getDropoffLocation();
+    final double la2 = dropLoc.getLatitude();
+    final double lg2 = dropLoc.getLongitude();
+    final double res = this.haversineFormula(la1, lg1, la2, lg2);
+    final double rem = Math.abs(userDist - res);
     return rem;
   }
 
   /**
    * Uses the Haversine Formula to find the distance from start to end.
-   * 
+   *
    * @param lat1
    *          latitude
    * @param lng1
@@ -215,30 +220,30 @@ public class Ranker {
   public double haversineFormula(Double lat1, Double lng1, Double lat2,
       Double lng2) {
     double res = 0.0;
-    double radius = 6378.137;
-    double dLat = Math.toRadians(lat2 - lat1);
-    double dLon = Math.toRadians(lng2 - lng1);
+    final double radius = 6378.137;
+    final double dLat = Math.toRadians(lat2 - lat1);
+    final double dLon = Math.toRadians(lng2 - lng1);
     lat1 = Math.toRadians(lat1);
     lat2 = Math.toRadians(lat2);
-    double a = Math.pow(Math.sin(dLat / 2), 2)
+    final double a = Math.pow(Math.sin(dLat / 2), 2)
         + Math.pow(Math.sin(dLon / 2), 2) * Math.cos(lat1) * Math.cos(lat2);
-    double c = 2 * Math.asin(Math.sqrt(a));
+    final double c = 2 * Math.asin(Math.sqrt(a));
     res = radius * c;
     return res;
   }
 
   /**
    * Considers the Payment that the orderer would receieve.
-   * 
+   *
    * @param curr
    *          Order
    * @return double for average
    */
 
   public double considerPayment(Order curr) {
-    double currentPay = curr.getPrice();
-    double desiredPay = user.getDeliveryFeePreference();
-    double res = desiredPay - currentPay;
+    final double currentPay = curr.getPrice();
+    final double desiredPay = user.getDeliveryFeePreference();
+    final double res = desiredPay - currentPay;
     return res;
   }
 
@@ -250,7 +255,7 @@ public class Ranker {
    * @return double for average
    */
   public double considerStars(Order curr) {
-    User u = curr.getOrderer();
+    final User u = curr.getOrderer();
     double stars = u.getOrdererRating();
     stars = 5.0 - stars;
     return stars;
@@ -259,21 +264,19 @@ public class Ranker {
   /**
    * Considers whether the orderer and the deliverer have a history of
    * interactions.
-   * 
+   *
    * @param curr
    *          Order
    * @return double for average
    */
   public double considerHistory(Order curr) {
-    User u = curr.getOrderer();
-    Collection<Order> past = u.pastDeliveries();
-    List<Order> p = new ArrayList<Order>(past);
+    final User u = curr.getOrderer();
+    final Collection<Order> past = u.pastDeliveries();
+    final List<Order> p = new ArrayList<>(past);
     double res = 5.0;
-    for (Order o : p) {
-      if (o.getOrderer().getId().equals(u.getId())) {
-        if (res > 0.0) {
-          res = res - 1.0;
-        }
+    for (final Order o : p) {
+      if (o.getOrderer().getId().equals(u.getId()) && res > 0.0) {
+        res = res - 1.0;
       }
     }
     return res;

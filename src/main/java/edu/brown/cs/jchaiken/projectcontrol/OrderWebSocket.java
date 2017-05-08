@@ -87,7 +87,7 @@ public class OrderWebSocket {
 						GSON.toJson(ImmutableMap.of("error", "CLAIMED", "type", MESSAGE_TYPE.DELIVERED.ordinal())));
 				return;
 			}
-			Manager.addOrder(o);
+			// Manager.addOrder(o);
 			if (o.getDropoffTime() < (System.currentTimeMillis() / 1000L)) {
 				session.getRemote().sendString(
 						GSON.toJson(ImmutableMap.of("error", "TIME", "type", MESSAGE_TYPE.DELIVERED.ordinal())));

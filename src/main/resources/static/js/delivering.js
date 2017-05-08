@@ -61,8 +61,13 @@ conn.onmessage = msg => {
         conn.send(JSON.stringify({jid: jid, type: MESSAGE_TYPE.CONNECT}))
         break;*/
     case MESSAGE_TYPE.DELIVERED:
-      if (data.error === "TIME") {
+      if (data.error === "TIME" || data.error === "CLAIMED") {
         console.log("error")
+        if (data.error === "TIME") {
+          alert("Ticket expired! Please take another order :)")
+        } else {
+          alert("Sorry! Order already claimed!")
+        }
         window.location.href = "/deliver"
       } else {
         console.log(data)

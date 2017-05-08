@@ -6,6 +6,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -21,6 +22,7 @@ import edu.brown.cs.jchaiken.deliveryobject.User;
 import edu.brown.cs.jchaiken.deliveryobject.User.AccountStatus;
 import edu.brown.cs.jchaiken.deliveryobject.User.UserBuilder;
 import edu.brown.cs.mhasan3.messaging.Sender;
+import edu.brown.cs.mhasan3.rankers.Ranker;
 import edu.brown.cs.mhasan3.rankers.Suggestor;
 import freemarker.template.Configuration;
 import spark.ExceptionHandler;
@@ -137,6 +139,42 @@ public class Gui {
 			sender.customMessage(content);
 			sender.sendMessage();
 			return new Object();
+		});
+		Spark.post("/submit-Ordering", (request, response) -> {
+			try {
+				QueryParamsMap qm = request.queryMap();
+				User u = User.byWebId(request.session().attribute("webId"));
+				String opt = qm.value("option");
+				Ranker r = new Ranker(MANAGER, u);
+				List<Order> os = new ArrayList<>();
+				if (opt.equals("tip")) {
+					os = r.orderByPrice();
+				} else if (opt.equals("distance")) {
+					os = r.orderByDistance();
+				} else {
+					os = r.orderByTime();
+				}
+				OrderWebSocket.sendOrders(request.session().id(), os);
+				return "";
+			} catch (Exception e) {
+				e.printStackTrace();
+				return "";
+			}
+		});
+		Spark.post("/submit-Preferences", (request, response) -> {
+			try {
+				QueryParamsMap qm = request.queryMap();
+				User u = User.byWebId(request.session().attribute("webId"));
+				double price = Double.parseDouble(qm.value("price"));
+				double distance = Double.parseDouble(qm.value("distance"));
+				double time = Double.parseDouble(qm.value("time"));
+				u.addDeliveryPreferences(distance, price, time);
+				Ranker r = new Ranker(MANAGER, u);
+				OrderWebSocket.sendOrders(request.session().id(), r.rank());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return "";
 		});
 		Spark.post("/validate-code", (request, response) -> {
 			String cell = request.queryMap().value("cell");

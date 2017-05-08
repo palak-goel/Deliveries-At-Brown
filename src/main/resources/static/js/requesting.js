@@ -15,6 +15,7 @@ conn.onmessage = msg => {
       console.log("REQUESTED");
       if (data.error === "CLAIMED" || data.error === "TIME") {
         console.log("ERROR");
+        alert("Ticket expired! Please submit again :)")
         window.location.href = '/request'
       } else {
         localStorage.name = data.name;

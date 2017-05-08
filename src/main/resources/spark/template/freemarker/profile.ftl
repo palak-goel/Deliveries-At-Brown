@@ -26,25 +26,23 @@
     <div id = "history">
         <h2>History</h2>
         <h3>Order History</h3>
-        <table id="table">
+        <table id="ordTable">
           <tr>
             <th>Pick-Up</th>
             <th>Drop-Off</th>
             <th>Item</th>
-            <th>Price</th>
-            <th>Rating</th>
+            <th>Tip</th>
           </tr>
           <tbody>
           </tbody>
         </table>
         <h3>Deliver History</h3>
-        <table id="otherTable">
+        <table id="delivTable">
           <tr>
             <th>Pick-Up</th>
             <th>Drop-Off</th>
             <th>Item</th>
-            <th>Price</th>
-            <th>Rating</th>
+            <th>Tip</th>
           </tr>
           <tbody>
           </tbody>

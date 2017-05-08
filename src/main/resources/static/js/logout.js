@@ -1,4 +1,5 @@
 function logout() {
+	localStorage.clear();
 	$.post("/logout", {}, responseJSON => {
 	});
 	window.location.replace("/login");

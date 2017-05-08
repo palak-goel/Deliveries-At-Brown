@@ -50,10 +50,12 @@ function update() {
 	}
 	$.post("/reset-password", returnPackage, responseJSON => {
 		console.log("received");
-		status = JSON.parse(responseJSON).status;
-		if (status == "true") {
+		error = JSON.parse(responseJSON).error;
+		if (error == "") {
 			$("#enter_password").hide();
 			$("#success").show();
+		} else {
+			alert("There was an error resetting the password, please try again")
 		}
 	});
 }

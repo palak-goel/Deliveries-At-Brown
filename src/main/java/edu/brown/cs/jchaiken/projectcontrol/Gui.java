@@ -317,9 +317,13 @@ public class Gui {
   private static Object resetPassword(Request request) {
     final String email = request.queryMap().value("email");
     final String newPass = request.queryMap().value("password");
+    if (!checkSql(email)) {
+      return GSON.toJson(ImmutableMap.of("error", "sql"));
+    }
     final boolean status = User.newPassword(email, newPass);
     final Map<String, Object> toServer = new HashMap<>();
     toServer.put("status", status);
+    toServer.put("error", "");
     return GSON.toJson(toServer);
   }
 
@@ -344,7 +348,7 @@ public class Gui {
     final String jid = request.session().id();
     final User u = User.byWebId(Manager.getSession(jid).attribute("webId"));
     final Suggestor s = new Suggestor(u);
-    final Map<String, Object> m = new HashMap<>();
+    Map<String, Object> m = new HashMap<>();
     m.put("pickup", s.suggestPickup());
     m.put("dropoff", s.suggestDropoff());
     m.put("items", s.suggestItem());
@@ -378,7 +382,7 @@ public class Gui {
     final String email = request.queryMap().value("email");
     if (User.resetCombination(email, cell)) {
       final String code = sender.resetPassword(cell);
-      final Map<String, Object> toServer = ImmutableMap.of("sent", true,
+      Map<String, Object> toServer = ImmutableMap.of("sent", true,
           "error", "");
       sentCodes.put(cell, code);
       return GSON.toJson(toServer);
@@ -419,7 +423,6 @@ public class Gui {
       final Map<String, Object> variables = new HashMap<>();
       variables.put("title", "Login");
       variables.put("from", from);
-      System.out.println(from);
       return new ModelAndView(variables, "login.ftl");
     }
   }
@@ -438,7 +441,6 @@ public class Gui {
       final Map<String, Object> toServer = new HashMap<>();
       try {
         final QueryParamsMap qm = arg0.queryMap();
-        System.out.println("validating");
         final String id = qm.value("id");
         final String password = qm.value("password");
         if (!checkSql(id)) {

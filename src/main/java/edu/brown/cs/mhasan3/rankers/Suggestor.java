@@ -17,7 +17,7 @@ import edu.brown.cs.jchaiken.deliveryobject.User;
  *
  */
 
-// TODO - POSSIBLY CHANGE ALL INDIVIDUAL USERS TO AN OVERALL HISTORY?
+//TODO: - POSSIBLY CHANGE ALL INDIVIDUAL USERS TO AN OVERALL HISTORY?
 public class Suggestor {
 
   private final User user;

@@ -339,7 +339,7 @@ public class Gui {
 		}
 		System.out.println("here");
 		List<Order> dRev = new ArrayList<>(u.pastDeliveries());
-		List<Order> oRev = new ArrayList<>(u.pastDeliveries());
+		List<Order> oRev = new ArrayList<>(u.pastOrders());
 		Collections.reverse(dRev);
 		Collections.reverse(oRev);
 		res.put("deliver", dRev);

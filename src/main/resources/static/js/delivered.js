@@ -69,12 +69,16 @@ function sendTextToDeliverer() {
 }
 
 function sendDirectionsToDeliverer(string){
+    console.log("sending");
+    console.log(string);
     var message = string;
 
-    const postParamters = {
+    const postParameters = {
         number : delivererNumber,
         content : message
     }
+    $.post("/sendText", postParameters, responseJSON => {
+        });
 }
 
 function completeDelivery() {
@@ -87,14 +91,14 @@ function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-function sendTextToDeliverer() {
-    var message = document.getElementById("text-message").value;
-    const postParameters = {
-        number : delivererNumber,
-        content : message
-    }
-    $.post("/sendText", postParameters, responseJSON => {
-        });
+// function sendTextToDeliverer() {
+//     var message = document.getElementById("text-message").value;
+//     const postParameters = {
+//         number : delivererNumber,
+//         content : message
+//     }
+//     $.post("/sendText", postParameters, responseJSON => {
+//         });
 
     
-}
+

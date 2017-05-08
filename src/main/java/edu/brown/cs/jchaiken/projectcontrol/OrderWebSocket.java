@@ -65,10 +65,6 @@ public class OrderWebSocket {
     msg.addProperty("id", nextId);
     msg.addProperty("type", MessageType.CONNECT.ordinal());
     session.getRemote().sendString(GSON.toJson(msg));
-    incrementNext();
-  }
-
-  private static void incrementNext() {
     nextId++;
   }
 
@@ -144,42 +140,47 @@ public class OrderWebSocket {
       System.out.println(o.getOrderer().getName());
       System.out.println("---");
       System.out.println(reqId);
-      for (final spark.Session s : Manager.allSessions()) {
-        final String z = s.attribute("webId");
-        System.out.println(z);
-        System.out.println(socketidUser.keySet());
-        final double dlat = received.get("dLat").getAsDouble();
-        final double dlng = received.get("dLng").getAsDouble();
-        final double dropLat = o.getDropoffLocation().getLatitude();
-        final double dropLng = o.getDropoffLocation().getLongitude();
-        final double pickupLat = o.getPickupLocation().getLatitude();
-        final double pickupLng = o.getPickupLocation().getLongitude();
-        if (reqId.equals(s.attribute("webId"))) {
-          Manager
-              .setActiveUser(Manager.getUserJid(o.getOrderer().getWebId()));
-          Manager
-              .setActiveUser(Manager.getUserJid(o.getDeliverer().getWebId()));
-          System.out.println("Found requested id");
-          final String y = Manager.getUserJid(reqId);
-          System.out.println(y);
-          final Map<String, Object> msg = ImmutableMap
-              .<String, Object>builder()
-              .put("type", MessageType.REQUESTED.ordinal())
-              .put("name", u.getName()).put("phone", u.getCell())
-              .put("delivLat", dlat).put("delivLng", dlng)
-              .put("dropLat", dropLat).put("dropLng", dropLng)
-              .put("pickLat", pickupLat).put("pickLng", pickupLng).build();
-          socketidUser.get(y).getRemote().sendString(GSON.toJson(msg));
-          sendRemoveOrder(o);
-          // Manager.setActiveUser(jid);
-          // Manager.setActiveUser(y);
-          final Sender sender = new Sender(o.getOrderer().getCell());
-          sender.updateMessage("confirm", o);
-          sender.sendMessage();
-          return;
+      try {
+        for (final spark.Session s : Manager.allSessions()) {
+          final String z = s.attribute("webId");
+          System.out.println(z);
+          System.out.println(socketidUser.keySet());
+          final double dlat = received.get("dLat").getAsDouble();
+          final double dlng = received.get("dLng").getAsDouble();
+          final double dropLat = o.getDropoffLocation().getLatitude();
+          final double dropLng = o.getDropoffLocation().getLongitude();
+          final double pickupLat = o.getPickupLocation().getLatitude();
+          final double pickupLng = o.getPickupLocation().getLongitude();
+          if (reqId.equals(s.attribute("webId"))) {
+            Manager
+                .setActiveUser(Manager.getUserJid(o.getOrderer().getWebId()));
+            Manager
+                .setActiveUser(Manager.getUserJid(o.getDeliverer().getWebId()));
+            System.out.println("Found requested id");
+            final String y = Manager.getUserJid(reqId);
+            System.out.println(y);
+            final Map<String, Object> msg = ImmutableMap
+                .<String, Object>builder()
+                .put("type", MessageType.REQUESTED.ordinal())
+                .put("name", u.getName()).put("phone", u.getCell())
+                .put("delivLat", dlat).put("delivLng", dlng)
+                .put("dropLat", dropLat).put("dropLng", dropLng)
+                .put("pickLat", pickupLat).put("pickLng", pickupLng).build();
+            socketidUser.get(y).getRemote().sendString(GSON.toJson(msg));
+            sendRemoveOrder(o);
+            // Manager.setActiveUser(jid);
+            // Manager.setActiveUser(y);
+            final Sender sender = new Sender(o.getOrderer().getCell());
+            sender.updateMessage("confirm", o);
+            sender.sendMessage();
+            return;
+          }
         }
+      } catch (final Exception e) {
+        e.printStackTrace();
       }
     }
+
   }
 
   /**
@@ -193,7 +194,7 @@ public class OrderWebSocket {
         s.getRemote().sendString(GSON.toJson(msg));
       }
     } catch (final IOException e) {
-      e.printStackTrace();
+
     }
   }
 
@@ -203,29 +204,25 @@ public class OrderWebSocket {
    */
   public static void sendAddOrder(Order o) {
     Manager.addOrder(o);
-    sendAddRemove(MessageType.ADD_ORDER);
-  }
-
-  private static void sendAddRemove(MessageType type) {
     final List<Order> orders = MGR.getPendingOrders();
-    final Map<String, Object> toServer = new HashMap<>();
-    toServer.put("orders", orders);
-    final List<String> start = new ArrayList<>();
-    final List<String> end = new ArrayList<>();
-    for (final Order os : orders) {
-      start.add(os.getPickupLocation().getName());
-      end.add(os.getDropoffLocation().getName());
-    }
-    toServer.put("pickup", start);
-    toServer.put("dropoff", end);
-    toServer.put("type", type.ordinal());
-    final String msg = GSON.toJson(toServer);
-    for (final Session s : SESSIONS) {
-      try {
-        s.getRemote().sendString(msg);
-      } catch (IOException e) {
-        e.printStackTrace();
+    try {
+      final Map<String, Object> toServer = new HashMap<>();
+      toServer.put("orders", orders);
+      final List<String> start = new ArrayList<>();
+      final List<String> end = new ArrayList<>();
+      for (final Order os : orders) {
+        start.add(os.getPickupLocation().getName());
+        end.add(os.getDropoffLocation().getName());
       }
+      toServer.put("pickup", start);
+      toServer.put("dropoff", end);
+      toServer.put("type", MessageType.ADD_ORDER.ordinal());
+      final String msg = GSON.toJson(toServer);
+      for (final Session s : SESSIONS) {
+        s.getRemote().sendString(msg);
+      }
+    } catch (final IOException e) {
+
     }
   }
 
@@ -235,7 +232,26 @@ public class OrderWebSocket {
    */
   public static void sendRemoveOrder(Order o) {
     Manager.removeOrder(o);
-    sendAddRemove(MessageType.REMOVE_ORDER);
+    final List<Order> orders = MGR.getPendingOrders();
+    try {
+      final Map<String, Object> toServer = new HashMap<>();
+      toServer.put("orders", orders);
+      final List<String> start = new ArrayList<>();
+      final List<String> end = new ArrayList<>();
+      for (final Order os : orders) {
+        start.add(os.getPickupLocation().getName());
+        end.add(os.getDropoffLocation().getName());
+      }
+      toServer.put("pickup", start);
+      toServer.put("dropoff", end);
+      toServer.put("type", MessageType.ADD_ORDER.ordinal());
+      final String msg = GSON.toJson(toServer);
+      for (final Session s : SESSIONS) {
+        s.getRemote().sendString(msg);
+      }
+    } catch (final IOException e) {
+
+    }
   }
 
   /**
@@ -244,10 +260,6 @@ public class OrderWebSocket {
    */
   public static void sendOrders(Session s) {
     final List<Order> orders = MGR.getPendingOrders();
-    sendOrderHelper(s, orders);
-  }
-
-  private static void sendOrderHelper(Session s, List<Order> orders) {
     try {
       final Map<String, Object> toServer = new HashMap<>();
       toServer.put("orders", orders);
@@ -263,7 +275,7 @@ public class OrderWebSocket {
       final String msg = GSON.toJson(toServer);
       s.getRemote().sendString(msg);
     } catch (final IOException e) {
-      e.printStackTrace();
+
     }
   }
 
@@ -274,7 +286,23 @@ public class OrderWebSocket {
    */
   public static void sendOrders(String jid, List<Order> orders) {
     final Session s = socketidUser.get(jid);
-    sendOrderHelper(s, orders);
+    try {
+      final Map<String, Object> toServer = new HashMap<>();
+      toServer.put("orders", orders);
+      final List<String> start = new ArrayList<>();
+      final List<String> end = new ArrayList<>();
+      for (final Order o : orders) {
+        start.add(o.getPickupLocation().getName());
+        end.add(o.getDropoffLocation().getName());
+      }
+      toServer.put("pickup", start);
+      toServer.put("dropoff", end);
+      toServer.put("type", MessageType.ADD_ORDER.ordinal());
+      final String msg = GSON.toJson(toServer);
+      s.getRemote().sendString(msg);
+    } catch (final IOException e) {
+
+    }
   }
 
   /**
@@ -287,7 +315,7 @@ public class OrderWebSocket {
       s.getRemote().sendString(GSON
           .toJson(ImmutableMap.of("type", MessageType.COMPLETED.ordinal())));
     } catch (final IOException e) {
-      e.printStackTrace();
+
     }
   }
 
@@ -302,7 +330,6 @@ public class OrderWebSocket {
       req.getRemote().sendString(GSON.toJson(ImmutableMap.of("error", "TIME",
           "type", MessageType.REQUESTED.ordinal())));
     } catch (final IOException e) {
-      e.printStackTrace();
     }
   }
 

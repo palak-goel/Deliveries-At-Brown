@@ -1,10 +1,10 @@
 # cs0320 Term Project
 
-**Team Members:** _Fill this in!_
+**Team Members:** Jackson Chaiken: jchaiken, Shehryar Hasan: mhasan3, Palak Goel: pgoel1, Sumit Sohani: ssohani
 
-**Project Idea:** _Fill this in!_
+**Project Idea:** Our project idea is to create a web app to fulfill the Brown community's delivery needs. Anything you want can be delivered using our web app.
 
-**Mentor TA:** _Put your mentor TA's name and email here once you're assigned one!_
+**Mentor TA:** Rafael Reyes (rafael_reyes@brown.edu)
 
 ## Project Requirements
 _This portion of the README is due March 8th (see the project handout)!_
@@ -25,7 +25,7 @@ Allow for deliverers to view a smart recommendation of potential deliveries
 We talked to users, and most agreed that deliverers should be able to do 3 and 4. If a deliverer is about to leave a location and pick something up, they should be able to quickly scan through open tickets and pick one (or more) up. On the other hand, if nothing is open at the time, the system should be smart enough to notify the deliverer when a relevant ticket is added to the queue. 
 Utilize location, time, wage, and ranking to generate recommendations for the deliverer.
 Users agreed that these would be the main components in recommending a ticket to the deliverer. Some people we talked to wanted even more metrics to factor into the smart suggestion (for example, weather, or likelihood of a line) but by keeping it simple (just these four categories) we make it easy for anyone to submit a ticket with only the relevant information.
-Allow for deliverers and requestors to communicate once a delivery is picked up
+Allow for deliverers and requesters to communicate once a delivery is picked up
 All users agreed that this was a very important feature, even if it wasn’t baked into the app. Especially since people might have to move around or swipe others in, it’s important to have an open line of communication. A chat system is a possible solution to this issue.
 Allow for some notion of payment (even if it’s by an initial API) to ensure that
 Delivery seekers automatically pay part of the order once it’s picked up
@@ -40,10 +40,16 @@ One feature that respondents indicated would be useful was requesters being auto
 Another feature that respondents indicated might be useful was the ability to utilize the app without creating any user profile. However, we disregarded this idea as it could lead to security risks and to poorly rated users and deliverers continuing to use the application.
 
 ## Project Specs and Mockup
-_A link to your specifications document and your mockup will go here!_
+https://docs.google.com/a/brown.edu/document/d/1eCrp9UEbnDgbCA5VJ5NoyUmqwYK138M_x-u4m3c1oGc/edit?usp=drive_web
 
 ## Project Design Presentation
-_A link to your design presentation/document will go here!_
+https://docs.google.com/presentation/d/1d1ORuJEsAdoZN0HB4wgDYLhyjk6VSwOehv3uSabrkA8/edit
+
+## Known Bugs
+To date, the only bug that has persisted is an occasional post error when logging in for the first time. However, we believe we fixed it and it has not happened recently.
+## Design Details
+The backend of our code utilizes the proxy/bean pattern to model User, Order, and Location objects. This pattern was utilized to allow for the team to interact with the interfaces without having to know the underlying state of the object (read in from the database or not). In addition, these classes were designed to interact seamlessly with the front end so data can be sent back and forth easily.
+Client's main interactions with our code 
 
 ## How to Build and Run
-_A necessary part of any README!_
+To build D@B, use "mvn package" to compile the source files. Use ./run [--gui] [--port [port number]] [--db <link to db>] with any of the desired flags.

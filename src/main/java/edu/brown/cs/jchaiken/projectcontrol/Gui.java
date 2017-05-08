@@ -328,9 +328,11 @@ public class Gui {
   }
 
   private static Object orderHistory(Request request) {
+    System.out.println("here");
     final String jid = request.session().id();
     final User u = User.byWebId(Manager.getSession(jid).attribute("webId"));
     final Map<String, Object> res = new HashMap<>();
+    System.out.println("here");
     for (final Order o : u.pastDeliveries()) {
       o.getDropoffLocation().getName();
       o.getPickupLocation().getName();
@@ -339,6 +341,7 @@ public class Gui {
       o.getDropoffLocation().getName();
       o.getPickupLocation().getName();
     }
+    System.out.println("here");
     res.put("deliver", u.pastDeliveries());
     res.put("order", u.pastOrders());
     return GSON.toJson(res);
@@ -348,7 +351,7 @@ public class Gui {
     final String jid = request.session().id();
     final User u = User.byWebId(Manager.getSession(jid).attribute("webId"));
     final Suggestor s = new Suggestor(u);
-    Map<String, Object> m = new HashMap<>();
+    final Map<String, Object> m = new HashMap<>();
     m.put("pickup", s.suggestPickup());
     m.put("dropoff", s.suggestDropoff());
     m.put("items", s.suggestItem());
@@ -382,7 +385,7 @@ public class Gui {
     final String email = request.queryMap().value("email");
     if (User.resetCombination(email, cell)) {
       final String code = sender.resetPassword(cell);
-      Map<String, Object> toServer = ImmutableMap.of("sent", true,
+      final Map<String, Object> toServer = ImmutableMap.of("sent", true,
           "error", "");
       sentCodes.put(cell, code);
       return GSON.toJson(toServer);
@@ -423,6 +426,7 @@ public class Gui {
       final Map<String, Object> variables = new HashMap<>();
       variables.put("title", "Login");
       variables.put("from", from);
+      System.out.println(from);
       return new ModelAndView(variables, "login.ftl");
     }
   }
@@ -441,6 +445,7 @@ public class Gui {
       final Map<String, Object> toServer = new HashMap<>();
       try {
         final QueryParamsMap qm = arg0.queryMap();
+        System.out.println("validating");
         final String id = qm.value("id");
         final String password = qm.value("password");
         if (!checkSql(id)) {

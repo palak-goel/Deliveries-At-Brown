@@ -1,7 +1,7 @@
 let phoneNumber;
 function reset() {
 	returnPackage = {
-		cell: document.getElementById("area_code").value + document.getElementById("phone").value
+		cell: document.getElementById("area_code").value + document.getElementById("phone").value,
 		email: document.getElementById("acc_email").value
 	}
 	if (returnPackage.cell != "" && returnPackage.email != "") {

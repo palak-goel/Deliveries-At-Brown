@@ -87,8 +87,8 @@ function sendDirectionsToDeliverer(string){
 function completeDelivery() {
     var priceEntered = document.getElementById("price")
     if (isNaN(priceEntered) || priceEntered == null || priceEntered.length < 1) {
-        alert("Must enter a numeric price")
-        return
+        alert("Must enter a numeric price");
+        return 5;
     }
     $.post("/complete-order", {id: localStorage.id, price: $("#price").val()}, responseJson => {
         window.location.href = '/deliverycompleted';

@@ -37,7 +37,16 @@ let jid = -1;
 const setup_socket = () => {
   console.log("myId", myId)
   if (myId === -1) {
-    conn = new WebSocket("ws://localhost:4567/deliverysocket")
+    host = window.location.hostname
+    console.log(host)
+    if (host === "localhost") {
+      console.log("ENTERED")
+      conn = new WebSocket("ws://localhost:4567/deliverysocket")
+    } else {
+      conn = new WebSocket("ws://35.185.121.37/deliverysocket")
+      //http://35.185.121.37/login
+    }
+    
     jid = getCookie("JSESSIONID").split(".")[0]
     console.log("SETTING JID", jid)
   }
